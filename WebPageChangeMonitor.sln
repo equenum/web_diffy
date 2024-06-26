@@ -5,6 +5,10 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPageChangeMonitor.Api", "WebPageChangeMonitor.Api\WebPageChangeMonitor.Api.csproj", "{15140228-E60D-4C3F-B385-7BD935F27EF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPageChangeMonitor.Services", "WebPageChangeMonitor.Services\WebPageChangeMonitor.Services.csproj", "{9ECA0ED7-E415-45D8-8F6F-120EE4B8EA75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPageChangeMonitor.Models", "WebPageChangeMonitor.Models\WebPageChangeMonitor.Models.csproj", "{3BA748EF-EA1D-49D6-9704-7325A6043103}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{15140228-E60D-4C3F-B385-7BD935F27EF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15140228-E60D-4C3F-B385-7BD935F27EF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15140228-E60D-4C3F-B385-7BD935F27EF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ECA0ED7-E415-45D8-8F6F-120EE4B8EA75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ECA0ED7-E415-45D8-8F6F-120EE4B8EA75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ECA0ED7-E415-45D8-8F6F-120EE4B8EA75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ECA0ED7-E415-45D8-8F6F-120EE4B8EA75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BA748EF-EA1D-49D6-9704-7325A6043103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BA748EF-EA1D-49D6-9704-7325A6043103}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BA748EF-EA1D-49D6-9704-7325A6043103}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BA748EF-EA1D-49D6-9704-7325A6043103}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
