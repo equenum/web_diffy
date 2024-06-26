@@ -16,6 +16,11 @@ public class Target
     // required, not null or whitespace
     public string Url { get; set; }
 
+    // required, not null, empty or whitespace
+    // validate the cron itself?
+    // add default value
+    public string CronSchedule { get; set; }
+
     // required, not null or whitespace
     public TargetType Type { get; set; }
 
