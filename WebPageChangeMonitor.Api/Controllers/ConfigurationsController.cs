@@ -15,6 +15,7 @@ public class ConfigurationsController : ControllerBase
         _options = options.Value;
     }
 
+    [HttpGet]
     public IActionResult Get()
     {
         return Ok(_options);
