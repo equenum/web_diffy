@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPageChangeMonitor.Servic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPageChangeMonitor.Models", "WebPageChangeMonitor.Models\WebPageChangeMonitor.Models.csproj", "{3BA748EF-EA1D-49D6-9704-7325A6043103}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPageChangeMonitor.Data", "WebPageChangeMonitor.Data\WebPageChangeMonitor.Data.csproj", "{C84E0F99-4019-4A2A-9AEB-2C03F21153E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{3BA748EF-EA1D-49D6-9704-7325A6043103}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BA748EF-EA1D-49D6-9704-7325A6043103}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BA748EF-EA1D-49D6-9704-7325A6043103}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C84E0F99-4019-4A2A-9AEB-2C03F21153E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C84E0F99-4019-4A2A-9AEB-2C03F21153E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C84E0F99-4019-4A2A-9AEB-2C03F21153E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C84E0F99-4019-4A2A-9AEB-2C03F21153E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
