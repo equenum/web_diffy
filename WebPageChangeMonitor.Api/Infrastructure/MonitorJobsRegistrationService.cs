@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz;
 using Quartz.Impl;
+using Quartz.Spi;
 using WebPageChangeMonitor.Models.Options;
 
 namespace WebPageChangeMonitor.Api.Infrastructure;
@@ -15,14 +16,17 @@ public class MonitorJobsRegistrationService : IHostedService
     private readonly ILogger<MonitorJobsRegistrationService> _logger;
     private readonly StdSchedulerFactory _schedulerFactory;
     private readonly ChangeMonitorOptions _options;
+    private readonly IJobFactory _jobFactory;
 
     public MonitorJobsRegistrationService(
         ILogger<MonitorJobsRegistrationService> logger,
-        IOptions<ChangeMonitorOptions> options)
+        IOptions<ChangeMonitorOptions> options,
+        IJobFactory jobFactory)
     {
         _logger = logger;
         _schedulerFactory = new StdSchedulerFactory();
         _options = options.Value;
+        _jobFactory = jobFactory;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -34,6 +38,8 @@ public class MonitorJobsRegistrationService : IHostedService
 
         // schedule jobs
         var scheduler = await _schedulerFactory.GetScheduler();
+        scheduler.JobFactory = _jobFactory;
+
         await scheduler.Start();
 
         foreach (var details in jobDetails)

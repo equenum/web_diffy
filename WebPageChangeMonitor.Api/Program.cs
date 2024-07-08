@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
+using Quartz.Spi;
 using WebPageChangeMonitor.Api.Infrastructure;
 using WebPageChangeMonitor.Models.Options;
 
@@ -26,6 +27,9 @@ builder.Services.AddQuartzHostedService(options =>
 {
     options.WaitForJobsToComplete = false;
 });
+
+builder.Services.AddTransient<MonitorChangeJob>();   
+builder.Services.AddSingleton<IJobFactory, MonitorJobFactory>();
 
 builder.Services.AddHttpClient();
 
