@@ -29,7 +29,7 @@ public class ConfigurationsController : ControllerBase
         return Ok(_options.Resources);
     }
 
-    [HttpGet("targets/{string:resource}")]
+    [HttpGet("targets")]
     public IActionResult GetTargets(string resourceId)
     {
         // todo map to resource dto

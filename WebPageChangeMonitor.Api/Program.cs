@@ -27,6 +27,8 @@ builder.Services.AddQuartzHostedService(options =>
     options.WaitForJobsToComplete = false;
 });
 
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
