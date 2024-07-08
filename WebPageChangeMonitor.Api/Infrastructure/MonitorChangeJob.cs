@@ -46,6 +46,10 @@ public class MonitorChangeJob : IJob
             var html = await httpResponseMessage.Content.ReadAsStringAsync();
 
             // parse html here
+            // Html Agility Pack (HAP)
+            // https://html-agility-pack.net/
+            // https://github.com/zzzprojects/html-agility-pack
+
             // introduce parsing strategies and factory
         }
     }
