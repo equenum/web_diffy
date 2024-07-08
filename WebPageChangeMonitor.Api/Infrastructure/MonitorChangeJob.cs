@@ -5,6 +5,7 @@ using Quartz;
 
 namespace WebPageChangeMonitor.Api.Infrastructure;
 
+[DisallowConcurrentExecution]
 public class MonitorChangeJob : IJob
 {
     private readonly ILogger<MonitorChangeJob> _logger;
@@ -28,7 +29,7 @@ public class MonitorChangeJob : IJob
         // add Polly
         var requestMessage = new HttpRequestMessage(
             HttpMethod.Get,
-            "https://api.github.com/repos/dotnet/AspNetCore.Docs/branches")
+            "https://github.com/equenum?tab=repositories")
         {
             // Headers =
             // {
@@ -42,11 +43,10 @@ public class MonitorChangeJob : IJob
 
         if (httpResponseMessage.IsSuccessStatusCode)
         {
-            using (var stream = await httpResponseMessage.Content.ReadAsStreamAsync())
-            {
-                // parse the response here
-                // introduce parsing strategies and factory
-            }
+            var html = await httpResponseMessage.Content.ReadAsStringAsync();
+
+            // parse html here
+            // introduce parsing strategies and factory
         }
     }
 }
