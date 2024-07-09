@@ -1,7 +1,7 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Quartz;
+using WebPageChangeMonitor.Api.Services;
 
 namespace WebPageChangeMonitor.Api.Infrastructure;
 
@@ -9,14 +9,14 @@ namespace WebPageChangeMonitor.Api.Infrastructure;
 public class MonitorChangeJob : IJob
 {
     private readonly ILogger<MonitorChangeJob> _logger;
-    private readonly IHttpClientFactory _clientFactory;
+    private readonly IChangeDetector _changeDetector;
 
     public MonitorChangeJob(
-        ILogger<MonitorChangeJob> logger, 
-        IHttpClientFactory clientFactory)
+        ILogger<MonitorChangeJob> logger,
+        IChangeDetector changeDetector)
     {
         _logger = logger;
-        _clientFactory = clientFactory;
+        _changeDetector = changeDetector;
     }
 
     public async Task Execute(IJobExecutionContext context)
@@ -26,31 +26,8 @@ public class MonitorChangeJob : IJob
 
         _logger.LogInformation($"Executing job {context.JobDetail.Key}, url: {url}");
 
-        // add Polly
-        var requestMessage = new HttpRequestMessage(
-            HttpMethod.Get,
-            "https://github.com/equenum?tab=repositories")
-        {
-            // Headers =
-            // {
-            //     { HeaderNames.Accept, "application/vnd.github.v3+json" },
-            //     { HeaderNames.UserAgent, "HttpRequestsSample" }
-            // }
-        };
-
-        var client = _clientFactory.CreateClient();
-        var httpResponseMessage = await client.SendAsync(requestMessage);
-
-        if (httpResponseMessage.IsSuccessStatusCode)
-        {
-            var html = await httpResponseMessage.Content.ReadAsStringAsync();
-
-            // parse html here
-            // Html Agility Pack (HAP)
-            // https://html-agility-pack.net/
-            // https://github.com/zzzprojects/html-agility-pack
-
-            // introduce parsing strategies and factory
-        }
+        // pass arguments
+        // add exception handling
+        await _changeDetector.ProcessAsync(url);
     }
 }

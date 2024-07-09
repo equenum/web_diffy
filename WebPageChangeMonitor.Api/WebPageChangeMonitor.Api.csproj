@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WebPageChangeMonitor.Models\WebPageChangeMonitor.Models.csproj" />
+    <ProjectReference Include="..\WebPageChangeMonitor.Services\WebPageChangeMonitor.Services.csproj" />
   </ItemGroup>
 
 </Project>
