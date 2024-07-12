@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -57,18 +58,27 @@ public class MonitorJobsRegistrationService : IHostedService
 
     private static JobDetailsBundle BuildJobDetails(Target target)
     {
+        // todo use auto mapper
+        var context = new TargetContext()
+        {
+            Url = target.Url,
+            Type = target.Type,
+            HtmlTag = target.HtmlTag,
+            Selector = target.Selector,
+            ExpectedValue = target.ExpectedValue 
+        };
+
         var jobDetails = JobBuilder.Create<MonitorChangeJob>()
             .WithIdentity(target.Id)
 
-            // todo add all the other data required for polling
-            .UsingJobData("url", target.Url)
-            // TargetType
+            // extract const
+            .UsingJobData("target-context", JsonSerializer.Serialize(context))
             .Build();
 
         var trigger = TriggerBuilder.Create()
-            .WithIdentity($"{target.Id}-trigger")
+            .WithIdentity($"{target.Id}-trigger") // extract const
             .StartNow()
-            .WithCronSchedule("0/5 * * * * ?")
+            .WithCronSchedule(target.CronSchedule)
             .Build();
 
         return new JobDetailsBundle(jobDetails, trigger);

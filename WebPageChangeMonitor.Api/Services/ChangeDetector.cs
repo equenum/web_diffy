@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using WebPageChangeMonitor.Models.Change;
 using WebPageChangeMonitor.Services.Parsers;
 
 namespace WebPageChangeMonitor.Api.Services;
@@ -17,11 +18,11 @@ public class ChangeDetector : IChangeDetector
         _htmlParser = htmlParser;
     }
     
-    public async Task ProcessAsync(string url)
+    public async Task ProcessAsync(TargetContext context)
     {
         // add Polly
 
-        var requestMessage = new HttpRequestMessage(HttpMethod.Get, url)
+        var requestMessage = new HttpRequestMessage(HttpMethod.Get, context.Url)
         {
             // Headers =
             // {
@@ -43,7 +44,7 @@ public class ChangeDetector : IChangeDetector
             //  - https://html-agility-pack.net/
             //  - https://github.com/zzzprojects/html-agility-pack
 
-            var text = _htmlParser.GetNodeInnerText(html);
+            var text = _htmlParser.GetNodeInnerText(html, context);
         }
     }
 }

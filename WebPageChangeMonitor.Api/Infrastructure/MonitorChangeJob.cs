@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using WebPageChangeMonitor.Api.Services;
+using WebPageChangeMonitor.Models.Change;
 
 namespace WebPageChangeMonitor.Api.Infrastructure;
 
@@ -22,12 +24,13 @@ public class MonitorChangeJob : IJob
     public async Task Execute(IJobExecutionContext context)
     {
         JobDataMap dataMap = context.JobDetail.JobDataMap;
-        var url = dataMap.GetString("url");
+        var jsonContext = dataMap.GetString("target-context");
+        var targetContext =  JsonSerializer.Deserialize<TargetContext>(jsonContext);
 
-        _logger.LogInformation($"Executing job {context.JobDetail.Key}, url: {url}");
+        _logger.LogInformation($"Executing job {context.JobDetail.Key}, url: {targetContext.Url}");
 
         // pass arguments
         // add exception handling
-        await _changeDetector.ProcessAsync(url);
+        await _changeDetector.ProcessAsync(targetContext);
     }
 }
