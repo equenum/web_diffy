@@ -1,4 +1,4 @@
-﻿namespace WebPageChangeMonitor.Models.Options;
+﻿namespace WebPageChangeMonitor.Models.Consts;
 
 public enum TargetType
 {

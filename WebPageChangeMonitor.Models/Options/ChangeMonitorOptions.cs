@@ -1,4 +1,6 @@
-﻿namespace WebPageChangeMonitor.Models.Options;
+﻿using WebPageChangeMonitor.Models.Change;
+
+namespace WebPageChangeMonitor.Models.Options;
 
 public class ChangeMonitorOptions
 {

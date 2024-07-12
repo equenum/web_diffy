@@ -1,4 +1,6 @@
-﻿namespace WebPageChangeMonitor.Models.Options;
+﻿using WebPageChangeMonitor.Models.Consts;
+
+namespace WebPageChangeMonitor.Models.Change;
 
 // implement validation
 public class Target

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
+using WebPageChangeMonitor.Models.Change;
 using WebPageChangeMonitor.Models.Options;
 
 namespace WebPageChangeMonitor.Api.Infrastructure;
@@ -61,6 +62,7 @@ public class MonitorJobsRegistrationService : IHostedService
 
             // todo add all the other data required for polling
             .UsingJobData("url", target.Url)
+            // TargetType
             .Build();
 
         var trigger = TriggerBuilder.Create()

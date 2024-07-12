@@ -1,4 +1,4 @@
-﻿namespace WebPageChangeMonitor.Models.Options;
+﻿namespace WebPageChangeMonitor.Models.Change;
 
 // implement validation
 public class Resource
