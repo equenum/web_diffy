@@ -1,4 +1,5 @@
-﻿using WebPageChangeMonitor.Models.Consts;
+﻿using System;
+using WebPageChangeMonitor.Models.Consts;
 
 namespace WebPageChangeMonitor.Models.Change;
 
@@ -6,7 +7,10 @@ namespace WebPageChangeMonitor.Models.Change;
 public class Target
 {
     // required, not null, empty or whitespace
-    public string Id { get; set; }
+    public Guid Id { get; set; }
+
+    // required, not null, empty or whitespace
+    public Guid ResourceId { get; set; }
 
     // not empty or whitespace
     public string DisplayName { get; set; }

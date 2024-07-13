@@ -1,10 +1,14 @@
-﻿namespace WebPageChangeMonitor.Models.Change;
+﻿using System;
+
+namespace WebPageChangeMonitor.Models.Change;
+
+// todo implement separate models for asp.net validation and repos
 
 // implement validation
 public class Resource
 {
     // required, not null, empty or whitespace
-    public string Id { get; set; }
+    public Guid Id { get; set; }
 
     // not empty or whitespace
     public string DisplayName { get; set; }

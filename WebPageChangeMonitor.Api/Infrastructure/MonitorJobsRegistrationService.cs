@@ -33,12 +33,11 @@ public class MonitorJobsRegistrationService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        // create jobs for all targets
+        // todo replace with a database call
         var monitoringTargets = _options.Resources.SelectMany(resource => resource.Targets);
         var jobDetails = monitoringTargets.Select(BuildJobDetails);
         _logger.LogInformation($"JobCount: {jobDetails.Count()}");
 
-        // schedule jobs
         var scheduler = await _schedulerFactory.GetScheduler();
         scheduler.JobFactory = _jobFactory;
 
@@ -69,7 +68,7 @@ public class MonitorJobsRegistrationService : IHostedService
         };
 
         var jobDetails = JobBuilder.Create<MonitorChangeJob>()
-            .WithIdentity(target.Id)
+            .WithIdentity(target.Id.ToString())
 
             // extract const
             .UsingJobData("target-context", JsonSerializer.Serialize(context))
