@@ -6,7 +6,9 @@ using Quartz.Spi;
 using WebPageChangeMonitor.Api.Infrastructure;
 using WebPageChangeMonitor.Api.Services;
 using WebPageChangeMonitor.Models.Options;
+using WebPageChangeMonitor.Services.Detection;
 using WebPageChangeMonitor.Services.Parsers;
+using WebPageChangeMonitor.Services.Strategies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,10 +33,19 @@ builder.Services.AddQuartzHostedService(options =>
 });
 
 // todo extract
+// job management
 builder.Services.AddTransient<MonitorChangeJob>();   
 builder.Services.AddSingleton<IJobFactory, MonitorJobFactory>();
-builder.Services.AddTransient<IHtmlParser, HtmlParser>();
+
+// change detection
 builder.Services.AddTransient<IChangeDetector, ChangeDetector>();
+builder.Services.AddTransient<IChangeDetectionService, ChangeDetectionService>();
+builder.Services.AddTransient<IChangeDetectionStrategyFactory, ChangeDetectionStrategyFactory>();
+builder.Services.AddTransient<IChangeDetectionStrategy, ValueChangeDetectionStrategy>();
+builder.Services.AddTransient<IChangeDetectionStrategy, SnapshotChangeDetectionStrategy>();
+
+// other services
+builder.Services.AddTransient<IHtmlParser, HtmlParser>();
 
 builder.Services.AddHttpClient();
 

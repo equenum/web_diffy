@@ -1,23 +1,23 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using WebPageChangeMonitor.Models.Change;
-using WebPageChangeMonitor.Services.Parsers;
+using WebPageChangeMonitor.Services.Detection;
 
 namespace WebPageChangeMonitor.Api.Services;
 
 public class ChangeDetector : IChangeDetector
 {
     private readonly IHttpClientFactory _clientFactory;
-    private readonly IHtmlParser _htmlParser;
+    private readonly IChangeDetectionService _detectionService;
 
     public ChangeDetector(
         IHttpClientFactory clientFactory,
-        IHtmlParser htmlParser)
+        IChangeDetectionService detectionService)
     {
         _clientFactory = clientFactory;
-        _htmlParser = htmlParser;
+        _detectionService = detectionService;
     }
-    
+
     public async Task ProcessAsync(TargetContext context)
     {
         // add Polly
@@ -37,14 +37,7 @@ public class ChangeDetector : IChangeDetector
         if (httpResponseMessage.IsSuccessStatusCode)
         {
             var html = await httpResponseMessage.Content.ReadAsStringAsync();
-
-            // introduce parsing strategies and factory
-            
-            // Html Agility Pack (HAP):
-            //  - https://html-agility-pack.net/
-            //  - https://github.com/zzzprojects/html-agility-pack
-
-            var text = _htmlParser.GetNodeInnerText(html, context);
+            await _detectionService.ProcessAsync(html, context);
         }
     }
 }
