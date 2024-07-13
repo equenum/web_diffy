@@ -24,7 +24,7 @@ public class Target
     public string CronSchedule { get; set; }
 
     // required, not null or whitespace
-    public TargetType Type { get; set; }
+    public ChangeType ChangeType { get; set; }
 
     // required, not null or whitespace
     public string HtmlTag { get; set; }

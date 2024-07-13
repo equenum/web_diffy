@@ -62,7 +62,7 @@ public class MonitorJobsRegistrationService : IHostedService
         var context = new TargetContext()
         {
             Url = target.Url,
-            Type = target.Type,
+            ChangeType = target.ChangeType,
             HtmlTag = target.HtmlTag,
             Selector = target.Selector,
             ExpectedValue = target.ExpectedValue 
