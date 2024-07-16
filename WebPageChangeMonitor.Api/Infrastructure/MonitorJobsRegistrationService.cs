@@ -63,7 +63,8 @@ public class MonitorJobsRegistrationService : IHostedService
             Url = target.Url,
             ChangeType = target.ChangeType,
             HtmlTag = target.HtmlTag,
-            Selector = target.Selector,
+            SelectorType = target.SelectorType,
+            SelectorValue = target.SelectorValue,
             ExpectedValue = target.ExpectedValue 
         };
 

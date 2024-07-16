@@ -34,7 +34,10 @@ public class Target
     public string HtmlTag { get; set; }
 
     // optional
-    public Selector Selector { get; set; }
+    public SelectorType SelectorType { get; set; }
+
+    // required, is not null, empty or whitespace
+    public string SelectorValue { get; set; }
 
     // only supposed to have value when target type is ValueCheck
     // not null or whitespace

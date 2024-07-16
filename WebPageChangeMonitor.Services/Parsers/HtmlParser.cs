@@ -20,7 +20,7 @@ public class HtmlParser : IHtmlParser
         //  - https://devhints.io/xpath
 
         // var xPath = "//span[contains(@class, 'p-name vcard-fullname d-block overflow-hidden')]";
-        var xPath = $"//{context.HtmlTag}[contains(@{context.Selector.Type}, '{context.Selector.Value}')]".ToLowerInvariant();
+        var xPath = $"//{context.HtmlTag}[contains(@{context.SelectorType}, '{context.SelectorValue}')]".ToLowerInvariant();
         var targetNode = document.DocumentNode
             .SelectNodes(xPath)
             .FirstOrDefault();
