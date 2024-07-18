@@ -1,6 +1,6 @@
 ﻿using WebPageChangeMonitor.Models.Consts;
 
-namespace WebPageChangeMonitor.Models.Change;
+namespace WebPageChangeMonitor.Models.Domain;
 
 public class TargetContext
 {

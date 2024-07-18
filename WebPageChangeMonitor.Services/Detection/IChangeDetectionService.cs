@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using WebPageChangeMonitor.Models.Change;
+using WebPageChangeMonitor.Models.Domain;
 
 namespace WebPageChangeMonitor.Services.Detection;
 

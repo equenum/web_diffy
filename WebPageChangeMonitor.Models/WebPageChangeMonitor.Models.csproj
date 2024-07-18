@@ -6,4 +6,12 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebPageChangeMonitor.Common\WebPageChangeMonitor.Common.csproj" />
+  </ItemGroup>
+
 </Project>

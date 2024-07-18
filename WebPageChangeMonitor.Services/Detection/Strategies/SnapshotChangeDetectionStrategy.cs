@@ -1,6 +1,6 @@
 ﻿using System;
-using WebPageChangeMonitor.Models.Change;
 using WebPageChangeMonitor.Models.Consts;
+using WebPageChangeMonitor.Models.Domain;
 
 namespace WebPageChangeMonitor.Services.Strategies;
 

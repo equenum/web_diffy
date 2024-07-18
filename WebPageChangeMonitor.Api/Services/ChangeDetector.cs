@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using WebPageChangeMonitor.Models.Change;
+using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Services.Detection;
 
 namespace WebPageChangeMonitor.Api.Services;

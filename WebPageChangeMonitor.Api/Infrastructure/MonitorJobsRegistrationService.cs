@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
-using WebPageChangeMonitor.Models.Change;
+using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Options;
 
 namespace WebPageChangeMonitor.Api.Infrastructure;
@@ -34,19 +34,19 @@ public class MonitorJobsRegistrationService : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         // todo replace with a database call
-        var monitoringTargets = _options.Resources.SelectMany(resource => resource.Targets);
-        var jobDetails = monitoringTargets.Select(BuildJobDetails);
-        _logger.LogInformation($"JobCount: {jobDetails.Count()}");
+        // var monitoringTargets = _options.Resources.SelectMany(resource => resource.Targets);
+        // var jobDetails = monitoringTargets.Select(BuildJobDetails);
+        // _logger.LogInformation($"JobCount: {jobDetails.Count()}");
 
-        var scheduler = await _schedulerFactory.GetScheduler();
-        scheduler.JobFactory = _jobFactory;
+        // var scheduler = await _schedulerFactory.GetScheduler();
+        // scheduler.JobFactory = _jobFactory;
 
-        await scheduler.Start();
+        // await scheduler.Start();
 
-        foreach (var details in jobDetails)
-        {
-            await scheduler.ScheduleJob(details.Details, details.Trigger);
-        }
+        // foreach (var details in jobDetails)
+        // {
+        //     await scheduler.ScheduleJob(details.Details, details.Trigger);
+        // }
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

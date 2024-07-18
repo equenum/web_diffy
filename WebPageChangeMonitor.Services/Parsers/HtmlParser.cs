@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using HtmlAgilityPack;
-using WebPageChangeMonitor.Models.Change;
+using WebPageChangeMonitor.Models.Domain;
 
 namespace WebPageChangeMonitor.Services.Parsers;
 

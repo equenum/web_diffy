@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using WebPageChangeMonitor.Api.Services;
-using WebPageChangeMonitor.Models.Change;
+using WebPageChangeMonitor.Models.Domain;
 
 namespace WebPageChangeMonitor.Api.Infrastructure;
 
