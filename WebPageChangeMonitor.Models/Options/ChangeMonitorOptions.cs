@@ -1,11 +1,6 @@
-﻿using WebPageChangeMonitor.Models.Change;
-
-namespace WebPageChangeMonitor.Models.Options;
+﻿namespace WebPageChangeMonitor.Models.Options;
 
 public class ChangeMonitorOptions
 {
     public const string SectionName = "ChangeMonitor";
-
-    // check if empty during startup
-    public Resource[] Resources { get; set; }
 }
