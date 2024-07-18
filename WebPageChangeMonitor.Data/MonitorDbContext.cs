@@ -20,5 +20,6 @@ public class MonitorDbContext : DbContext
 
         modelBuilder.ApplyConfiguration(new ResourceEntityConfiguration());
         modelBuilder.ApplyConfiguration(new TargetEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new TargetSnapshotEntityConfiguration());
     }
 }
