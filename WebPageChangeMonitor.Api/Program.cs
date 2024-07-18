@@ -7,6 +7,7 @@ using Quartz;
 using Quartz.Spi;
 using WebPageChangeMonitor.Api.Infrastructure;
 using WebPageChangeMonitor.Api.Services;
+using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Options;
 using WebPageChangeMonitor.Services.Detection;
@@ -22,7 +23,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.Configure<ChangeMonitorOptions>(
     builder.Configuration.GetSection(ChangeMonitorOptions.SectionName));
 
-builder.Services.AddHostedService<MonitorJobsRegistrationService>();
+// todo activate when database polling is implemented
+// builder.Services.AddHostedService<MonitorJobsRegistrationService>();
+
 builder.Services.Configure<HostOptions>(options => 
 {
     options.ServicesStartConcurrently = true;
@@ -50,9 +53,13 @@ builder.Services.AddTransient<IChangeDetectionStrategy, SnapshotChangeDetectionS
 // data access
 builder.Services.AddDbContext<MonitorDbContext>(options => 
 {
+    options.UseLazyLoadingProxies();
     options.UseNpgsql(builder.Configuration.GetConnectionString("ChangeMonitor"));
     options.UseSnakeCaseNamingConvention();
 });
+
+// worker services
+builder.Services.AddTransient<IResourceService, ResourceService>();
 
 // other services
 builder.Services.AddTransient<IHtmlParser, HtmlParser>();
@@ -68,7 +75,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

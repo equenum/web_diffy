@@ -1,0 +1,107 @@
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using WebPageChangeMonitor.Api.Exceptions;
+using WebPageChangeMonitor.Api.Infrastructure.Mappers;
+using WebPageChangeMonitor.Api.Requests;
+using WebPageChangeMonitor.Api.Responses;
+using WebPageChangeMonitor.Data;
+using WebPageChangeMonitor.Models.Domain;
+using WebPageChangeMonitor.Models.Dtos;
+using WebPageChangeMonitor.Models.Entities;
+
+namespace WebPageChangeMonitor.Api.Services.Controller;
+
+public class ResourceService : IResourceService
+{
+    private readonly MonitorDbContext _context;
+
+    public ResourceService(MonitorDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<ResourcePaginatedResponse> GetAsync(int? page, int count)
+    {
+        if (page.HasValue && page.Value < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(page), $"Expected range: {nameof(page)} > 0.");
+        }
+
+        if (count < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(count), $"Expected range: {nameof(count)} > 0.");
+        }
+
+        var availableCount = await _context.Resources.CountAsync();
+
+        var resourceQuery = page.HasValue
+            ? _context.Resources.Skip((page.Value - 1) * count).Take(count)
+            : _context.Resources;
+
+        var resources =  await resourceQuery.AsNoTracking().ToListAsync();
+
+        return new ResourcePaginatedResponse()
+        {
+            Resources = resources.Select(resource => resource.ToResourceDto()),
+            AvailableCount = availableCount
+        };
+    }
+
+    public async Task<ResourceDto> GetAsync(Guid id)
+    {
+        var targetResource = await _context.Resources
+            .AsNoTracking()
+            .FirstOrDefaultAsync(resource => resource.Id == id);
+        
+        if (targetResource is null)
+        {
+            throw new ResourceNotFoundException(id.ToString());
+        }
+
+        return targetResource.ToResourceDto();
+    }
+
+    public async Task<ResourceDto> CreateAsync(CreateRecourseRequest request)
+    {
+        var resource = new ResourceEntity()
+        {
+            DisplayName = request.DisplayName,
+            Description = request.Description
+        };
+
+        _context.Resources.Add(resource);
+        await _context.SaveChangesAsync();
+
+        return resource.ToResourceDto();
+    }
+
+    public async Task<ResourceDto> UpdateAsync(Resource updatedResource)
+    {
+        var targetResource = await _context.Resources
+            .FirstOrDefaultAsync(resource => resource.Id == updatedResource.Id);
+        
+        if (targetResource is null)
+        {
+            throw new ResourceNotFoundException(updatedResource.ToString());
+        }
+
+        _context.Entry(targetResource).CurrentValues.SetValues(updatedResource.ToResourceEntity());
+        await _context.SaveChangesAsync();
+
+        return targetResource.ToResourceDto();
+    }
+
+    public async Task RemoveAsync(Guid id)
+    {
+        var targetResource = await _context.Resources.FirstOrDefaultAsync(resource => resource.Id == id);
+        if (targetResource is null)
+        {
+            throw new ResourceNotFoundException(id.ToString());
+        }
+
+        _context.Resources.Remove(targetResource);
+        await _context.SaveChangesAsync();
+    }
+}
