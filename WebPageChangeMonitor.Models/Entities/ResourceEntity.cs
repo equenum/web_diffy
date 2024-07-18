@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebPageChangeMonitor.Data.Entities;
+namespace WebPageChangeMonitor.Models.Entities;
 
 public class ResourceEntity
 {

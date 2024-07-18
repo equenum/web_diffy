@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WebPageChangeMonitor.Data.Entities;
+using WebPageChangeMonitor.Models.Entities;
 
 namespace WebPageChangeMonitor.Data.Configurations;
 
@@ -10,6 +10,7 @@ public class ResourceEntityConfiguration : IEntityTypeConfiguration<ResourceEnti
     {
         builder.HasKey(m => m.Id);
         builder.ToTable("target_resources");
+        
         builder.HasMany(m => m.Targets);
     }
 }

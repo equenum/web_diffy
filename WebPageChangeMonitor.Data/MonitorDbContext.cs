@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebPageChangeMonitor.Data.Configurations;
-using WebPageChangeMonitor.Data.Entities;
+using WebPageChangeMonitor.Models.Entities;
 
 namespace WebPageChangeMonitor.Data;
 
@@ -13,14 +13,12 @@ public class MonitorDbContext : DbContext
         : base(options) 
     { }
 
-    // todo enable lazy loading
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("monitor");
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyConfiguration(new ResourceEntityConfiguration());
-
-        // todo add TargetEntity configs
+        modelBuilder.ApplyConfiguration(new TargetEntityConfiguration());
     }
 }
