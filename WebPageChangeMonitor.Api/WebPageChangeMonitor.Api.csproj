@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Quartz.Extensions.Hosting" Version="3.11.0" />
     <PackageReference Include="Quartz" Version="3.11.0" />
+    <PackageReference Include="Riok.Mapperly" Version="3.6.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
