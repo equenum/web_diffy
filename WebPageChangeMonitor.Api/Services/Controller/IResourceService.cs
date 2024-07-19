@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using WebPageChangeMonitor.Api.Requests;
+using WebPageChangeMonitor.Api.Models.Requests;
 using WebPageChangeMonitor.Api.Responses;
 using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Dtos;

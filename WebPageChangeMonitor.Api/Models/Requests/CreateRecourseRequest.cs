@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebPageChangeMonitor.Api.Requests;
+namespace WebPageChangeMonitor.Api.Models.Requests;
 
 public class CreateRecourseRequest
 {
