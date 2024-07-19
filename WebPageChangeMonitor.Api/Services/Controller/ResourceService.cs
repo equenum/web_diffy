@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
-using WebPageChangeMonitor.Api.Requests;
+using WebPageChangeMonitor.Api.Models.Requests;
 using WebPageChangeMonitor.Api.Responses;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Domain;
@@ -51,10 +51,7 @@ public class ResourceService : IResourceService
 
     public async Task<ResourceDto> GetAsync(Guid id)
     {
-        var targetResource = await _context.Resources
-            .AsNoTracking()
-            .FirstOrDefaultAsync(resource => resource.Id == id);
-        
+        var targetResource = await _context.Resources.FindAsync(id);
         if (targetResource is null)
         {
             throw new ResourceNotFoundException(id.ToString());
@@ -79,9 +76,7 @@ public class ResourceService : IResourceService
 
     public async Task<ResourceDto> UpdateAsync(Resource updatedResource)
     {
-        var targetResource = await _context.Resources
-            .FirstOrDefaultAsync(resource => resource.Id == updatedResource.Id);
-        
+        var targetResource = await _context.Resources.FindAsync(updatedResource.Id);
         if (targetResource is null)
         {
             throw new ResourceNotFoundException(updatedResource.ToString());
@@ -95,7 +90,7 @@ public class ResourceService : IResourceService
 
     public async Task RemoveAsync(Guid id)
     {
-        var targetResource = await _context.Resources.FirstOrDefaultAsync(resource => resource.Id == id);
+        var targetResource = await _context.Resources.FindAsync(id);
         if (targetResource is null)
         {
             throw new ResourceNotFoundException(id.ToString());
