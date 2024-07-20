@@ -2,10 +2,12 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using WebPageChangeMonitor.Api.Exceptions;
-using WebPageChangeMonitor.Api.Requests;
+using WebPageChangeMonitor.Api.Models.Requests;
 using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Models.Domain;
+using WebPageChangeMonitor.Models.Options;
 
 namespace WebPageChangeMonitor.Api.Controllers;
 
@@ -13,26 +15,27 @@ namespace WebPageChangeMonitor.Api.Controllers;
 [Route("api/public/resources")]
 public class ResourcesController : ControllerBase
 {
-    // todo extract to configs
-    private const int DefaultPageSize = 10;
-
     private readonly ILogger<ResourcesController> _logger;
+    private readonly ChangeMonitorOptions _options;
     private readonly IResourceService _service;
+    
 
     public ResourcesController(
         ILogger<ResourcesController> logger,
+        IOptions<ChangeMonitorOptions> options,
         IResourceService service)
     {
         _logger = logger;
+        _options = options.Value;
         _service = service;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(int? page, int count = DefaultPageSize)
+    public async Task<IActionResult> GetAll(int? page, int? count)
     {
         try
         {
-            var response = await _service.GetAsync(page, count);
+            var response = await _service.GetAsync(page, count ?? _options.DefaultResourcePageSize);
             return Ok(response);
         }
         catch (ArgumentOutOfRangeException ex)
@@ -75,7 +78,7 @@ public class ResourcesController : ControllerBase
             var updatedResource = await _service.UpdateAsync(resource);
 
             return CreatedAtAction(actionName: nameof(GetById),
-                routeValues: new { id = resource.Id },
+                routeValues: new { id = updatedResource.Id },
                 value: updatedResource);
         }
         catch (ResourceNotFoundException)
