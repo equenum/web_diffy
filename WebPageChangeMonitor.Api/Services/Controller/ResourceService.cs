@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using UUIDNext;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
 using WebPageChangeMonitor.Api.Models.Requests;
@@ -64,6 +65,7 @@ public class ResourceService : IResourceService
     {
         var resource = new ResourceEntity()
         {
+            Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
             DisplayName = request.DisplayName,
             Description = request.Description
         };

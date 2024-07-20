@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using UUIDNext;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
 using WebPageChangeMonitor.Api.Models.Requests;
@@ -96,11 +97,12 @@ public class TargetService : ITargetService
         var targetResource = await _context.Resources.FindAsync(request.ResourceId);
         if (targetResource is null)
         {
-            throw new ResourceNotFoundException("Resource not found, id: {request.ResourceId}.");
+            throw new ResourceNotFoundException(request.ResourceId.ToString());
         }
 
         var target = new TargetEntity()
         {
+            Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
             ResourceId = request.ResourceId,
             DisplayName = request.DisplayName,
             Description = request.Description,
@@ -124,7 +126,7 @@ public class TargetService : ITargetService
         var targetResource = await _context.Resources.FindAsync(updatedTarget.ResourceId);
         if (targetResource is null)
         {
-            throw new ResourceNotFoundException("Resource not found, id: {request.ResourceId}.");
+            throw new ResourceNotFoundException(updatedTarget.ResourceId.ToString());
         }
 
         var targetTarget = await _context.Targets.FindAsync(updatedTarget.Id);
@@ -159,7 +161,7 @@ public class TargetService : ITargetService
 
         if (availableCount == 0) 
         {
-            throw new InvalidOperationException("Not targets found for the given resource id: {id}.");
+            throw new InvalidOperationException("No targets found for the given resource id: {id}.");
         }
 
         await _context.Targets.Where(target => target.ResourceId == id)
