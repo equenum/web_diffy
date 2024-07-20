@@ -2,7 +2,7 @@ start transaction;
 
 -- create table
 create table if not exists monitor.targets (
-    id uuid default gen_random_uuid() primary key,
+    id uuid primary key,
     resource_id uuid references monitor.target_resources(id),
     display_name text not null,
     description text,
