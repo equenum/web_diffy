@@ -8,6 +8,7 @@ public class MonitorDbContext : DbContext
 {
     public DbSet<ResourceEntity> Resources { get; set; }
     public DbSet<TargetEntity> Targets { get; set; }
+    public DbSet<TargetSnapshotEntity> TargetSnapshots { get; set; }
 
     public MonitorDbContext(DbContextOptions<MonitorDbContext> options)
         : base(options) 
