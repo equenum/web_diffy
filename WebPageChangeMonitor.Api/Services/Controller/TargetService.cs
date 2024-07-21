@@ -37,6 +37,7 @@ public class TargetService : ITargetService
 
         var availableCount = await _context.Targets.CountAsync();
 
+        // todo only fetch values if available count is more than 0
         var targetQuery = page.HasValue
             ? _context.Targets.Skip((page.Value - 1) * count).Take(count)
             : _context.Targets;
@@ -77,6 +78,7 @@ public class TargetService : ITargetService
             .Where(target => target.ResourceId == id)
             .CountAsync();
 
+        // todo only fetch values if available count is more than 0
         var targetQuery = page.HasValue
             ? _context.Targets.Where(target => target.ResourceId == id)
                 .Skip((page.Value - 1) * count)

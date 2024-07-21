@@ -37,6 +37,7 @@ public class ResourceService : IResourceService
 
         var availableCount = await _context.Resources.CountAsync();
 
+        // todo only fetch values if available count is more than 0
         var resourceQuery = page.HasValue
             ? _context.Resources.Skip((page.Value - 1) * count).Take(count)
             : _context.Resources;
