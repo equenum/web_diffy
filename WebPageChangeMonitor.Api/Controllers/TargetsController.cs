@@ -118,10 +118,10 @@ public class TargetsController : ControllerBase
             await _service.RemoveAsync(id);
             return NoContent();
         }
-        catch (ResourceNotFoundException)
+        catch (TargetNotFoundException)
         {
-            _logger.LogError("Resource not found: {Id}", id);
-            return NotFound($"Resource not found: {id}");
+            _logger.LogError("Target not found: {Id}", id);
+            return NotFound($"Target not found: {id}");
         }
     }
 
