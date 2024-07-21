@@ -6,4 +6,5 @@ public class ChangeMonitorOptions
 
     public int DefaultResourcePageSize { get; init; }
     public int DefaultTargetPageSize { get; init; }
+    public int DefaultTargetSnapshotPageSize { get; init; }
 }
