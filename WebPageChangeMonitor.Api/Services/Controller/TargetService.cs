@@ -17,12 +17,16 @@ namespace WebPageChangeMonitor.Api.Services.Controller;
 public class TargetService : ITargetService
 {
     private readonly MonitorDbContext _context;
+    private readonly IMonitorJobService _jobService;
 
-    public TargetService(MonitorDbContext context)
+    public TargetService(
+        MonitorDbContext context,
+        IMonitorJobService jobService)
     {
         _context = context;
+        _jobService = jobService;
     }
-    
+
     public async Task<TargetPaginatedResponse> GetAsync(int? page, int count)
     {
         if (page.HasValue && page.Value < 1)
@@ -94,7 +98,6 @@ public class TargetService : ITargetService
         };
     }
 
-    // todo schedule new jobs when targets are added
     public async Task<TargetDto> CreateAsync(CreateTargetRequest request)
     {
         var targetResource = await _context.Resources.FindAsync(request.ResourceId);
@@ -103,7 +106,7 @@ public class TargetService : ITargetService
             throw new ResourceNotFoundException(request.ResourceId.ToString());
         }
 
-        var target = new TargetEntity()
+        var targetEntity = new TargetEntity()
         {
             Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
             ResourceId = request.ResourceId,
@@ -119,13 +122,14 @@ public class TargetService : ITargetService
             CreatedAt = DateTime.UtcNow
         };
 
-        _context.Targets.Add(target);
+        await _jobService.ScheduleAsync(targetEntity.ToTarget());
+
+        _context.Targets.Add(targetEntity);
         await _context.SaveChangesAsync();
 
-        return target.ToTargetDto();
+        return targetEntity.ToTargetDto();
     }
 
-    // todo reschedule jobs when targets are updated
     public async Task<TargetDto> UpdateAsync(Target updatedTarget)
     {
         var targetResource = await _context.Resources.FindAsync(updatedTarget.ResourceId);
@@ -140,13 +144,15 @@ public class TargetService : ITargetService
             throw new TargetNotFoundException(updatedTarget.Id.ToString());
         }
 
+        await _jobService.UnscheduleByTargetAsync(updatedTarget.Id, updatedTarget.ResourceId);
+        await _jobService.ScheduleAsync(updatedTarget);
+
         _context.Entry(targetTarget).CurrentValues.SetValues(updatedTarget.ToTargetEntity());
         await _context.SaveChangesAsync();
 
         return targetTarget.ToTargetDto();
     }
 
-    // todo unschedule jobs when targets are deleted
     public async Task RemoveAsync(Guid id)
     {
         var targetTarget = await _context.Targets.FindAsync(id);
@@ -155,11 +161,12 @@ public class TargetService : ITargetService
             throw new TargetNotFoundException(targetTarget.Id.ToString());
         }
 
+        await _jobService.UnscheduleByTargetAsync(targetTarget.Id, targetTarget.ResourceId);
+
         _context.Targets.Remove(targetTarget);
         await _context.SaveChangesAsync();
     }
 
-    // todo unschedule jobs when targets are deleted
     public async Task RemoveByResourceIdAsync(Guid id)
     {
         var availableCount = await _context.Targets
@@ -170,6 +177,8 @@ public class TargetService : ITargetService
         {
             throw new InvalidOperationException("No targets found for the given resource id: {id}.");
         }
+
+        await _jobService.UnscheduleByResourceAsync(id);
 
         await _context.Targets.Where(target => target.ResourceId == id)
             .ExecuteDeleteAsync();

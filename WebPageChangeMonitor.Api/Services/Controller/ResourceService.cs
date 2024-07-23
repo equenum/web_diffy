@@ -17,10 +17,14 @@ namespace WebPageChangeMonitor.Api.Services.Controller;
 public class ResourceService : IResourceService
 {
     private readonly MonitorDbContext _context;
+    private readonly IMonitorJobService _jobService;
 
-    public ResourceService(MonitorDbContext context)
+    public ResourceService(
+        MonitorDbContext context,
+        IMonitorJobService jobService)
     {
         _context = context;
+        _jobService = jobService;
     }
 
     public async Task<ResourcePaginatedResponse> GetAsync(int? page, int count)
@@ -92,7 +96,6 @@ public class ResourceService : IResourceService
         return targetResource.ToResourceDto();
     }
 
-    // todo remove related targets and unschedule jobs
     public async Task RemoveAsync(Guid id)
     {
         var targetResource = await _context.Resources.FindAsync(id);
@@ -100,6 +103,8 @@ public class ResourceService : IResourceService
         {
             throw new ResourceNotFoundException(id.ToString());
         }
+
+        await _jobService.UnscheduleByResourceAsync(id);
 
         _context.Resources.Remove(targetResource);
         await _context.SaveChangesAsync();

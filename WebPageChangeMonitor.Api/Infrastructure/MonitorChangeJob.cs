@@ -24,15 +24,14 @@ public class MonitorChangeJob : IJob
     public async Task Execute(IJobExecutionContext context)
     {
         JobDataMap dataMap = context.JobDetail.JobDataMap;
-        var jsonContext = dataMap.GetString("target-context");
+        var jsonContext = dataMap.GetString(JobConsts.DataKeys.TargetContext);
         var targetContext =  JsonSerializer.Deserialize<TargetContext>(jsonContext);
 
         _logger.LogInformation("Executing job {JobKey}, url: {TargetUrl}",
             context.JobDetail.Key,
             targetContext.Url);
 
-        // pass arguments
-        // add exception handling
+        // add exception handling and retries
         await _changeDetector.ProcessAsync(targetContext);
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using Quartz.Impl;
+using Quartz.Impl.Matchers;
 using WebPageChangeMonitor.Api.Infrastructure;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
 using WebPageChangeMonitor.Models.Domain;
@@ -26,7 +27,7 @@ public class MonitorJobService : IMonitorJobService
 
     public async Task ScheduleAsync(Target target, CancellationToken cancellationToken = default)
     {
-        // todo throw if null
+        ArgumentNullException.ThrowIfNull(target);
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
 
@@ -36,7 +37,10 @@ public class MonitorJobService : IMonitorJobService
 
     public async Task ScheduleAsync(IEnumerable<Target> targets, CancellationToken cancellationToken = default)
     {
-        // todo throw in empty
+        if (!targets.Any())
+        {
+            throw new InvalidOperationException("Target collection is empty.");
+        }
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
         foreach (var details in targets.Select(BuildJobDetails))
@@ -48,22 +52,48 @@ public class MonitorJobService : IMonitorJobService
         }
     }
 
-    public Task UnscheduleByResourceAsync(Guid resourceId, CancellationToken cancellationToken = default)
+    public async Task UnscheduleByResourceAsync(Guid resourceId, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var groupMatcher = GroupMatcher<TriggerKey>.GroupEquals(resourceId.ToString());
+
+        var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
+        var triggerKeys = await scheduler.GetTriggerKeys(groupMatcher, cancellationToken);
+        if (triggerKeys.Count == 0)
+        {
+            _logger.LogError("Job triggers not found, group name: {TriggerGroup}.",
+                resourceId.ToString());
+
+            throw new InvalidOperationException($"Job triggers not found, group name: {resourceId}.");
+        }
+
+        await scheduler.UnscheduleJobs(triggerKeys, cancellationToken);
     }
 
-    public Task UnscheduleByTargetAsync(Guid targetId, CancellationToken cancellationToken = default)
+    public async Task UnscheduleByTargetAsync(Guid targetId, Guid resourceId, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var groupMatcher = GroupMatcher<TriggerKey>.GroupEquals(resourceId.ToString());
+
+        var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
+        var triggerKeys = await scheduler.GetTriggerKeys(groupMatcher, cancellationToken);
+
+        var targetTriggerKey = triggerKeys.FirstOrDefault(key => key.Name == targetId.ToString());
+        if (targetTriggerKey is null)
+        {
+            _logger.LogError("Job trigger not found, key: {TriggerName}.{TriggerGroup}.",
+                targetId.ToString(),
+                resourceId.ToString());
+
+            throw new InvalidOperationException($"Job trigger not found, key: {targetId}.{resourceId}.");
+        }
+
+        await scheduler.UnscheduleJob(targetTriggerKey, cancellationToken);
     }
 
     private static JobDetailsBundle BuildJobDetails(Target target)
     {
         var jobDetails = JobBuilder.Create<MonitorChangeJob>()
             .WithIdentity(target.Id.ToString(), target.ResourceId.ToString())
-            // todo extract to constant
-            .UsingJobData("target-context", JsonSerializer.Serialize(target.ToTargetContext()))
+            .UsingJobData(JobConsts.DataKeys.TargetContext, JsonSerializer.Serialize(target.ToTargetContext()))
             .Build();
 
         var trigger = TriggerBuilder.Create()
