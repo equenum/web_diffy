@@ -94,6 +94,7 @@ public class TargetService : ITargetService
         };
     }
 
+    // todo schedule new jobs when targets are added
     public async Task<TargetDto> CreateAsync(CreateTargetRequest request)
     {
         var targetResource = await _context.Resources.FindAsync(request.ResourceId);
@@ -114,7 +115,8 @@ public class TargetService : ITargetService
             HtmlTag = request.HtmlTag,
             SelectorType = request.SelectorType,
             SelectorValue = request.SelectorValue,
-            ExpectedValue = request.ExpectedValue
+            ExpectedValue = request.ExpectedValue,
+            CreatedAt = DateTime.UtcNow
         };
 
         _context.Targets.Add(target);
@@ -123,6 +125,7 @@ public class TargetService : ITargetService
         return target.ToTargetDto();
     }
 
+    // todo reschedule jobs when targets are updated
     public async Task<TargetDto> UpdateAsync(Target updatedTarget)
     {
         var targetResource = await _context.Resources.FindAsync(updatedTarget.ResourceId);
@@ -143,6 +146,7 @@ public class TargetService : ITargetService
         return targetTarget.ToTargetDto();
     }
 
+    // todo unschedule jobs when targets are deleted
     public async Task RemoveAsync(Guid id)
     {
         var targetTarget = await _context.Targets.FindAsync(id);
@@ -155,6 +159,7 @@ public class TargetService : ITargetService
         await _context.SaveChangesAsync();
     }
 
+    // todo unschedule jobs when targets are deleted
     public async Task RemoveByResourceIdAsync(Guid id)
     {
         var availableCount = await _context.Targets

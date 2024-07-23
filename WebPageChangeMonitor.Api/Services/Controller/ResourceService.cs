@@ -68,7 +68,8 @@ public class ResourceService : IResourceService
         {
             Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
             DisplayName = request.DisplayName,
-            Description = request.Description
+            Description = request.Description,
+            CreatedAt = DateTime.UtcNow
         };
 
         _context.Resources.Add(resource);
@@ -91,6 +92,7 @@ public class ResourceService : IResourceService
         return targetResource.ToResourceDto();
     }
 
+    // todo remove related targets and unschedule jobs
     public async Task RemoveAsync(Guid id)
     {
         var targetResource = await _context.Resources.FindAsync(id);
