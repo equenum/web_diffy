@@ -2,5 +2,5 @@
 
 namespace WebPageChangeMonitor.Api;
 
-public record JobDetailsBundle(IJobDetail Details, ITrigger Trigger);
+public record JobDetailsBundle(IJobDetail Details, ITrigger Trigger, string JobTargetName);
 

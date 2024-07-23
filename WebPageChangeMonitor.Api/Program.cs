@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Quartz;
 using Quartz.Spi;
 using WebPageChangeMonitor.Api.Infrastructure;
+using WebPageChangeMonitor.Api.Infrastructure.Schemas;
 using WebPageChangeMonitor.Api.Services;
 using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Data;
@@ -16,9 +18,18 @@ using WebPageChangeMonitor.Services.Strategies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => 
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(options => 
+{
+    options.SchemaFilter<EnumSchemaFilter>();
+});
 
 builder.Services.Configure<ChangeMonitorOptions>(
     builder.Configuration.GetSection(ChangeMonitorOptions.SectionName));
@@ -42,6 +53,7 @@ builder.Services.AddQuartzHostedService(options =>
 // job management
 builder.Services.AddTransient<MonitorChangeJob>();   
 builder.Services.AddSingleton<IJobFactory, MonitorJobFactory>();
+builder.Services.AddTransient<IMonitorJobService, MonitorJobService>();
 
 // change detection
 builder.Services.AddTransient<IChangeDetector, ChangeDetector>();
@@ -60,6 +72,8 @@ builder.Services.AddDbContext<MonitorDbContext>(options =>
 
 // worker services
 builder.Services.AddTransient<IResourceService, ResourceService>();
+builder.Services.AddTransient<ITargetService, TargetService>();
+builder.Services.AddTransient<ITargetSnapshotService, TargetSnapshotService>();
 
 // other services
 builder.Services.AddTransient<IHtmlParser, HtmlParser>();

@@ -9,5 +9,7 @@ namespace WebPageChangeMonitor.Api.Infrastructure.Mappers;
 public static partial class TargetMapper
 {
     public static partial TargetEntity ToTargetEntity(this Target target);
+    public static partial Target ToTarget(this TargetEntity targetEntity);
     public static partial TargetDto ToTargetDto(this TargetEntity targetEntity);
+    public static partial TargetContext ToTargetContext(this Target target);
 }
