@@ -22,7 +22,6 @@ public class TargetEntity
 
     public Guid ResourceId { get; set; }
     public virtual ResourceEntity Resource { get; set; }
-
-    public Guid SnapshotId { get; set; }
+    
     public virtual IEnumerable<TargetSnapshotEntity> Snapshots { get; set; }
 }

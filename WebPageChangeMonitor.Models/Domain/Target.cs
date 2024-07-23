@@ -20,7 +20,6 @@ public class Target
     [StringLength(50, MinimumLength = 1)]
     public string Description { get; set; }
 
-    // todo test
     [Required]
     [Url]
     public string Url { get; set; }
