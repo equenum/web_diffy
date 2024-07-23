@@ -27,7 +27,9 @@ public class MonitorChangeJob : IJob
         var jsonContext = dataMap.GetString("target-context");
         var targetContext =  JsonSerializer.Deserialize<TargetContext>(jsonContext);
 
-        _logger.LogInformation($"Executing job {context.JobDetail.Key}, url: {targetContext.Url}");
+        _logger.LogInformation("Executing job {JobKey}, url: {TargetUrl}",
+            context.JobDetail.Key,
+            targetContext.Url);
 
         // pass arguments
         // add exception handling

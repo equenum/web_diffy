@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using WebPageChangeMonitor.Api.Controller;
 using WebPageChangeMonitor.Api.Exceptions;
+using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Models.Options;
 
-namespace WebPageChangeMonitor.Api;
+namespace WebPageChangeMonitor.Api.Controllers;
 
 [ApiController]
 [Route("api/public/snapshots")]

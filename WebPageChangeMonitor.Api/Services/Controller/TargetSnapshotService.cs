@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WebPageChangeMonitor.Api.Controller;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
 using WebPageChangeMonitor.Api.Models.Responses;

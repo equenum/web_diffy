@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using WebPageChangeMonitor.Api.Models.Responses;
 using WebPageChangeMonitor.Models.Dtos;
 
-namespace WebPageChangeMonitor.Api.Controller;
+namespace WebPageChangeMonitor.Api.Services.Controller;
 
 public interface ITargetSnapshotService
 {
