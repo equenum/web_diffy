@@ -18,53 +18,81 @@ public class ValueChangeDetectionStrategy : IChangeDetectionStrategy
 {
     private readonly ILogger<ValueChangeDetectionStrategy> _logger;
     private readonly IHtmlParser _htmlParser;
-    private readonly MonitorDbContext _context;
     private readonly ChangeMonitorOptions _options;
+    private readonly IDbContextFactory<MonitorDbContext> _contextFactory;
 
     public ValueChangeDetectionStrategy(
         ILogger<ValueChangeDetectionStrategy> logger,
         IHtmlParser htmlParser,
-        MonitorDbContext context,
-        IOptions<ChangeMonitorOptions> options)
+        IOptions<ChangeMonitorOptions> options,
+        IDbContextFactory<MonitorDbContext> contextFactory)
     {
         _logger = logger;
         _htmlParser = htmlParser;
-        _context = context;
         _options = options.Value;
+        _contextFactory = contextFactory;
     }
 
     public bool CanHandle(ChangeType type) => type == ChangeType.Value;
 
     public async Task ExecuteAsync(string html, TargetContext context)
     {
-        if  (context.ExpectedValue is null)
+        using (var dbContext = _contextFactory.CreateDbContext())
         {
-            throw new InvalidOperationException(
-                $"{nameof(context.ExpectedValue)} expected for value based change detection.");
-        }
+            if  (context.ExpectedValue is null)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(context.ExpectedValue)} expected for value based change detection.");
+            }
 
-        var currentValue = _htmlParser.GetNodeInnerText(html, context);
-        var isExpectedValue = context.ExpectedValue == currentValue;
+            var currentValue = _htmlParser.GetNodeInnerText(html, context);
+            var isExpectedValue = context.ExpectedValue == currentValue;
 
-        var latestSnapshot = await _context.TargetSnapshots
-            .OrderByDescending(snapshot => snapshot.CreatedAt)
-            .FirstOrDefaultAsync();
+            var latestSnapshot = await dbContext.TargetSnapshots
+                .OrderByDescending(snapshot => snapshot.CreatedAt)
+                .FirstOrDefaultAsync();
 
-        if (latestSnapshot is null) 
-        {   
-            var initSnapshot = new TargetSnapshotEntity()
+            if (latestSnapshot is null) 
+            {   
+                var initSnapshot = new TargetSnapshotEntity()
+                {
+                    Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
+                    Value = currentValue,
+                    IsExpectedValue = isExpectedValue,
+                    IsChangeDetected = false,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                dbContext.TargetSnapshots.Add(initSnapshot);
+                await dbContext.SaveChangesAsync();
+
+                if (isExpectedValue && _options.AreNotificationsEnabled)
+                {
+                    // todo implement notification mechanism here
+
+                    _logger.LogInformation(
+                        "Expected value detected for url {Url}. Sending notifications out...",
+                        context.Url);
+                }
+
+                return;
+            }
+
+            var isChangeDetected = latestSnapshot.Value != currentValue;
+
+            var snapshot = new TargetSnapshotEntity()
             {
                 Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                 Value = currentValue,
                 IsExpectedValue = isExpectedValue,
-                IsChangeDetected = false,
+                IsChangeDetected = isChangeDetected,
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.TargetSnapshots.Add(initSnapshot);
-            await _context.SaveChangesAsync();
+            dbContext.TargetSnapshots.Add(snapshot);
+            await dbContext.SaveChangesAsync();
 
-            if (isExpectedValue && _options.AreNotificationsEnabled)
+            if (isChangeDetected && isExpectedValue && _options.AreNotificationsEnabled)
             {
                 // todo implement notification mechanism here
 
@@ -72,31 +100,6 @@ public class ValueChangeDetectionStrategy : IChangeDetectionStrategy
                     "Expected value detected for url {Url}. Sending notifications out...",
                     context.Url);
             }
-
-            return;
-        }
-
-        var isChangeDetected = latestSnapshot.Value != currentValue;
-
-        var snapshot = new TargetSnapshotEntity()
-        {
-            Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
-            Value = currentValue,
-            IsExpectedValue = isExpectedValue,
-            IsChangeDetected = isChangeDetected,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        _context.TargetSnapshots.Add(snapshot);
-        await _context.SaveChangesAsync();
-
-        if (isChangeDetected && isExpectedValue && _options.AreNotificationsEnabled)
-        {
-            // todo implement notification mechanism here
-            
-            _logger.LogInformation(
-                    "Expected value detected for url {Url}. Sending notifications out...",
-                    context.Url);
         }
     }
 }

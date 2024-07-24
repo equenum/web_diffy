@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Quartz.Impl;
@@ -17,30 +16,28 @@ public class MonitorJobsRegistrationService : IHostedService
 {
     private readonly ILogger<MonitorJobsRegistrationService> _logger;
     private readonly StdSchedulerFactory _schedulerFactory;
-    private readonly IServiceScopeFactory _scopeFactory;
     private readonly IJobFactory _jobFactory;
     private readonly IMonitorJobService _jobService;
+    private readonly IDbContextFactory<MonitorDbContext> _contextFactory;
 
     public MonitorJobsRegistrationService(
         ILogger<MonitorJobsRegistrationService> logger,
-        IServiceScopeFactory scopeFactory,
         IJobFactory jobFactory,
-        IMonitorJobService jobService)
+        IMonitorJobService jobService,
+        IDbContextFactory<MonitorDbContext> contextFactory)
     {
         _logger = logger;
         _schedulerFactory = new StdSchedulerFactory();
-        _scopeFactory = scopeFactory;
         _jobFactory = jobFactory;
         _jobService = jobService;
-        _scopeFactory = scopeFactory;
+        _contextFactory = contextFactory;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        using (var scope = _scopeFactory.CreateScope())
+        using (var context = _contextFactory.CreateDbContext())
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<MonitorDbContext>();
-            var targetEntities = await dbContext.Targets.ToListAsync(cancellationToken);
+            var targetEntities = await context.Targets.ToListAsync(cancellationToken);
 
             if (targetEntities.Count > 0) 
             {

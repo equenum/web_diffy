@@ -59,7 +59,7 @@ builder.Services.AddTransient<IChangeDetectionStrategy, ValueChangeDetectionStra
 builder.Services.AddTransient<IChangeDetectionStrategy, SnapshotChangeDetectionStrategy>();
 
 // data access
-builder.Services.AddDbContext<MonitorDbContext>(options => 
+builder.Services.AddDbContextFactory<MonitorDbContext>(options => 
 {
     options.UseLazyLoadingProxies();
     options.UseNpgsql(builder.Configuration.GetConnectionString("ChangeMonitor"));

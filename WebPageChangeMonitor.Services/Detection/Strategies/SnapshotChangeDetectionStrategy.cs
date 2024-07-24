@@ -16,63 +16,66 @@ namespace WebPageChangeMonitor.Services.Strategies;
 public class SnapshotChangeDetectionStrategy : IChangeDetectionStrategy
 {
     private readonly ILogger<SnapshotChangeDetectionStrategy> _logger;
-    private readonly MonitorDbContext _context;
     private readonly ChangeMonitorOptions _options;
+    private readonly IDbContextFactory<MonitorDbContext> _contextFactory;
 
     public SnapshotChangeDetectionStrategy(
         ILogger<SnapshotChangeDetectionStrategy> logger,
-        MonitorDbContext context,
-        IOptions<ChangeMonitorOptions> options)
+        IOptions<ChangeMonitorOptions> options,
+        IDbContextFactory<MonitorDbContext> contextFactory)
     {
         _logger = logger;
-        _context = context;
         _options = options.Value;
+        _contextFactory = contextFactory;
     }
 
     public bool CanHandle(ChangeType type) => type == ChangeType.Snapshot;
 
     public async Task ExecuteAsync(string html, TargetContext context)
     {
-        var latestSnapshot = await _context.TargetSnapshots
-            .OrderByDescending(snapshot => snapshot.CreatedAt)
-            .FirstOrDefaultAsync();
-
-        if (latestSnapshot is null) 
+        using (var dbContext = _contextFactory.CreateDbContext())
         {
-            var initSnapshot = new TargetSnapshotEntity()
+            var latestSnapshot = await dbContext.TargetSnapshots
+                .OrderByDescending(snapshot => snapshot.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            if (latestSnapshot is null) 
+            {
+                var initSnapshot = new TargetSnapshotEntity()
+                {
+                    Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
+                    Value = html,
+                    IsChangeDetected = false,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                dbContext.TargetSnapshots.Add(initSnapshot);
+                await dbContext.SaveChangesAsync();
+
+                return;
+            }
+
+            var isChangeDetected = latestSnapshot.Value != html;
+
+            var snapshot = new TargetSnapshotEntity()
             {
                 Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                 Value = html,
-                IsChangeDetected = false,
+                IsChangeDetected = isChangeDetected,
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.TargetSnapshots.Add(initSnapshot);
-            await _context.SaveChangesAsync();
+            dbContext.TargetSnapshots.Add(snapshot);
+            await dbContext.SaveChangesAsync();
 
-            return;
-        }
-
-        var isChangeDetected = latestSnapshot.Value != html;
-
-        var snapshot = new TargetSnapshotEntity()
-        {
-            Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
-            Value = html,
-            IsChangeDetected = isChangeDetected,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        _context.TargetSnapshots.Add(snapshot);
-        await _context.SaveChangesAsync();
-
-        if (isChangeDetected && _options.AreNotificationsEnabled)
-        {
-            // todo implement notification mechanism here
-            
-            _logger.LogInformation(
+            if (isChangeDetected && _options.AreNotificationsEnabled)
+            {
+                // todo implement notification mechanism here
+                
+                _logger.LogInformation(
                     "Expected value detected for url {Url}. Sending notifications out...",
                     context.Url);
+            }
         }
     }
 }
