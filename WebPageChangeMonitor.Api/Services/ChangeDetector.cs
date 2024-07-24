@@ -1,35 +1,27 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using WebPageChangeMonitor.Models.Domain;
-using WebPageChangeMonitor.Services.Detection;
+using WebPageChangeMonitor.Services.Strategies;
 
 namespace WebPageChangeMonitor.Api.Services;
 
 public class ChangeDetector : IChangeDetector
 {
     private readonly IHttpClientFactory _clientFactory;
-    private readonly IChangeDetectionService _detectionService;
+    private readonly IChangeDetectionStrategyFactory _strategyFactory;
 
     public ChangeDetector(
-        IHttpClientFactory clientFactory,
-        IChangeDetectionService detectionService)
+        IHttpClientFactory clientFactory, 
+        IChangeDetectionStrategyFactory strategyFactory)
+
     {
         _clientFactory = clientFactory;
-        _detectionService = detectionService;
+        _strategyFactory = strategyFactory;
     }
 
     public async Task ProcessAsync(TargetContext context)
     {
-        // add Polly
-
-        var requestMessage = new HttpRequestMessage(HttpMethod.Get, context.Url)
-        {
-            // Headers =
-            // {
-            //     { HeaderNames.Accept, "application/vnd.github.v3+json" },
-            //     { HeaderNames.UserAgent, "HttpRequestsSample" }
-            // }
-        };
+        var requestMessage = new HttpRequestMessage(HttpMethod.Get, context.Url);
 
         var client = _clientFactory.CreateClient();
         var httpResponseMessage = await client.SendAsync(requestMessage);
@@ -37,7 +29,9 @@ public class ChangeDetector : IChangeDetector
         if (httpResponseMessage.IsSuccessStatusCode)
         {
             var html = await httpResponseMessage.Content.ReadAsStringAsync();
-            await _detectionService.ProcessAsync(html, context);
+
+            var strategy = _strategyFactory.Get(context.ChangeType);
+            await strategy.ExecuteAsync(html, context);
         }
     }
 }

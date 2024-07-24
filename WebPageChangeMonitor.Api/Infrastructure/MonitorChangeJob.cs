@@ -1,9 +1,14 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Retry;
 using Quartz;
 using WebPageChangeMonitor.Api.Services;
 using WebPageChangeMonitor.Models.Domain;
+using WebPageChangeMonitor.Models.Options;
 
 namespace WebPageChangeMonitor.Api.Infrastructure;
 
@@ -12,13 +17,16 @@ public class MonitorChangeJob : IJob
 {
     private readonly ILogger<MonitorChangeJob> _logger;
     private readonly IChangeDetector _changeDetector;
+    private readonly ChangeMonitorOptions _options;
 
     public MonitorChangeJob(
         ILogger<MonitorChangeJob> logger,
-        IChangeDetector changeDetector)
+        IChangeDetector changeDetector,
+        IOptions<ChangeMonitorOptions> options)
     {
         _logger = logger;
         _changeDetector = changeDetector;
+        _options = options.Value;
     }
 
     public async Task Execute(IJobExecutionContext context)
@@ -31,7 +39,18 @@ public class MonitorChangeJob : IJob
             context.JobDetail.Key,
             targetContext.Url);
 
-        // add exception handling and retries
-        await _changeDetector.ProcessAsync(targetContext);
+        var pipeline = new ResiliencePipelineBuilder()
+            .AddRetry(new RetryStrategyOptions()
+            {
+                ShouldHandle = new PredicateBuilder().Handle<Exception>(),
+                BackoffType = DelayBackoffType.Exponential,
+                UseJitter = true,
+                MaxRetryAttempts = _options.JobRetry.MaxAttempts,
+                Delay = _options.JobRetry.Delay
+            })
+            .Build();
+
+        await pipeline.ExecuteAsync(async token =>
+            await _changeDetector.ProcessAsync(targetContext), context.CancellationToken);
     }
 }

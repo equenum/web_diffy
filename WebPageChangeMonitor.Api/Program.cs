@@ -12,7 +12,6 @@ using WebPageChangeMonitor.Api.Services;
 using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Options;
-using WebPageChangeMonitor.Services.Detection;
 using WebPageChangeMonitor.Services.Parsers;
 using WebPageChangeMonitor.Services.Strategies;
 
@@ -34,8 +33,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.Configure<ChangeMonitorOptions>(
     builder.Configuration.GetSection(ChangeMonitorOptions.SectionName));
 
-// todo activate when database polling is implemented
-// builder.Services.AddHostedService<MonitorJobsRegistrationService>();
+builder.Services.AddHostedService<MonitorJobsRegistrationService>();
 
 builder.Services.Configure<HostOptions>(options => 
 {
@@ -49,7 +47,6 @@ builder.Services.AddQuartzHostedService(options =>
     options.WaitForJobsToComplete = false;
 });
 
-// todo extract
 // job management
 builder.Services.AddTransient<MonitorChangeJob>();   
 builder.Services.AddSingleton<IJobFactory, MonitorJobFactory>();
@@ -57,7 +54,6 @@ builder.Services.AddTransient<IMonitorJobService, MonitorJobService>();
 
 // change detection
 builder.Services.AddTransient<IChangeDetector, ChangeDetector>();
-builder.Services.AddTransient<IChangeDetectionService, ChangeDetectionService>();
 builder.Services.AddTransient<IChangeDetectionStrategyFactory, ChangeDetectionStrategyFactory>();
 builder.Services.AddTransient<IChangeDetectionStrategy, ValueChangeDetectionStrategy>();
 builder.Services.AddTransient<IChangeDetectionStrategy, SnapshotChangeDetectionStrategy>();
