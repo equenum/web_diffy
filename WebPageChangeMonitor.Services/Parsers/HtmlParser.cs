@@ -15,15 +15,15 @@ public class HtmlParser : IHtmlParser
         var document = new HtmlDocument();
         document.LoadHtml(html);
 
-        // XPath: 
-        //  - https://developer.mozilla.org/en-US/docs/Web/XPath
-        //  - https://devhints.io/xpath
-
-        // var xPath = "//span[contains(@class, 'p-name vcard-fullname d-block overflow-hidden')]";
         var xPath = $"//{context.HtmlTag}[contains(@{context.SelectorType}, '{context.SelectorValue}')]".ToLowerInvariant();
         var targetNode = document.DocumentNode
             .SelectNodes(xPath)
             .FirstOrDefault();
+
+        if (targetNode is null)
+        {
+            throw new InvalidOperationException("Target HTML node not found.");
+        }
 
         return targetNode.InnerText;
     }
