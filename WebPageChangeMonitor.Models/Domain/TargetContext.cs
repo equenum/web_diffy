@@ -1,9 +1,11 @@
-﻿using WebPageChangeMonitor.Models.Consts;
+﻿using System;
+using WebPageChangeMonitor.Models.Consts;
 
 namespace WebPageChangeMonitor.Models.Domain;
 
 public class TargetContext
 {
+    public Guid Id { get; set; }
     public string Url { get; set; }
     public ChangeType ChangeType { get; set; }
     public string HtmlTag { get; set; }

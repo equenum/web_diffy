@@ -35,6 +35,8 @@ public class MonitorJobsRegistrationService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        await InitiateScheduler(cancellationToken);
+
         using (var context = _contextFactory.CreateDbContext())
         {
             var targetEntities = await context.Targets.ToListAsync(cancellationToken);
@@ -43,11 +45,7 @@ public class MonitorJobsRegistrationService : IHostedService
             {
                 _logger.LogInformation("Existing targets found, count: {TargetCount}. Registering jobs...",
                     targetEntities.Count);
-
-                var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
-                scheduler.JobFactory = _jobFactory;
-
-                await scheduler.Start(cancellationToken);
+                
                 await _jobService.ScheduleAsync(targetEntities.Select(entity => entity.ToTarget()),
                     cancellationToken);
             }
@@ -58,5 +56,13 @@ public class MonitorJobsRegistrationService : IHostedService
     {
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
         await scheduler.Shutdown(cancellationToken);
+    }
+
+    private async Task InitiateScheduler(CancellationToken cancellationToken)
+    {
+        var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
+        scheduler.JobFactory = _jobFactory;
+
+        await scheduler.Start(cancellationToken);
     }
 }

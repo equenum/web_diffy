@@ -10,6 +10,7 @@ using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Entities;
 using WebPageChangeMonitor.Models.Options;
+using WebPageChangeMonitor.Services.Parsers;
 
 namespace WebPageChangeMonitor.Services.Strategies;
 
@@ -18,15 +19,18 @@ public class SnapshotChangeDetectionStrategy : IChangeDetectionStrategy
     private readonly ILogger<SnapshotChangeDetectionStrategy> _logger;
     private readonly ChangeMonitorOptions _options;
     private readonly IDbContextFactory<MonitorDbContext> _contextFactory;
+    private readonly IHtmlParser _htmlParser;
 
     public SnapshotChangeDetectionStrategy(
         ILogger<SnapshotChangeDetectionStrategy> logger,
         IOptions<ChangeMonitorOptions> options,
-        IDbContextFactory<MonitorDbContext> contextFactory)
+        IDbContextFactory<MonitorDbContext> contextFactory,
+        IHtmlParser htmlParser)
     {
         _logger = logger;
         _options = options.Value;
         _contextFactory = contextFactory;
+        _htmlParser = htmlParser;
     }
 
     public bool CanHandle(ChangeType type) => type == ChangeType.Snapshot;
@@ -35,6 +39,8 @@ public class SnapshotChangeDetectionStrategy : IChangeDetectionStrategy
     {
         using (var dbContext = _contextFactory.CreateDbContext())
         {
+            var currentValue = _htmlParser.GetNodeInnerText(html, context);
+
             var latestSnapshot = await dbContext.TargetSnapshots
                 .OrderByDescending(snapshot => snapshot.CreatedAt)
                 .FirstOrDefaultAsync();
@@ -44,7 +50,8 @@ public class SnapshotChangeDetectionStrategy : IChangeDetectionStrategy
                 var initSnapshot = new TargetSnapshotEntity()
                 {
                     Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
-                    Value = html,
+                    TargetId = context.Id,
+                    Value = currentValue,
                     IsChangeDetected = false,
                     CreatedAt = DateTime.UtcNow
                 };
@@ -60,7 +67,8 @@ public class SnapshotChangeDetectionStrategy : IChangeDetectionStrategy
             var snapshot = new TargetSnapshotEntity()
             {
                 Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
-                Value = html,
+                TargetId = context.Id,
+                Value = currentValue,
                 IsChangeDetected = isChangeDetected,
                 CreatedAt = DateTime.UtcNow
             };
