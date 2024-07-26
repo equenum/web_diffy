@@ -3,7 +3,7 @@ start transaction;
 -- create table
 create table if not exists monitor.targets (
     id uuid primary key,
-    resource_id uuid references monitor.target_resources(id),
+    resource_id uuid references monitor.target_resources(id) on delete cascade,
     display_name text not null,
     description text,
     url text not null,

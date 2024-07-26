@@ -3,7 +3,7 @@ start transaction;
 -- create table
 create table if not exists monitor.target_snapshots (
     id uuid primary key,
-    target_id uuid references monitor.targets(id),
+    target_id uuid references monitor.targets(id) on delete cascade,
     value text not null,
     is_expected_value boolean default false not null,
     is_change_detected boolean default false not null,
