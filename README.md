@@ -2,3 +2,5 @@
 
 - What if the target page or node no longer exists?
 - Add a job schedule jitter?
+- Notifications: Telegram, email?
+- Import export resource / target configurations as json.
