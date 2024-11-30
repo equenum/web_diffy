@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using WebPageChangeMonitor.Models.Consts;
 
-namespace WebPageChangeMonitor.Services.Strategies;
+namespace WebPageChangeMonitor.Services.Detection.Strategies;
 
 public class ChangeDetectionStrategyFactory : IChangeDetectionStrategyFactory
 {

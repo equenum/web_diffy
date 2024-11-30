@@ -12,7 +12,7 @@ using WebPageChangeMonitor.Models.Entities;
 using WebPageChangeMonitor.Models.Options;
 using WebPageChangeMonitor.Services.Parsers;
 
-namespace WebPageChangeMonitor.Services.Strategies;
+namespace WebPageChangeMonitor.Services.Detection.Strategies;
 
 public class SnapshotChangeDetectionStrategy : IChangeDetectionStrategy
 {

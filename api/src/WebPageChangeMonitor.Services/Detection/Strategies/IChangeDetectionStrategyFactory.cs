@@ -1,6 +1,6 @@
 ﻿using WebPageChangeMonitor.Models.Consts;
 
-namespace WebPageChangeMonitor.Services.Strategies;
+namespace WebPageChangeMonitor.Services.Detection.Strategies;
 
 public interface IChangeDetectionStrategyFactory
 {

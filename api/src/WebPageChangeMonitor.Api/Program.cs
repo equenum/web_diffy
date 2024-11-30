@@ -13,7 +13,7 @@ using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Options;
 using WebPageChangeMonitor.Services.Parsers;
-using WebPageChangeMonitor.Services.Strategies;
+using WebPageChangeMonitor.Services.Detection.Strategies;
 
 var builder = WebApplication.CreateBuilder(args);
 

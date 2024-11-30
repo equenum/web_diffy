@@ -2,7 +2,7 @@
 using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
 
-namespace WebPageChangeMonitor.Services.Strategies;
+namespace WebPageChangeMonitor.Services.Detection.Strategies;
 
 public interface IChangeDetectionStrategy
 {
