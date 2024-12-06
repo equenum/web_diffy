@@ -8,5 +8,5 @@
 # Todo:
 
 - Complete tests for ValueChangeDetectionStrategy.
-- Add tests for SnapshotChangeDetectionStrategy.
+- Complete tests for SnapshotChangeDetectionStrategy.
 
