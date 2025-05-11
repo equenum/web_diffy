@@ -9,4 +9,4 @@
 
 - Complete tests for ValueChangeDetectionStrategy.
 - Complete tests for SnapshotChangeDetectionStrategy.
-
+- Verify MudBlazor install works properly.
