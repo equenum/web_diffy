@@ -7,7 +7,7 @@ namespace WebPageChangeMonitor.Common.Attributes;
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
 public class QuartzCronExpressionAttribute : ValidationAttribute
 {
-    protected override ValidationResult? IsValid(object? value,
+    protected override ValidationResult IsValid(object value,
         ValidationContext validationContext)
     {
         if (value is string expression)
