@@ -39,36 +39,37 @@ public class SnapshotChangeDetectionStrategy : IChangeDetectionStrategy
     {
         using (var dbContext = _contextFactory.CreateDbContext())
         {
-            var currentValue = _htmlParser.GetNodeInnerText(html, context);
+            var newValue = _htmlParser.GetNodeInnerText(html, context);
 
-            var latestSnapshot = await dbContext.TargetSnapshots
+            var latestPreviousSnapshot = await dbContext.TargetSnapshots
+                .Where(snapshot => snapshot.TargetId == context.Id)
                 .OrderByDescending(snapshot => snapshot.CreatedAt)
                 .FirstOrDefaultAsync();
 
-            if (latestSnapshot is null) 
+            if (latestPreviousSnapshot is null) 
             {
-                var initSnapshot = new TargetSnapshotEntity()
+                var initialSnapshot = new TargetSnapshotEntity()
                 {
                     Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                     TargetId = context.Id,
-                    Value = currentValue,
+                    Value = newValue,
                     IsChangeDetected = false,
                     CreatedAt = DateTime.UtcNow
                 };
 
-                dbContext.TargetSnapshots.Add(initSnapshot);
+                dbContext.TargetSnapshots.Add(initialSnapshot);
                 await dbContext.SaveChangesAsync();
 
                 return;
             }
 
-            var isChangeDetected = latestSnapshot.Value != html;
+            var isChangeDetected = latestPreviousSnapshot.Value != newValue;
 
             var snapshot = new TargetSnapshotEntity()
             {
                 Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                 TargetId = context.Id,
-                Value = currentValue,
+                Value = isChangeDetected ? newValue : latestPreviousSnapshot.Value,
                 IsChangeDetected = isChangeDetected,
                 CreatedAt = DateTime.UtcNow
             };

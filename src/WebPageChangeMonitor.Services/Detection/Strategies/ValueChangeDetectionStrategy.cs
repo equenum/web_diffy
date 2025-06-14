@@ -45,20 +45,21 @@ public class ValueChangeDetectionStrategy : IChangeDetectionStrategy
                     $"{nameof(context.ExpectedValue)} expected for value based change detection.");
             }
 
-            var currentValue = _htmlParser.GetNodeInnerText(html, context);
-            var isExpectedValue = context.ExpectedValue == currentValue;
+            var newValue = _htmlParser.GetNodeInnerText(html, context);
+            var isExpectedValue = context.ExpectedValue == newValue;
 
-            var latestSnapshot = await dbContext.TargetSnapshots
+            var latestPreviousSnapshot = await dbContext.TargetSnapshots
+                .Where(snapshot => snapshot.TargetId == context.Id)
                 .OrderByDescending(snapshot => snapshot.CreatedAt)
                 .FirstOrDefaultAsync();
 
-            if (latestSnapshot is null) 
+            if (latestPreviousSnapshot is null) 
             {   
                 var initSnapshot = new TargetSnapshotEntity()
                 {
                     Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                     TargetId = context.Id,
-                    Value = currentValue,
+                    Value = newValue,
                     IsExpectedValue = isExpectedValue,
                     IsChangeDetected = false,
                     CreatedAt = DateTime.UtcNow
@@ -79,13 +80,13 @@ public class ValueChangeDetectionStrategy : IChangeDetectionStrategy
                 return;
             }
 
-            var isChangeDetected = latestSnapshot.Value != currentValue;
+            var isChangeDetected = latestPreviousSnapshot.Value != newValue;
 
             var snapshot = new TargetSnapshotEntity()
             {
                 Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                 TargetId = context.Id,
-                Value = currentValue,
+                Value = isChangeDetected ? newValue : latestPreviousSnapshot.Value,
                 IsExpectedValue = isExpectedValue,
                 IsChangeDetected = isChangeDetected,
                 CreatedAt = DateTime.UtcNow
