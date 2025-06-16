@@ -19,20 +19,21 @@ namespace WebPageChangeMonitor.Services.Tests.Detection.Strategies;
 
 public class SnapshotChangeDetectionStrategyTests : IDisposable
 {
-    private readonly ChangeMonitorOptions _options;
+    private readonly string DbName = nameof(SnapshotChangeDetectionStrategyTests);
+
     private readonly IDbContextFactory<MonitorDbContext> _dbContextFactoryMock;
     private readonly IHtmlParser _parserMock;
+
     private readonly SnapshotChangeDetectionStrategy _strategy;
 
     public SnapshotChangeDetectionStrategyTests()
     {
-        _options = GetDefaultOptions();
         _dbContextFactoryMock = Substitute.For<IDbContextFactory<MonitorDbContext>>();
         _parserMock = Substitute.For<IHtmlParser>();
 
         _strategy = new SnapshotChangeDetectionStrategy(
             Substitute.For<ILogger<SnapshotChangeDetectionStrategy>>(),
-            Options.Create(_options),
+            Options.Create(GetDefaultOptions()),
             _dbContextFactoryMock,
             _parserMock);
     }
@@ -50,19 +51,26 @@ public class SnapshotChangeDetectionStrategyTests : IDisposable
     public async Task ExecuteAsync_FirstEverSnapshot_SavesNewSnapshot()
     {
         // Arrange
+        const string newValue = "new";
         var targetContext = new TargetContext()
         {
             Id = Uuid.NewDatabaseFriendly(Database.PostgreSql)
         };
 
-        _dbContextFactoryMock.CreateDbContext().Returns(FakeDbContext.GetInstance());
-        _parserMock.GetNodeInnerText(Arg.Any<string>(), targetContext).Returns("test");
+        _dbContextFactoryMock.CreateDbContext().Returns(FakeDbContext.GetInstance(DbName));
+        _parserMock.GetNodeInnerText(Arg.Any<string>(), targetContext).Returns(newValue);
 
         // Act
         await _strategy.ExecuteAsync(string.Empty, targetContext);
 
+        var dbTargetSnapshots = await FakeDbContext.GetInstance(DbName).TargetSnapshots
+            .OrderBy(snapshot => snapshot.CreatedAt)
+            .ToListAsync();
+
         // Assert
-        Assert.Equal(1, await FakeDbContext.GetInstance().TargetSnapshots.CountAsync());
+        dbTargetSnapshots.Should().ContainSingle();
+        dbTargetSnapshots[0].Value.Should().Be(newValue);
+        dbTargetSnapshots[0].IsChangeDetected.Should().BeFalse();
     }
 
     [Fact]
@@ -77,10 +85,10 @@ public class SnapshotChangeDetectionStrategyTests : IDisposable
             Id = Uuid.NewDatabaseFriendly(Database.PostgreSql)
         };
 
-        _dbContextFactoryMock.CreateDbContext().Returns(FakeDbContext.GetInstance());
+        _dbContextFactoryMock.CreateDbContext().Returns(FakeDbContext.GetInstance(DbName));
         _parserMock.GetNodeInnerText(Arg.Any<string>(), targetContext).Returns(newValue);
 
-        using (var context = FakeDbContext.GetInstance())
+        using (var context = FakeDbContext.GetInstance(DbName))
         {
             context.TargetSnapshots.Add(new TargetSnapshotEntity
             {
@@ -96,7 +104,7 @@ public class SnapshotChangeDetectionStrategyTests : IDisposable
         // Act
         await _strategy.ExecuteAsync("html", targetContext);
 
-        var dbTargetSnapshots = await FakeDbContext.GetInstance().TargetSnapshots
+        var dbTargetSnapshots = await FakeDbContext.GetInstance(DbName).TargetSnapshots
             .OrderBy(snapshot => snapshot.CreatedAt)
             .ToListAsync();
 
@@ -120,10 +128,10 @@ public class SnapshotChangeDetectionStrategyTests : IDisposable
             Id = Uuid.NewDatabaseFriendly(Database.PostgreSql)
         };
 
-        _dbContextFactoryMock.CreateDbContext().Returns(FakeDbContext.GetInstance());
+        _dbContextFactoryMock.CreateDbContext().Returns(FakeDbContext.GetInstance(DbName));
         _parserMock.GetNodeInnerText(Arg.Any<string>(), targetContext).Returns(newValue);
 
-        using (var context = FakeDbContext.GetInstance())
+        using (var context = FakeDbContext.GetInstance(DbName))
         {
             context.TargetSnapshots.Add(new TargetSnapshotEntity
             {
@@ -139,7 +147,7 @@ public class SnapshotChangeDetectionStrategyTests : IDisposable
         // Act
         await _strategy.ExecuteAsync("html", targetContext);
 
-        var dbTargetSnapshots = await FakeDbContext.GetInstance().TargetSnapshots
+        var dbTargetSnapshots = await FakeDbContext.GetInstance(DbName).TargetSnapshots
             .OrderBy(snapshot => snapshot.CreatedAt)
             .ToListAsync();
 
@@ -153,9 +161,9 @@ public class SnapshotChangeDetectionStrategyTests : IDisposable
 
     public void Dispose()
     {
-        FakeDbContext.Reset();
+        FakeDbContext.Reset(DbName);
     }
-    
+
     private static ChangeMonitorOptions GetDefaultOptions() => new()
     {
         AreNotificationsEnabled = false

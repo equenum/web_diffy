@@ -5,22 +5,18 @@ namespace WebPageChangeMonitor.Services.Tests;
 
 public class FakeDbContext
 {
-    public static MonitorDbContext GetInstance() => new
+    public static MonitorDbContext GetInstance(string dbName) => new
     (
         new DbContextOptionsBuilder<MonitorDbContext>()
-            .UseInMemoryDatabase(databaseName: "ChangeMonitor")
+            .UseInMemoryDatabase(databaseName: dbName)
             .Options
     );
 
-    public static void Reset()
+    public static void Reset(string dbName)
     {
-        using (var dbContext = GetInstance())
+        using (var dbContext = GetInstance(dbName))
         {
-            dbContext.TargetSnapshots.RemoveRange(dbContext.TargetSnapshots);
-            dbContext.Resources.RemoveRange(dbContext.Resources);
-            dbContext.Targets.RemoveRange(dbContext.Targets);
-
-            dbContext.SaveChanges();
+            dbContext.Database.EnsureDeleted();
         }
     }
 }
