@@ -10,8 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
-    <PackageReference Include="FluentAssertions" Version="6.12.2" />
-    <PackageReference Include="FluentAssertions.Analyzers" Version="0.34.1">
+    <PackageReference Include="FluentAssertions" Version="[7.2.0]" /> <!-- locked the version due to a license change starting version 8 -->
+    <PackageReference Include="FluentAssertions.Analyzers" Version="0.34.1"> <!-- remains MIT -->
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
