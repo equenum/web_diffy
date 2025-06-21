@@ -9,3 +9,4 @@
 
 - Complete tests for ValueChangeDetectionStrategy.
 - Complete tests for SnapshotChangeDetectionStrategy.
+- Add error codes to all error logs like in ChangeDetector.cs

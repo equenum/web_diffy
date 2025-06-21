@@ -14,12 +14,12 @@ public class QuartzCronExpressionAttribute : ValidationAttribute
         {
             if (!CronExpression.IsValidExpression(expression))
             {
-                return new ValidationResult("Invalid Quartz cron expression format!");
+                return new ValidationResult("Invalid quartz cron expression format.");
             }
 
             return ValidationResult.Success;
         }
 
-        return new ValidationResult("Invalid Quartz cron expression value type. Expected - 'string'.");
+        return new ValidationResult("Invalid quartz cron expression value type, expected - 'string'.");
     }
 }

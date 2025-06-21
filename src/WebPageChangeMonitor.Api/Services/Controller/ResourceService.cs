@@ -46,7 +46,7 @@ public class ResourceService : IResourceService
             ? _context.Resources.Skip((page.Value - 1) * count).Take(count)
             : _context.Resources;
 
-        var resources =  await resourceQuery.AsNoTracking().ToListAsync();
+        var resources = await resourceQuery.AsNoTracking().ToListAsync();
 
         return new ResourcePaginatedResponse()
         {
