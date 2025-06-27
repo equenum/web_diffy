@@ -31,9 +31,8 @@ public class MonitorChangeJob : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
-        JobDataMap dataMap = context.JobDetail.JobDataMap;
-        var jsonContext = dataMap.GetString(JobConsts.DataKeys.TargetContext);
-        var targetContext =  JsonSerializer.Deserialize<TargetContext>(jsonContext);
+        var jsonContext = context.JobDetail.JobDataMap.GetString(JobConsts.DataKeys.TargetContext);
+        var targetContext = JsonSerializer.Deserialize<TargetContext>(jsonContext);
 
         _logger.LogInformation("Executing job {JobKey}, url: {TargetUrl}",
             context.JobDetail.Key,
@@ -43,8 +42,8 @@ public class MonitorChangeJob : IJob
             .AddRetry(new RetryStrategyOptions()
             {
                 ShouldHandle = new PredicateBuilder().Handle<Exception>(),
-                BackoffType = DelayBackoffType.Exponential,
-                UseJitter = true,
+                BackoffType = (DelayBackoffType)_options.BackoffType,
+                UseJitter = _options.UseJitter,
                 MaxRetryAttempts = _options.JobRetry.MaxAttempts,
                 Delay = _options.JobRetry.Delay
             })
