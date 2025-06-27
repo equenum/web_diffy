@@ -10,3 +10,5 @@
 - Complete tests for ValueChangeDetectionStrategy.
 - Complete tests for SnapshotChangeDetectionStrategy.
 - Add error codes to all error logs like in ChangeDetector.cs
+- Settings: ask before deletion
+- Add the theme manager? https://github.com/MudBlazor/ThemeManager
