@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebPageChangeMonitor.Api.Models.Requests;
+namespace WebPageChangeMonitor.Models.Requests;
 
-public class CreateRecourseRequest
+public class CreateResourceRequest
 {
     [Required(AllowEmptyStrings = false)]
     [StringLength(20)]

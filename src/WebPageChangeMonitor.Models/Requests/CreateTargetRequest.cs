@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using WebPageChangeMonitor.Common.Attributes;
 using WebPageChangeMonitor.Models.Consts;
 
-namespace WebPageChangeMonitor.Api.Models.Requests;
+namespace WebPageChangeMonitor.Models.Requests;
 
 public class CreateTargetRequest
 {

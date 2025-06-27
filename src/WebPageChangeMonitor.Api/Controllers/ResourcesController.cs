@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebPageChangeMonitor.Api.Exceptions;
-using WebPageChangeMonitor.Api.Models.Requests;
 using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Options;
+using WebPageChangeMonitor.Models.Requests;
 
 namespace WebPageChangeMonitor.Api.Controllers;
 
@@ -61,7 +61,7 @@ public class ResourcesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateRecourseRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateResourceRequest request)
     {
         var resource = await _service.CreateAsync(request);
 

@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebPageChangeMonitor.Api.Exceptions;
-using WebPageChangeMonitor.Api.Models.Requests;
 using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Options;
+using WebPageChangeMonitor.Models.Requests;
 
 namespace WebPageChangeMonitor.Api.Controllers;
 

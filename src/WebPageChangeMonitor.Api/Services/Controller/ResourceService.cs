@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using UUIDNext;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
-using WebPageChangeMonitor.Api.Models.Requests;
-using WebPageChangeMonitor.Api.Responses;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Dtos;
 using WebPageChangeMonitor.Models.Entities;
+using WebPageChangeMonitor.Models.Requests;
+using WebPageChangeMonitor.Models.Responses;
 
 namespace WebPageChangeMonitor.Api.Services.Controller;
 
@@ -66,7 +66,7 @@ public class ResourceService : IResourceService
         return targetResource.ToResourceDto();
     }
 
-    public async Task<ResourceDto> CreateAsync(CreateRecourseRequest request)
+    public async Task<ResourceDto> CreateAsync(CreateResourceRequest request)
     {
         var resource = new ResourceEntity()
         {

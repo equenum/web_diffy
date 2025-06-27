@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using WebPageChangeMonitor.Models.Dtos;
 
-namespace WebPageChangeMonitor.Api.Models.Responses;
+namespace WebPageChangeMonitor.Models.Responses;
 
 public class TargetPaginatedResponse
 {

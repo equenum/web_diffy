@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using WebPageChangeMonitor.Api.Models.Requests;
-using WebPageChangeMonitor.Api.Models.Responses;
 using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Dtos;
+using WebPageChangeMonitor.Models.Requests;
+using WebPageChangeMonitor.Models.Responses;
 
 namespace WebPageChangeMonitor.Api.Services.Controller;
 

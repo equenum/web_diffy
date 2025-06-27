@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
-using WebPageChangeMonitor.Api.Models.Responses;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Dtos;
+using WebPageChangeMonitor.Models.Responses;
 
 namespace WebPageChangeMonitor.Api.Services.Controller;
 
