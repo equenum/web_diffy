@@ -59,10 +59,12 @@ builder.Services.AddTransient<IChangeDetectionStrategy, ValueChangeDetectionStra
 builder.Services.AddTransient<IChangeDetectionStrategy, SnapshotChangeDetectionStrategy>();
 
 // data access
+var connectionString = builder.Configuration.GetConnectionString("ChangeMonitor");
+
 builder.Services.AddDbContextFactory<MonitorDbContext>(options => 
 {
     options.UseLazyLoadingProxies();
-    options.UseNpgsql(builder.Configuration.GetConnectionString("ChangeMonitor"));
+    options.UseNpgsql(connectionString);
     options.UseSnakeCaseNamingConvention();
 });
 
@@ -86,5 +88,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
+
+await DbInitializer.ExecuteAsync(connectionString);
 
 app.Run();
