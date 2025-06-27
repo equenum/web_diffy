@@ -1,39 +1,46 @@
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
+using WebDiffy.UI.Services;
 using WebPageChangeMonitor.Models.Dtos;
 
 namespace WebDiffy.UI.Components.Pages.Resources;
 
 public partial class ResourcesPage
 {
-    private IEnumerable<ResourceDto> _resources = [];
-    
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
+    [Inject]
+    private IDialogService DialogService { get; set; }
 
-        // extract into a static class
-        _resources =
-        [
-            new()
-            {
-                Id = Guid.NewGuid(),
-                DisplayName = "Resource 1",
-                Description = "Resource 1"
-            },
-            new()
-            {
-                Id = Guid.NewGuid(),
-                DisplayName = "Resource 2",
-                Description = "Resource 2"
-            },
-            new()
-            {
-                Id = Guid.NewGuid(),
-                DisplayName = "Resource 3",
-                Description = "Resource 3"
-            }
-        ];
+    [Inject]
+    private IResourceService ResourceService { get; set; }
+
+    private IEnumerable<ResourceDto> Resources = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Resources = await FetchResources();
     }
 
+    private async Task AddResourceAsync()
+    {
+        var dialog = await DialogService.ShowAsync<CreateResourceDialog>();
+        var dialogResult = await dialog.Result;
+
+        if (!dialogResult.Canceled)
+        {
+            if (dialogResult.Data is not null)
+            {
+                Resources = await FetchResources();
+            }
+        }
+    }
+
+    private async Task<IEnumerable<ResourceDto>> FetchResources()
+    {
+        var resourceResponse = await ResourceService.GetAsync(count: int.MaxValue);
+        return resourceResponse.Resources;
+    }
 }

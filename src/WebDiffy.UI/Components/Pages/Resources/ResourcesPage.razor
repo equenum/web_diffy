@@ -2,25 +2,40 @@
 
 <PageTitle>Resources</PageTitle>
 
-<div id="resources-header">
-    <MudText Typo="Typo.h5" Align="Align.Left">Resources</MudText>
-    <MudText Typo="Typo.subtitle1" Align="Align.Left">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur</MudText>
-</div>
-
-
-<MudDataGrid T="ResourceDto" Items="@_resources" SortMode="SortMode.Multiple">
-    <Columns>
-        <PropertyColumn Property="x => x.Id" Title="Id" />
-        <PropertyColumn Property="x => x.DisplayName" Title="Display Name" />
-        <PropertyColumn Property="x => x.Description" Title="Description" />
-        <TemplateColumn CellClass="d-flex justify-end">
-            <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit"/>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete"/>
-            </CellTemplate>
-        </TemplateColumn>
-    </Columns>
-    <PagerContent>
-        <MudDataGridPager T="ResourceDto" />
-    </PagerContent>
-</MudDataGrid>
+<MudGrid id="resources-header" Justify="Justify.Center">
+    <MudItem xs="12">
+        <MudPaper Class="py-2 px-2">
+            <MudText Typo="Typo.h5" Align="Align.Left">Resources</MudText>
+            <MudText Typo="Typo.subtitle1" Align="Align.Left">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12">
+        <MudPaper Class="py-2 px-2">
+            <MudStack>
+                <div>
+                    <MudDataGrid T="ResourceDto" Items="@Resources" SortMode="SortMode.Multiple">
+                        <Columns>
+                            <PropertyColumn Property="x => x.Id" Title="Id" />
+                            <PropertyColumn Property="x => x.DisplayName" Title="Display Name" />
+                            <PropertyColumn Property="x => x.Description" Title="Description" />
+                            <TemplateColumn CellClass="d-flex justify-end">
+                                <CellTemplate>
+                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit"/>
+                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete"/>
+                                </CellTemplate>
+                            </TemplateColumn>
+                        </Columns>
+                        <PagerContent>
+                            <MudDataGridPager T="ResourceDto" />
+                        </PagerContent>
+                    </MudDataGrid>
+                </div>
+                <div class="d-flex flex-row-reverse">
+                    <MudButton OnClick="AddResourceAsync" Variant="Variant.Filled" Color="Color.Primary">
+                        <MudText>Add</MudText>
+                    </MudButton>
+                </div>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
