@@ -1,0 +1,17 @@
+﻿@attribute [Route(Urls.Settings)]
+
+<PageTitle>Settings</PageTitle>
+
+<MudGrid id="settings-header" Justify="Justify.Center">
+    <MudItem xs="12">
+        <MudPaper Class="py-2 px-2">
+            <MudText Typo="Typo.h5" Align="Align.Left">Settings</MudText>
+            <MudText Typo="Typo.subtitle1" Align="Align.Left">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12">
+        <MudPaper Class="py-2 px-2">
+            <MudCheckBox @bind-Value="UserAppSettings.AreDeletePopUpsEnabled" Label="AreDeletePopUpsEnabled"></MudCheckBox>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
