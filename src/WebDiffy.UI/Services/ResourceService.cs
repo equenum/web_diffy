@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -13,6 +14,9 @@ public interface IResourceService
 {
     Task<ResourceDto> CreateAsync(ResourceDto resource);
     Task<ResourcePaginatedResponse> GetAsync(int? page = null, int? count = null);
+    Task<ResourceDto> GetAsync(Guid id);
+    Task<ResourceDto> UpdateAsync(ResourceDto resource);
+    Task RemoveAsync(Guid id);
 }
 
 public class ResourceService : BaseService, IResourceService
@@ -59,5 +63,40 @@ public class ResourceService : BaseService, IResourceService
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<ResourcePaginatedResponse>();
+    }
+
+    public async Task<ResourceDto> GetAsync(Guid id)
+    {
+        var queryParams = new Dictionary<string, string>() {{ "id", id.ToString() }};
+
+        var message = BuildGetRequestMessage(_resourcesBaseUrl, queryParams);
+        var client = _clientFactory.CreateClient();
+
+        var response = await client.SendAsync(message);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<ResourceDto>();
+    }
+
+    public async Task RemoveAsync(Guid id)
+    {
+        var queryParams = new Dictionary<string, string>() {{ "id", id.ToString() }};
+
+        var message = BuildDeleteRequestMessage(_resourcesBaseUrl, queryParams);
+        var client = _clientFactory.CreateClient();
+
+        var response = await client.SendAsync(message);
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task<ResourceDto> UpdateAsync(ResourceDto resource)
+    {
+        var message = BuildPutRequestMessage(_resourcesBaseUrl, resource);
+        var client = _clientFactory.CreateClient();
+
+        var response = await client.SendAsync(message);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<ResourceDto>();
     }
 }

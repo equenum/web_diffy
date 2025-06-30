@@ -26,17 +26,33 @@ public class BaseService
 
     protected HttpRequestMessage BuildPostRequestMessage(string url, object content)
     {
-        var message = new HttpRequestMessage(HttpMethod.Post, url);
-        message.Content = new StringContent(JsonSerializer.Serialize(content), Encoding.UTF8);
-        message.Content.Headers.ContentType = new MediaTypeHeaderValue(JsonMediaType);
-
-        return message;
+        return BuildRequestMessageWithBody(HttpMethod.Post, url, content);
+    }
+    
+    protected HttpRequestMessage BuildPutRequestMessage(string url, object content)
+    {
+        return BuildRequestMessageWithBody(HttpMethod.Put, url, content);
     }
 
     protected HttpRequestMessage BuildGetRequestMessage(string baseUrl,
         Dictionary<string, string> queryParams)
-    { 
+    {
         return new HttpRequestMessage(HttpMethod.Get, BuildUrl(baseUrl, queryParams));
+    }
+
+    protected HttpRequestMessage BuildDeleteRequestMessage(string baseUrl,
+        Dictionary<string, string> queryParams)
+    { 
+        return new HttpRequestMessage(HttpMethod.Delete, BuildUrl(baseUrl, queryParams));
+    }
+    
+    private static HttpRequestMessage BuildRequestMessageWithBody(HttpMethod method, string url, object content)
+    {
+        var message = new HttpRequestMessage(method, url);
+        message.Content = new StringContent(JsonSerializer.Serialize(content), Encoding.UTF8);
+        message.Content.Headers.ContentType = new MediaTypeHeaderValue(JsonMediaType);
+
+        return message;
     }
     
     private static string BuildUrl(string baseUrl, Dictionary<string, string> queryParams)
