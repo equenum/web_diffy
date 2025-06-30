@@ -21,8 +21,8 @@
                             <PropertyColumn Property="x => x.Description" Title="Description" />
                             <TemplateColumn CellClass="d-flex justify-end">
                                 <CellTemplate>
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit"/>
-                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete"/>
+                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => UpdateResourceAsync(context.Item))"/>
+                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => RemoveResourceAsync(context.Item.Id))"/>
                                 </CellTemplate>
                             </TemplateColumn>
                         </Columns>
