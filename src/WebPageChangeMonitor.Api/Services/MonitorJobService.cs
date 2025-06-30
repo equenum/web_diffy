@@ -60,10 +60,10 @@ public class MonitorJobService : IMonitorJobService
         var triggerKeys = await scheduler.GetTriggerKeys(groupMatcher, cancellationToken);
         if (triggerKeys.Count == 0)
         {
-            _logger.LogError("Job triggers not found, group name: {TriggerGroup}.",
+            _logger.LogInformation("Job triggers not found, group name: {TriggerGroup}.",
                 resourceId.ToString());
 
-            throw new InvalidOperationException($"Job triggers not found, group name: {resourceId}.");
+            return;
         }
 
         await scheduler.UnscheduleJobs(triggerKeys, cancellationToken);
