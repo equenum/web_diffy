@@ -10,5 +10,8 @@
 - Complete tests for ValueChangeDetectionStrategy.
 - Complete tests for SnapshotChangeDetectionStrategy.
 - Add error codes to all error logs like in ChangeDetector.cs
-- Settings: ask before deletion
+
 - Add the theme manager? https://github.com/MudBlazor/ThemeManager
+- Add input validation on UI
+- Update UI data grids to only show parts of GUIDs
+- Fix dialog cancelling - currently grids retain values being entered
