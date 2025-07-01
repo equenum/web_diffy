@@ -27,8 +27,11 @@
                             </TemplateColumn>
                         </Columns>
                         <PagerContent>
-                            <MudDataGridPager T="ResourceDto" />
+                            <MudDataGridPager T="ResourceDto" PageSizeOptions="UserAppSettings.GridPageSizeOptions" />
                         </PagerContent>
+                        <NoRecordsContent>
+                            <MudText>No records available.</MudText>
+                        </NoRecordsContent>
                     </MudDataGrid>
                 </div>
                 <div class="d-flex flex-row-reverse">
