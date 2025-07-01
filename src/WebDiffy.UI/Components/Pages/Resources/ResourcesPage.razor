@@ -16,7 +16,12 @@
                 <div>
                     <MudDataGrid T="ResourceDto" Items="@Resources" SortMode="SortMode.Multiple">
                         <Columns>
-                            <PropertyColumn Property="x => x.Id" Title="Id" />
+                            @if(UserAppSettings.AreItemIdColumnsEnabled)
+                            {
+                                <TemplateColumn Title="Id">
+                                    <CellTemplate>@(GuidHelper.ConvertToString(context.Item.Id))</CellTemplate>
+                                </TemplateColumn>
+                            }
                             <PropertyColumn Property="x => x.DisplayName" Title="Display Name" />
                             <PropertyColumn Property="x => x.Description" Title="Description" />
                             <TemplateColumn CellClass="d-flex justify-end">

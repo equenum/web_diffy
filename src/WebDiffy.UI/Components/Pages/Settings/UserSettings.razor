@@ -12,6 +12,9 @@
     <MudItem xs="12">
         <MudPaper Class="py-2 px-2">
             <MudCheckBox @bind-Value="UserAppSettings.AreDeletePopUpsEnabled" Label="AreDeletePopUpsEnabled"></MudCheckBox>
+            <MudCheckBox @bind-Value="UserAppSettings.AreItemIdColumnsEnabled" Label="AreItemIdColumnsEnabled"></MudCheckBox>
+            <MudCheckBox @bind-Value="UserAppSettings.AreItemIdsShortened" Label="AreItemIdsShortened"></MudCheckBox>
+            <MudNumericField @bind-Value="UserAppSettings.ItemIdSubSectionLength" Label="ItemIdSubSectionLength" Min="1" Max="12" />
             <MudTextField 
                 T="string"
                 Value="ConvertArrayBasedValue(UserAppSettings.GridPageSizeOptions)"
