@@ -6,9 +6,9 @@
         </MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField Value="@Resource.Id" Label="Id" ReadOnly="true" />
-        <MudTextField @bind-Value="Resource.DisplayName" Label="Display Name" />
-        <MudTextField @bind-Value="Resource.Description" Label="Description" />
+        <MudTextField Value="@CopiedResource.Id" Label="Id" ReadOnly="true" />
+        <MudTextField @bind-Value="CopiedResource.DisplayName" Label="Display Name" />
+        <MudTextField @bind-Value="CopiedResource.Description" Label="Description" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using WebDiffy.UI.Infrastructure.Helpers;
 using WebDiffy.UI.Services;
 using WebPageChangeMonitor.Models.Dtos;
 
@@ -21,6 +22,15 @@ public partial class UpdateResourceDialog
     [Parameter]
     public ResourceDto Resource { get; set; }
 
+    private ResourceDto CopiedResource;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        CopiedResource = ObjectCopyHelper.DeepCopy(Resource);
+    }
+
     private void Cancel() => MudDialog.Cancel();
 
     private async Task UpdateResourceAsync()
@@ -29,7 +39,7 @@ public partial class UpdateResourceDialog
 
         try
         {
-            var updatedResource = await ResourceService.UpdateAsync(Resource);
+            var updatedResource = await ResourceService.UpdateAsync(CopiedResource);
             updatedResourceId = updatedResource.Id;
 
             Snackbar.Add("Resource updated", Severity.Success);
