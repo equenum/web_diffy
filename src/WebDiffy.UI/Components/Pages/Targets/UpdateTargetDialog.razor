@@ -1,0 +1,42 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit"/>
+            Edit Target
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField Value="@CopiedTarget.Id" Label="Id" ReadOnly="true" />
+        <MudTextField @bind-Value="CopiedTarget.DisplayName" Label="Display Name" />
+        <MudTextField @bind-Value="CopiedTarget.Description" Label="Description" />
+        <MudTextField @bind-Value="CopiedTarget.Url" Label="Url" />
+        <MudTextField @bind-Value="CopiedTarget.CronSchedule" Label="Cron Schedule" />
+        <MudSelect 
+            T="string" 
+            Label="Change Type" 
+            Value="CopiedTarget.ChangeType.ToString()" 
+            ValueChanged="@((string value) => UpdateChangeType(value))">
+            @foreach (var type in Enum.GetValues(typeof(ChangeType)))
+            {
+                <MudSelectItem Value="@type.ToString()" />
+            }
+        </MudSelect>
+        <MudTextField @bind-Value="CopiedTarget.HtmlTag" Label="Html Tag" />
+        <MudSelect 
+            T="string" 
+            Label="Selector Type" 
+            Value="CopiedTarget.SelectorType.ToString()" 
+            ValueChanged="@((string value) => UpdateSelectorType(value))">
+            @foreach (var type in Enum.GetValues(typeof(SelectorType)))
+            {
+                <MudSelectItem Value="@type.ToString()" />
+            }
+        </MudSelect>
+        <MudTextField @bind-Value="CopiedTarget.SelectorValue" Label="Selector Value" />
+        <MudTextField @bind-Value="CopiedTarget.ExpectedValue" Label="Expected Value" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="UpdateTargetAsync">Edit</MudButton>
+    </DialogActions>
+</MudDialog>

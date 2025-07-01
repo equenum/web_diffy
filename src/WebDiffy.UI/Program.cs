@@ -15,6 +15,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpClient();
 builder.Services.AddTransient<IResourceService, ResourceService>();
+builder.Services.AddTransient<ITargetService, TargetService>();
 
 builder.Services.Configure<ApiOptions>(
     builder.Configuration.GetSection(ApiOptions.Name));
