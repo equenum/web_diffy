@@ -59,7 +59,6 @@ public class TargetsController : ControllerBase
         }
     }
 
-    // todo test query parameters
     [HttpGet("resource/{id:Guid}")]
     public async Task<IActionResult> GetByResourceIdAsync(Guid id, int? page, int? count)
     {
