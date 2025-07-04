@@ -12,3 +12,4 @@
 - Add error codes to all error logs like in ChangeDetector.cs
 - Add the theme manager? https://github.com/MudBlazor/ThemeManager
 - Add input validation on UI
+- Refactor to minimal API
