@@ -69,9 +69,7 @@ public class TargetService : BaseService, ITargetService
 
     public async Task<TargetDto> GetAsync(Guid id)
     {
-        var queryParams = new Dictionary<string, string>() {{ "id", id.ToString() }};
-
-        var message = BuildGetRequestMessage(_targetsBaseUrl, queryParams);
+        var message = BuildGetRequestMessage($"{_targetsBaseUrl}/{id}");
         var client = _clientFactory.CreateClient();
 
         var response = await client.SendAsync(message);
@@ -82,10 +80,7 @@ public class TargetService : BaseService, ITargetService
 
     public async Task<TargetPaginatedResponse> GetByResourceAsync(Guid resourceId, int? page = null, int? count = null)
     {
-        var queryParams = new Dictionary<string, string>
-        {
-            { "id", resourceId.ToString() }
-        };
+        var queryParams = new Dictionary<string, string>();
 
         if (page.HasValue)
         {
@@ -97,7 +92,7 @@ public class TargetService : BaseService, ITargetService
             queryParams.Add("count", count.ToString());
         }
 
-        var message = BuildGetRequestMessage($"{_targetsBaseUrl}/resource", queryParams);
+        var message = BuildGetRequestMessage($"{_targetsBaseUrl}/resource/{resourceId}", queryParams);
         var client = _clientFactory.CreateClient();
 
         var response = await client.SendAsync(message);
@@ -108,9 +103,7 @@ public class TargetService : BaseService, ITargetService
 
     public async Task RemoveAsync(Guid id)
     {
-        var queryParams = new Dictionary<string, string>() {{ "id", id.ToString() }};
-
-        var message = BuildDeleteRequestMessage(_targetsBaseUrl, queryParams);
+        var message = BuildDeleteRequestMessage($"{_targetsBaseUrl}/{id}");
         var client = _clientFactory.CreateClient();
 
         var response = await client.SendAsync(message);
@@ -119,9 +112,7 @@ public class TargetService : BaseService, ITargetService
 
     public async Task RemoveByResourceAsync(Guid resourceId)
     {
-        var queryParams = new Dictionary<string, string>() {{ "id", resourceId.ToString() }};
-
-        var message = BuildDeleteRequestMessage($"{_targetsBaseUrl}/resource", queryParams);
+        var message = BuildDeleteRequestMessage($"{_targetsBaseUrl}/resource/{resourceId}");
         var client = _clientFactory.CreateClient();
 
         var response = await client.SendAsync(message);

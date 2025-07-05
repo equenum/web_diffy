@@ -35,13 +35,13 @@ public class BaseService
     }
 
     protected HttpRequestMessage BuildGetRequestMessage(string baseUrl,
-        Dictionary<string, string> queryParams)
+        Dictionary<string, string> queryParams = null)
     {
         return new HttpRequestMessage(HttpMethod.Get, BuildUrl(baseUrl, queryParams));
     }
 
     protected HttpRequestMessage BuildDeleteRequestMessage(string baseUrl,
-        Dictionary<string, string> queryParams)
+        Dictionary<string, string> queryParams = null)
     { 
         return new HttpRequestMessage(HttpMethod.Delete, BuildUrl(baseUrl, queryParams));
     }
@@ -55,10 +55,14 @@ public class BaseService
         return message;
     }
     
-    private static string BuildUrl(string baseUrl, Dictionary<string, string> queryParams)
+    private static string BuildUrl(string baseUrl, Dictionary<string, string> queryParams = null)
     {
         var uriBuilder = new UriBuilder(baseUrl);
-        uriBuilder.Query = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+
+        if (queryParams is not null)
+        {
+            uriBuilder.Query = string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+        }
 
         return uriBuilder.Uri.AbsoluteUri;
     }

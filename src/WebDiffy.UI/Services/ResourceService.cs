@@ -67,9 +67,7 @@ public class ResourceService : BaseService, IResourceService
 
     public async Task<ResourceDto> GetAsync(Guid id)
     {
-        var queryParams = new Dictionary<string, string>() {{ "id", id.ToString() }};
-
-        var message = BuildGetRequestMessage(_resourcesBaseUrl, queryParams);
+        var message = BuildGetRequestMessage($"{_resourcesBaseUrl}/{id}");
         var client = _clientFactory.CreateClient();
 
         var response = await client.SendAsync(message);
@@ -80,9 +78,7 @@ public class ResourceService : BaseService, IResourceService
 
     public async Task RemoveAsync(Guid id)
     {
-        var queryParams = new Dictionary<string, string>() {{ "id", id.ToString() }};
-
-        var message = BuildDeleteRequestMessage(_resourcesBaseUrl, queryParams);
+        var message = BuildDeleteRequestMessage($"{_resourcesBaseUrl}/{id}");
         var client = _clientFactory.CreateClient();
 
         var response = await client.SendAsync(message);
