@@ -14,17 +14,17 @@ using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Options;
 using WebPageChangeMonitor.Services.Parsers;
 using WebPageChangeMonitor.Services.Detection.Strategies;
+using WebPageChangeMonitor.Api.Endpoints;
+using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options => 
-    {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
+builder.Services.Configure<JsonOptions>(options =>
+{ 
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(options => 
 {
     options.SchemaFilter<EnumSchemaFilter>();
@@ -87,7 +87,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.MapControllers();
+
+app.MapResourceEndpoints();
+app.MapTargetEndpoints();
+app.MapTargetSnapshotEndpoints();
 
 await DbInitializer.ExecuteAsync(connectionString);
 
