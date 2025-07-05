@@ -1,0 +1,113 @@
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using WebPageChangeMonitor.Api.Exceptions;
+using WebPageChangeMonitor.Api.Services.Controller;
+using WebPageChangeMonitor.Models.Dtos;
+using WebPageChangeMonitor.Models.Options;
+using WebPageChangeMonitor.Models.Responses;
+
+namespace WebPageChangeMonitor.Api.Endpoints;
+
+public static class TargetSnapshotEndpoints
+{
+    private const string GetByIdEndpointName = "GetTargetSnapshotById";
+    private static readonly Type TargetSnapshotEndpointsType = typeof(TargetSnapshotEndpoints);
+
+    public static void MapTargetSnapshotEndpoints(this IEndpointRouteBuilder builder)
+    {
+        var group = builder.MapGroup("api/public/snapshots");
+
+        group.MapGet("{id}", GetById).WithName(GetByIdEndpointName);
+        group.MapGet("target/{id}", GetByTargetId);
+
+        group.MapDelete("{id}", Remove);
+        group.MapDelete("target/{id}", RemoveByTargetId);
+    }
+
+    public static async Task<Results<Ok<TargetSnapshotDto>, NotFound<string>>> GetById(
+        Guid id,
+        ILoggerFactory loggerFactory,
+        ITargetSnapshotService service)
+    {
+        try
+        {
+            var targetSnapshot = await service.GetAsync(id);
+            return TypedResults.Ok(targetSnapshot);
+        }
+        catch (TargetSnapshotNotFoundException)
+        {
+            var logger = loggerFactory.CreateLogger(TargetSnapshotEndpointsType);
+            logger.LogError("Target snapshot not found: {Id}", id);
+
+            return TypedResults.NotFound($"Target snapshot not found: {id}");
+        }
+    }
+
+    public static async Task<Results<Ok<TargetSnapshotPaginatedResponse>, BadRequest<string>>> GetByTargetId(
+        Guid id,
+        int? page,
+        int? count,
+        ILoggerFactory loggerFactory,
+        IOptions<ChangeMonitorOptions> options,
+        ITargetSnapshotService service)
+    {
+        try
+        {
+            var response = await service.GetByTargetIdAsync(id, page,
+                count ?? options.Value.DefaultTargetSnapshotPageSize);
+            
+            return TypedResults.Ok(response);
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            var logger = loggerFactory.CreateLogger(TargetSnapshotEndpointsType);
+            logger.LogError("Invalid query parameter value: {ErrorMessage}.", ex.Message);
+
+            return TypedResults.BadRequest($"Invalid query parameter value: {ex.Message}.");
+        }
+    }
+
+    public static async Task<Results<NoContent, NotFound<string>>> Remove(
+        Guid id,
+        ILoggerFactory loggerFactory,
+        ITargetSnapshotService service)
+    {
+        try
+        {
+            await service.RemoveAsync(id);
+            return TypedResults.NoContent();
+        }
+        catch (TargetSnapshotNotFoundException)
+        {
+            var logger = loggerFactory.CreateLogger(TargetSnapshotEndpointsType);
+            logger.LogError("Target snapshot not found: {Id}", id);
+
+            return TypedResults.NotFound($"Target snapshot not found: {id}");
+        }
+    }
+
+    public static async Task<Results<NoContent, NotFound<string>>> RemoveByTargetId(
+        Guid id,
+        ILoggerFactory loggerFactory,
+        ITargetSnapshotService service)
+    {
+        try
+        {
+            await service.RemoveByTargetIdAsync(id);
+            return TypedResults.NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            var logger = loggerFactory.CreateLogger(TargetSnapshotEndpointsType);
+            logger.LogError("Failed to remove target snapshots: {Message}.", ex.Message);
+
+            return TypedResults.NotFound(ex.Message);
+        }
+    }
+}

@@ -2,20 +2,24 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Models.Domain;
+using WebPageChangeMonitor.Models.Dtos;
 using WebPageChangeMonitor.Models.Options;
 using WebPageChangeMonitor.Models.Requests;
+using WebPageChangeMonitor.Models.Responses;
 
 namespace WebPageChangeMonitor.Api.Endpoints;
 
 public static class ResourceEndpoints
 {
-    private const string GetByIdEndpointName = "GetById";
+    private const string GetByIdEndpointName = "GetResourceById";
+    private static readonly Type ResourceEndpointsType = typeof(ResourceEndpoints);
 
     public static void MapResourceEndpoints(this IEndpointRouteBuilder builder)
     {
@@ -23,12 +27,13 @@ public static class ResourceEndpoints
 
         group.MapGet(string.Empty, GetAll);
         group.MapGet("{id}", GetById).WithName(GetByIdEndpointName);
+
         group.MapPost(string.Empty, Create);
         group.MapPut(string.Empty, Update);
         group.MapDelete("{id}", Remove);
     }
 
-    public static async Task<IResult> GetAll(
+    public static async Task<Results<Ok<ResourcePaginatedResponse>, BadRequest<string>>> GetAll(
         int? page,
         int? count,
         ILoggerFactory loggerFactory,
@@ -38,18 +43,18 @@ public static class ResourceEndpoints
         try
         {
             var response = await service.GetAsync(page, count ?? options.Value.DefaultResourcePageSize);
-            return Results.Ok(response);
+            return TypedResults.Ok(response);
         }
         catch (ArgumentOutOfRangeException ex)
         {
-            var logger = loggerFactory.CreateLogger(typeof(ResourceEndpoints));
+            var logger = loggerFactory.CreateLogger(ResourceEndpointsType);
             logger.LogError("Invalid query parameter value: {ErrorMessage}.", ex.Message);
 
-            return Results.BadRequest($"Invalid query parameter value: {ex.Message}.");
+            return TypedResults.BadRequest($"Invalid query parameter value: {ex.Message}.");
         }
     }
 
-    public static async Task<IResult> GetById(
+    public static async Task<Results<Ok<ResourceDto>, NotFound<string>>> GetById(
         Guid id,
         ILoggerFactory loggerFactory,
         IResourceService service)
@@ -57,29 +62,29 @@ public static class ResourceEndpoints
         try
         {
             var resource = await service.GetAsync(id);
-            return Results.Ok(resource);
+            return TypedResults.Ok(resource);
         }
         catch (ResourceNotFoundException)
         {
-            var logger = loggerFactory.CreateLogger(typeof(ResourceEndpoints));
+            var logger = loggerFactory.CreateLogger(ResourceEndpointsType);
             logger.LogError("Resource not found: {Id}", id);
 
-            return Results.NotFound($"Resource not found: {id}");
+            return TypedResults.NotFound($"Resource not found: {id}");
         }
     }
 
-    public static async Task<IResult> Create(
+    public static async Task<CreatedAtRoute<ResourceDto>> Create(
         CreateResourceRequest request,
         IResourceService service)
     {
         var resource = await service.CreateAsync(request);
 
-        return Results.CreatedAtRoute(routeName: GetByIdEndpointName,
+        return TypedResults.CreatedAtRoute(routeName: GetByIdEndpointName,
             routeValues: new { id = resource.Id },
             value: resource);
     }
 
-    public static async Task<IResult> Update(
+    public static async Task<Results<CreatedAtRoute<ResourceDto>, NotFound<string>>> Update(
         Resource resource,
         ILoggerFactory loggerFactory,
         IResourceService service)
@@ -88,20 +93,20 @@ public static class ResourceEndpoints
         {
             var updatedResource = await service.UpdateAsync(resource);
 
-            return Results.CreatedAtRoute(routeName: GetByIdEndpointName,
+            return TypedResults.CreatedAtRoute(routeName: GetByIdEndpointName,
                 routeValues: new { id = updatedResource.Id },
                 value: updatedResource);
         }
         catch (ResourceNotFoundException)
         {
-            var logger = loggerFactory.CreateLogger(typeof(ResourceEndpoints));
+            var logger = loggerFactory.CreateLogger(ResourceEndpointsType);
             logger.LogError("Resource not found: {Id}", resource.Id);
 
-            return Results.NotFound($"Resource not found: {resource.Id}");
+            return TypedResults.NotFound($"Resource not found: {resource.Id}");
         }
     }
 
-    public static async Task<IResult> Remove(
+    public static async Task<Results<NoContent, NotFound<string>>> Remove(
         Guid id,
         ILoggerFactory loggerFactory,
         IResourceService service)
@@ -109,14 +114,14 @@ public static class ResourceEndpoints
         try
         {
             await service.RemoveAsync(id);
-            return Results.NoContent();
+            return TypedResults.NoContent();
         }
         catch (ResourceNotFoundException)
         {
-            var logger = loggerFactory.CreateLogger(typeof(ResourceEndpoints));
+            var logger = loggerFactory.CreateLogger(ResourceEndpointsType);
             logger.LogError("Resource not found: {Id}", id);
 
-            return Results.NotFound($"Resource not found: {id}");
+            return TypedResults.NotFound($"Resource not found: {id}");
         }
     }
 }
