@@ -1,80 +1,25 @@
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Quartz;
-using Quartz.Spi;
 using WebPageChangeMonitor.Api.Infrastructure;
-using WebPageChangeMonitor.Api.Infrastructure.Schemas;
-using WebPageChangeMonitor.Api.Services;
-using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Data;
-using WebPageChangeMonitor.Models.Options;
-using WebPageChangeMonitor.Services.Parsers;
-using WebPageChangeMonitor.Services.Detection.Strategies;
 using WebPageChangeMonitor.Api.Endpoints;
-using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<JsonOptions>(options =>
-{ 
-    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-});
+builder.Services.ConfigureOptions(builder.Configuration);
+builder.Services.ConfigureEndpointServices();
+builder.Services.ConfigureHostedServices();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options => 
-{
-    options.SchemaFilter<EnumSchemaFilter>();
-});
-
-builder.Services.Configure<ChangeMonitorOptions>(
-    builder.Configuration.GetSection(ChangeMonitorOptions.SectionName));
-
-builder.Services.AddHostedService<MonitorJobsRegistrationService>();
-
-builder.Services.Configure<HostOptions>(options => 
-{
-    options.ServicesStartConcurrently = true;
-    options.ServicesStopConcurrently = true;
-});
-
-builder.Services.AddQuartz();
-builder.Services.AddQuartzHostedService(options => 
-{
-    options.WaitForJobsToComplete = false;
-});
-
-// job management
-builder.Services.AddTransient<MonitorChangeJob>();   
-builder.Services.AddSingleton<IJobFactory, MonitorJobFactory>();
-builder.Services.AddTransient<IMonitorJobService, MonitorJobService>();
-
-// change detection
-builder.Services.AddTransient<IChangeDetector, ChangeDetector>();
-builder.Services.AddTransient<IChangeDetectionStrategyFactory, ChangeDetectionStrategyFactory>();
-builder.Services.AddTransient<IChangeDetectionStrategy, ValueChangeDetectionStrategy>();
-builder.Services.AddTransient<IChangeDetectionStrategy, SnapshotChangeDetectionStrategy>();
-
-// data access
 var connectionString = builder.Configuration.GetConnectionString("ChangeMonitor");
 
-builder.Services.AddDbContextFactory<MonitorDbContext>(options => 
-{
-    options.UseLazyLoadingProxies();
-    options.UseNpgsql(connectionString);
-    options.UseSnakeCaseNamingConvention();
-});
-
-// worker services
-builder.Services.AddTransient<IResourceService, ResourceService>();
-builder.Services.AddTransient<ITargetService, TargetService>();
-builder.Services.AddTransient<ITargetSnapshotService, TargetSnapshotService>();
-
-// other services
-builder.Services.AddTransient<IHtmlParser, HtmlParser>();
+builder.Services.AddJobManagementServices();
+builder.Services.AddChangeDetectionServices();
+builder.Services.AddDataAccessServices(connectionString);
+builder.Services.AddEndpointServices();
+builder.Services.AddOtherServices();
 
 builder.Services.AddHttpClient();
 
