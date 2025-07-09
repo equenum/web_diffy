@@ -7,9 +7,9 @@
 
 # Todo:
 
-- Complete tests for ValueChangeDetectionStrategy.
-- Complete tests for SnapshotChangeDetectionStrategy.
-- Add error codes to all error logs like in ChangeDetector.cs
-- Add the theme manager? https://github.com/MudBlazor/ThemeManager
-- Add input validation on UI
-- Refactor to minimal API
+- Add error codes to all error logs like in ChangeDetector.cs.
+- Add the theme manager (https://github.com/MudBlazor/ThemeManager)?
+- Add input validation on UI.
+- Restart jobs if target updates? Automagically or manually via a button?
+- Add a button to manually pause jobs?
+- Add a settings to auto expand all resource target panels on loading? Same for the dashboard page.
