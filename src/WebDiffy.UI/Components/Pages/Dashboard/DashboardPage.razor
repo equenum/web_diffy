@@ -10,10 +10,106 @@
         </MudPaper>
     </MudItem>
     <MudItem xs="12">
+        <MudStack Row="true" Spacing="6" Justify="Justify.SpaceBetween">
+            <MudPaper Height="100px" Width="210px">
+                <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
+                    <MudText Typo="Typo.button">Total</MudText>
+                    <MudText Typo="Typo.button">10</MudText>
+                </MudStack>
+            </MudPaper>
+            <MudPaper Height="100px" Width="210px">
+                <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
+                    <MudText Typo="Typo.button">Paused</MudText>
+                    <MudText Typo="Typo.button">1</MudText>
+                </MudStack>
+            </MudPaper>
+            <MudPaper Height="100px" Width="210px">
+                <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
+                    <MudText Typo="Typo.button">Active</MudText>
+                    <MudText Typo="Typo.button">9</MudText>
+                </MudStack>
+            </MudPaper>
+            <MudPaper Height="100px" Width="210px">
+                <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
+                    <MudText Typo="Typo.button">Change Detected</MudText>
+                    <MudText Typo="Typo.button">2</MudText>
+                </MudStack>
+            </MudPaper>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12">
         <MudPaper Class="py-2 px-2">
-            <MudStack>
-                
-            </MudStack>
+            @if(Resources.Any())
+            {
+                <MudExpansionPanels MultiExpansion="true">
+                    @foreach(var resource in Resources)
+                    {
+                        <MudExpansionPanel Text="@resource.DisplayName">
+                            @if (Targets.Where(target => target.ResourceId == resource.Id).Any())
+                            {
+                                <MudStack>
+                                    @foreach(var target in Targets.Where(target => target.ResourceId == resource.Id))
+                                    {
+                                        <MudStack Row="true" Class="d-flex align-items-center">
+                                            <MudText Class="pt-2 pb-1" style="width: 170px;">@target.DisplayName</MudText>
+                                            <MudStack Row="true" style="width: 650px;" Class="pt-2 pb-1">
+                                                @foreach(var snapshot in Snapshots)
+                                                {
+                                                    <MudTooltip Text="@GetSnapshotTooltipText(snapshot)">
+                                                        <MudPaper Height="20px" Width="20px" Outlined="true" Class="@GetSnapshotStyle(snapshot)"></MudPaper>
+                                                    </MudTooltip>
+                                                }
+                                            </MudStack>
+                                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.List"/>
+                                        </MudStack>
+                                        <MudDivider/>
+                                    }
+                                </MudStack>
+                            }
+                            else
+                            {
+                                <MudText>No targets available.</MudText>
+                            }
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+            }
+            else
+            {
+                <MudText>No resources available.</MudText>
+            }
         </MudPaper>
     </MudItem>
 </MudGrid>
+
+@code {
+    private static string GetSnapshotStyle(TargetSnapshotDto snapshot)
+    {
+        if (snapshot is null)
+        {
+            return "border-dashed";
+        }
+
+        if (snapshot is not null && !snapshot.IsChangeDetected)
+        {
+            return "border-solid";
+        }
+
+        return "border-solid mud-theme-primary";
+    }
+    
+    private static string GetSnapshotTooltipText(TargetSnapshotDto snapshot)
+    {
+        if (snapshot is null)
+        {
+            return "N/A";
+        }
+
+        if (snapshot is not null && !snapshot.IsChangeDetected)
+        {
+            return "No changes";
+        }
+
+        return $"Changes detected - {snapshot.CreatedAt}";
+    }
+}
