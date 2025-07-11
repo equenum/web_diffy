@@ -13,3 +13,4 @@
 - Restart jobs if target updates? Automagically or manually via a button?
 - Add a button to manually pause jobs?
 - Add a settings to auto expand all resource target panels on loading? Same for the dashboard page.
+- Make sure validation works after migrating to minimal api. Probably need to wire up validation services.
