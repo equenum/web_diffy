@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPageChangeMonitor.Api.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebDiffy.UI", "src\WebDiffy.UI\WebDiffy.UI.csproj", "{7BCDAE24-995E-4F8A-82C9-A7341171DD18}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPageChangeMonitor.UI.Dummy", "tests\WebPageChangeMonitor.UI.Dummy\WebPageChangeMonitor.UI.Dummy.csproj", "{BF486C18-2C12-45CA-A116-55C2C5C8BD85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,18 @@ Global
 		{7BCDAE24-995E-4F8A-82C9-A7341171DD18}.Release|x64.Build.0 = Release|Any CPU
 		{7BCDAE24-995E-4F8A-82C9-A7341171DD18}.Release|x86.ActiveCfg = Release|Any CPU
 		{7BCDAE24-995E-4F8A-82C9-A7341171DD18}.Release|x86.Build.0 = Release|Any CPU
+		{BF486C18-2C12-45CA-A116-55C2C5C8BD85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF486C18-2C12-45CA-A116-55C2C5C8BD85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF486C18-2C12-45CA-A116-55C2C5C8BD85}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BF486C18-2C12-45CA-A116-55C2C5C8BD85}.Debug|x64.Build.0 = Debug|Any CPU
+		{BF486C18-2C12-45CA-A116-55C2C5C8BD85}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BF486C18-2C12-45CA-A116-55C2C5C8BD85}.Debug|x86.Build.0 = Debug|Any CPU
+		{BF486C18-2C12-45CA-A116-55C2C5C8BD85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF486C18-2C12-45CA-A116-55C2C5C8BD85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF486C18-2C12-45CA-A116-55C2C5C8BD85}.Release|x64.ActiveCfg = Release|Any CPU
+		{BF486C18-2C12-45CA-A116-55C2C5C8BD85}.Release|x64.Build.0 = Release|Any CPU
+		{BF486C18-2C12-45CA-A116-55C2C5C8BD85}.Release|x86.ActiveCfg = Release|Any CPU
+		{BF486C18-2C12-45CA-A116-55C2C5C8BD85}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
