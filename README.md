@@ -18,3 +18,4 @@
 - Add sorting to all the endpoints.
 - Enable attribute based endpoint validation when dotnet 10 comes out.
 - Add sorting criteria with sortBy.
+- Persist UI user settings in the database?
