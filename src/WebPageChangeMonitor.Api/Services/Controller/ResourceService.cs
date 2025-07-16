@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using UUIDNext;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
+using WebPageChangeMonitor.Common.Helpers;
 using WebPageChangeMonitor.Data;
+using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Dtos;
 using WebPageChangeMonitor.Models.Entities;
@@ -27,8 +29,21 @@ public class ResourceService : IResourceService
         _jobService = jobService;
     }
 
-    public async Task<ResourcePaginatedResponse> GetAsync(int? page, int count)
+    public async Task<ResourcePaginatedResponse> GetAsync(SortDirection? sortDirection, string sortBy, int? page, int count)
     {
+        if (sortDirection.HasValue)
+        {
+            if (string.IsNullOrWhiteSpace(sortBy))
+            {
+                throw new ArgumentException("Value cannot be null", nameof(sortBy));
+            }
+
+            if (typeof(ResourceEntity).GetProperty(sortBy) is null)
+            {
+                throw new ArgumentException("Unexpected sort property value", nameof(sortBy));
+            }
+        }
+
         if (page.HasValue && page.Value < 1)
         {
             throw new ArgumentOutOfRangeException(nameof(page), $"Expected range: {nameof(page)} > 0.");
@@ -40,11 +55,32 @@ public class ResourceService : IResourceService
         }
 
         var availableCount = await _context.Resources.CountAsync();
+        if (availableCount == 0)
+        {
+            return new ResourcePaginatedResponse()
+            {
+                Resources = [],
+                AvailableCount = availableCount
+            };
+        }
 
-        // todo only fetch values if available count is more than 0
-        var resourceQuery = page.HasValue
-            ? _context.Resources.Skip((page.Value - 1) * count).Take(count)
-            : _context.Resources;
+        IQueryable<ResourceEntity> resourceQuery = _context.Resources;
+
+        if (sortDirection.HasValue)
+        {
+            var propertyLambda = ExpressionHelper.GetPropertyLambda<ResourceEntity>(sortBy);
+
+            resourceQuery = sortDirection switch
+            {
+                SortDirection.Asc => resourceQuery.OrderBy(propertyLambda),
+                SortDirection.Desc => resourceQuery.OrderByDescending(propertyLambda),
+                _ => throw new ArgumentOutOfRangeException(nameof(sortDirection), "Unexpected sort direction value."),
+            };
+        }
+
+        resourceQuery = page.HasValue
+            ? resourceQuery.Skip((page.Value - 1) * count).Take(count)
+            : resourceQuery.Take(count);
 
         var resources = await resourceQuery.AsNoTracking().ToListAsync();
 

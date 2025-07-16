@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebPageChangeMonitor.Api.Exceptions;
+using WebPageChangeMonitor.Api.Infrastructure.Filters;
 using WebPageChangeMonitor.Api.Services.Controller;
+using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Dtos;
 using WebPageChangeMonitor.Models.Options;
@@ -29,8 +31,9 @@ public static class TargetEndpoints
         group.MapGet("{id}", GetById).WithName(GetByIdEndpointName);
         group.MapGet("resource/{id}", GetByResourceIdAsync);
 
-        group.MapPost(string.Empty, Create);
-        group.MapPut(string.Empty, Update);
+        // remove the filters after enabling attribute based validation when dotnet 10 comes out
+        group.MapPost(string.Empty, Create).AddEndpointFilter<CreateTargetValidationFilter>();
+        group.MapPut(string.Empty, Update).AddEndpointFilter<UpdateTargetValidationFilter>();
 
         group.MapDelete("{id}", Remove);
         group.MapDelete("resource/{id}", RemoveByResourceId);
@@ -39,16 +42,18 @@ public static class TargetEndpoints
     public static async Task<Results<Ok<TargetPaginatedResponse>, BadRequest<string>>> GetAll(
         int? page,
         int? count,
+        SortDirection? sortDirection,
+        string sortBy,
         ILoggerFactory loggerFactory,
         IOptions<ChangeMonitorOptions> options,
         ITargetService service)
     {
         try
         {
-            var response = await service.GetAsync(page, count ?? options.Value.DefaultTargetPageSize);
+            var response = await service.GetAsync(sortDirection, sortBy, page, count ?? options.Value.DefaultTargetPageSize);
             return TypedResults.Ok(response);
         }
-        catch (ArgumentOutOfRangeException ex)
+        catch (Exception ex) when (ex is ArgumentException || ex is ArgumentOutOfRangeException)
         {
             var logger = loggerFactory.CreateLogger(TargetEndpointsType);
             logger.LogError("Invalid query parameter value: {ErrorMessage}.", ex.Message);
@@ -80,18 +85,18 @@ public static class TargetEndpoints
         Guid id,
         int? page,
         int? count,
+        SortDirection? sortDirection,
+        string sortBy,
         ILoggerFactory loggerFactory,
         IOptions<ChangeMonitorOptions> options,
         ITargetService service)
     {
         try
         {
-            var response = await service.GetByResourceIdAsync(id, page,
-                count ?? options.Value.DefaultTargetPageSize);
-            
+            var response = await service.GetByResourceIdAsync(id, sortDirection, sortBy, page, count ?? options.Value.DefaultTargetPageSize);
             return TypedResults.Ok(response);
         }
-        catch (ArgumentOutOfRangeException ex)
+        catch (Exception ex) when (ex is ArgumentException || ex is ArgumentOutOfRangeException)
         {
             var logger = loggerFactory.CreateLogger(TargetEndpointsType);
             logger.LogError("Invalid query parameter value: {ErrorMessage}.", ex.Message);

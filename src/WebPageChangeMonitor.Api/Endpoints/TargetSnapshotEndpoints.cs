@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Services.Controller;
+using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Dtos;
 using WebPageChangeMonitor.Models.Options;
 using WebPageChangeMonitor.Models.Responses;
@@ -53,18 +54,18 @@ public static class TargetSnapshotEndpoints
         Guid id,
         int? page,
         int? count,
+        SortDirection? sortDirection,
+        string sortBy,
         ILoggerFactory loggerFactory,
         IOptions<ChangeMonitorOptions> options,
         ITargetSnapshotService service)
     {
         try
         {
-            var response = await service.GetByTargetIdAsync(id, page,
-                count ?? options.Value.DefaultTargetSnapshotPageSize);
-            
+            var response = await service.GetByTargetIdAsync(id, sortDirection, sortBy, page, count ?? options.Value.DefaultTargetSnapshotPageSize);
             return TypedResults.Ok(response);
         }
-        catch (ArgumentOutOfRangeException ex)
+        catch (Exception ex) when (ex is ArgumentException || ex is ArgumentOutOfRangeException)
         {
             var logger = loggerFactory.CreateLogger(TargetSnapshotEndpointsType);
             logger.LogError("Invalid query parameter value: {ErrorMessage}.", ex.Message);

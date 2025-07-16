@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using UUIDNext;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
+using WebPageChangeMonitor.Common.Helpers;
 using WebPageChangeMonitor.Data;
+using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Dtos;
 using WebPageChangeMonitor.Models.Entities;
@@ -27,8 +29,22 @@ public class TargetService : ITargetService
         _jobService = jobService;
     }
 
-    public async Task<TargetPaginatedResponse> GetAsync(int? page, int count)
+    public async Task<TargetPaginatedResponse> GetAsync(SortDirection? sortDirection, string sortBy,
+        int? page, int count)
     {
+        if (sortDirection.HasValue)
+        {
+            if (string.IsNullOrWhiteSpace(sortBy))
+            {
+                throw new ArgumentException("Value cannot be null", nameof(sortBy));
+            }
+
+            if (typeof(TargetEntity).GetProperty(sortBy) is null)
+            {
+                throw new ArgumentException("Unexpected sort property value", nameof(sortBy));
+            }
+        }
+
         if (page.HasValue && page.Value < 1)
         {
             throw new ArgumentOutOfRangeException(nameof(page), $"Expected range: {nameof(page)} > 0.");
@@ -40,11 +56,32 @@ public class TargetService : ITargetService
         }
 
         var availableCount = await _context.Targets.CountAsync();
+        if (availableCount == 0)
+        {
+            return new TargetPaginatedResponse()
+            {
+                Targets = [],
+                AvailableCount = availableCount
+            };
+        }
 
-        // todo only fetch values if available count is more than 0
-        var targetQuery = page.HasValue
-            ? _context.Targets.Skip((page.Value - 1) * count).Take(count)
-            : _context.Targets;
+        IQueryable<TargetEntity> targetQuery = _context.Targets;
+
+        if (sortDirection.HasValue)
+        {
+            var propertyLambda = ExpressionHelper.GetPropertyLambda<TargetEntity>(sortBy);
+
+            targetQuery = sortDirection switch
+            {
+                SortDirection.Asc => targetQuery.OrderBy(propertyLambda),
+                SortDirection.Desc => targetQuery.OrderByDescending(propertyLambda),
+                _ => throw new ArgumentOutOfRangeException(nameof(sortDirection), "Unexpected sort direction value."),
+            };
+        }
+
+        targetQuery = page.HasValue
+            ? targetQuery.Skip((page.Value - 1) * count).Take(count)
+            : targetQuery.Take(count);
 
         var targets = await targetQuery.AsNoTracking().ToListAsync();
 
@@ -66,8 +103,22 @@ public class TargetService : ITargetService
         return targetTarget.ToTargetDto();
     }
 
-    public async Task<TargetPaginatedResponse> GetByResourceIdAsync(Guid id, int? page, int count)
+    public async Task<TargetPaginatedResponse> GetByResourceIdAsync(Guid id, SortDirection? sortDirection,
+        string sortBy, int? page, int count)
     {
+        if (sortDirection.HasValue)
+        {
+            if (string.IsNullOrWhiteSpace(sortBy))
+            {
+                throw new ArgumentException("Value cannot be null", nameof(sortBy));
+            }
+
+            if (typeof(TargetEntity).GetProperty(sortBy) is null)
+            {
+                throw new ArgumentException("Unexpected sort property value", nameof(sortBy));
+            }
+        }
+
         if (page.HasValue && page.Value < 1)
         {
             throw new ArgumentOutOfRangeException(nameof(page), $"Expected range: {nameof(page)} > 0.");
@@ -82,12 +133,32 @@ public class TargetService : ITargetService
             .Where(target => target.ResourceId == id)
             .CountAsync();
 
-        // todo only fetch values if available count is more than 0
-        var targetQuery = page.HasValue
-            ? _context.Targets.Where(target => target.ResourceId == id)
-                .Skip((page.Value - 1) * count)
-                .Take(count)
-            : _context.Targets.Where(target => target.ResourceId == id);
+        if (availableCount == 0)
+        {
+            return new TargetPaginatedResponse()
+            {
+                Targets = [],
+                AvailableCount = availableCount
+            };
+        }
+
+        IQueryable<TargetEntity> targetQuery = _context.Targets.Where(target => target.ResourceId == id);
+
+        if (sortDirection.HasValue)
+        {
+            var propertyLambda = ExpressionHelper.GetPropertyLambda<TargetEntity>(sortBy);
+
+            targetQuery = sortDirection switch
+            {
+                SortDirection.Asc => targetQuery.OrderBy(propertyLambda),
+                SortDirection.Desc => targetQuery.OrderByDescending(propertyLambda),
+                _ => throw new ArgumentOutOfRangeException(nameof(sortDirection), "Unexpected sort direction value."),
+            };
+        }
+
+        targetQuery = page.HasValue
+            ? targetQuery.Skip((page.Value - 1) * count).Take(count)
+            : targetQuery.Take(count);
 
         var targets = await targetQuery.AsNoTracking().ToListAsync();
 

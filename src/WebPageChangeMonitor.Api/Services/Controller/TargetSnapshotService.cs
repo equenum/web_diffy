@@ -4,8 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
+using WebPageChangeMonitor.Common.Helpers;
 using WebPageChangeMonitor.Data;
+using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Dtos;
+using WebPageChangeMonitor.Models.Entities;
 using WebPageChangeMonitor.Models.Responses;
 
 namespace WebPageChangeMonitor.Api.Services.Controller;
@@ -30,8 +33,22 @@ public class TargetSnapshotService : ITargetSnapshotService
         return targetSnapshot.ToTargetSnapshotDto();
     }
 
-    public async Task<TargetSnapshotPaginatedResponse> GetByTargetIdAsync(Guid id, int? page, int count)
+    public async Task<TargetSnapshotPaginatedResponse> GetByTargetIdAsync(Guid id, SortDirection? sortDirection,
+        string sortBy, int? page, int count)
     {
+        if (sortDirection.HasValue)
+        {
+            if (string.IsNullOrWhiteSpace(sortBy))
+            {
+                throw new ArgumentException("Value cannot be null", nameof(sortBy));
+            }
+
+            if (typeof(TargetSnapshotEntity).GetProperty(sortBy) is null)
+            {
+                throw new ArgumentException("Unexpected sort property value", nameof(sortBy));
+            }
+        }
+
         if (page.HasValue && page.Value < 1)
         {
             throw new ArgumentOutOfRangeException(nameof(page), $"Expected range: {nameof(page)} > 0.");
@@ -46,12 +63,32 @@ public class TargetSnapshotService : ITargetSnapshotService
             .Where(snapshot => snapshot.TargetId == id)
             .CountAsync();
 
-        // todo only fetch values if available count is more than 0
-        var snapshotQuery = page.HasValue
-            ? _context.TargetSnapshots.Where(snapshot => snapshot.TargetId == id)
-                .Skip((page.Value - 1) * count)
-                .Take(count)
-            : _context.TargetSnapshots.Where(snapshot => snapshot.TargetId == id);
+        if (availableCount == 0)
+        {
+            return new TargetSnapshotPaginatedResponse()
+            {
+                Snapshots = [],
+                AvailableCount = availableCount
+            };
+        }
+
+        IQueryable<TargetSnapshotEntity> snapshotQuery = _context.TargetSnapshots.Where(snapshot => snapshot.TargetId == id);
+
+        if (sortDirection.HasValue)
+        {
+            var propertyLambda = ExpressionHelper.GetPropertyLambda<TargetSnapshotEntity>(sortBy);
+
+            snapshotQuery = sortDirection switch
+            {
+                SortDirection.Asc => snapshotQuery.OrderBy(propertyLambda),
+                SortDirection.Desc => snapshotQuery.OrderByDescending(propertyLambda),
+                _ => throw new ArgumentOutOfRangeException(nameof(sortDirection), "Unexpected sort direction value."),
+            };
+        }
+
+        snapshotQuery = page.HasValue
+            ? snapshotQuery.Skip((page.Value - 1) * count).Take(count)
+            : snapshotQuery.Take(count);
 
         var snapshots = await snapshotQuery.AsNoTracking().ToListAsync();
 
