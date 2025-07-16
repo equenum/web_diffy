@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Dtos;
 
 namespace WebDiffy.UI.Components.Pages.Dashboard;
@@ -67,11 +68,11 @@ public partial class DashboardPage
             null,
             null,
             null,
-            null,
             new TargetSnapshotDto()
             {
                 Id = Guid.NewGuid(),
                 TargetId = targetId,
+                Outcome = Outcome.Success,
                 IsChangeDetected = false,
                 CreatedAt = DateTime.Now
             },
@@ -79,6 +80,7 @@ public partial class DashboardPage
             {
                 Id = Guid.NewGuid(),
                 TargetId = targetId,
+                Outcome = Outcome.Success,
                 IsChangeDetected = true,
                 CreatedAt = DateTime.Now
             },
@@ -86,6 +88,15 @@ public partial class DashboardPage
             {
                 Id = Guid.NewGuid(),
                 TargetId = targetId,
+                Outcome = Outcome.Success,
+                IsChangeDetected = false,
+                CreatedAt = DateTime.Now
+            },
+            new TargetSnapshotDto()
+            {
+                Id = Guid.NewGuid(),
+                TargetId = targetId,
+                Outcome = Outcome.Failure,
                 IsChangeDetected = false,
                 CreatedAt = DateTime.Now
             }

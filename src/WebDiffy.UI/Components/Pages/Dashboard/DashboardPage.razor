@@ -55,7 +55,7 @@
                                             <MudStack Row="true" style="width: 650px;" Class="pt-2 pb-1">
                                                 @foreach(var snapshot in Snapshots)
                                                 {
-                                                    <MudTooltip Text="@GetSnapshotTooltipText(snapshot)">
+                                                    <MudTooltip Text="@GetSnapshotTooltipText(snapshot)" Placement="Placement.Top" Arrow="true">
                                                         <MudPaper Height="20px" Width="20px" Outlined="true" Class="@GetSnapshotStyle(snapshot)"></MudPaper>
                                                     </MudTooltip>
                                                 }
@@ -90,7 +90,12 @@
             return "border-dashed";
         }
 
-        if (snapshot is not null && !snapshot.IsChangeDetected)
+        if (snapshot.Outcome is Outcome.Failure)
+        {
+            return "border-solid mud-theme-error";
+        }
+
+        if (snapshot.Outcome is Outcome.Success && !snapshot.IsChangeDetected)
         {
             return "border-solid";
         }
@@ -105,9 +110,14 @@
             return "N/A";
         }
 
-        if (snapshot is not null && !snapshot.IsChangeDetected)
+        if (snapshot.Outcome is Outcome.Failure)
         {
-            return "No changes";
+            return $"Error - {snapshot.CreatedAt}";
+        }
+
+        if (snapshot.Outcome is Outcome.Success && !snapshot.IsChangeDetected)
+        {
+            return $"No changes - {snapshot.CreatedAt}";
         }
 
         return $"Changes detected - {snapshot.CreatedAt}";
