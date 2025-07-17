@@ -62,6 +62,8 @@ public class ValueChangeDetectionStrategy : IChangeDetectionStrategy
                     Value = newValue,
                     IsExpectedValue = isExpectedValue,
                     IsChangeDetected = false,
+                    Outcome = Outcome.Success,
+                    Message = "Initial value snapshot created",
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -89,6 +91,8 @@ public class ValueChangeDetectionStrategy : IChangeDetectionStrategy
                 Value = isChangeDetected ? newValue : latestPreviousSnapshot.Value,
                 IsExpectedValue = isExpectedValue,
                 IsChangeDetected = isChangeDetected,
+                Outcome = Outcome.Success,
+                Message = "Consecutive value snapshot created",
                 CreatedAt = DateTime.UtcNow
             };
 

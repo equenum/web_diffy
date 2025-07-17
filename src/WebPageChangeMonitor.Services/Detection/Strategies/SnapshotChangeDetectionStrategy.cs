@@ -54,6 +54,8 @@ public class SnapshotChangeDetectionStrategy : IChangeDetectionStrategy
                     TargetId = context.Id,
                     Value = newValue,
                     IsChangeDetected = false,
+                    Outcome = Outcome.Success,
+                    Message = "Initial snapshot created",
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -71,6 +73,8 @@ public class SnapshotChangeDetectionStrategy : IChangeDetectionStrategy
                 TargetId = context.Id,
                 Value = isChangeDetected ? newValue : latestPreviousSnapshot.Value,
                 IsChangeDetected = isChangeDetected,
+                Outcome = Outcome.Success,
+                Message = "Consecutive snapshot created",
                 CreatedAt = DateTime.UtcNow
             };
 
