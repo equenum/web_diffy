@@ -7,6 +7,8 @@ create table if not exists monitor.target_snapshots (
     value text not null,
     is_expected_value boolean default false not null,
     is_change_detected boolean default false not null,
+    outcome text not null,
+    message text null,
     created_at timestamp default statement_timestamp() not null,
     updated_at timestamp
 );
