@@ -44,7 +44,7 @@
                 <MudExpansionPanels MultiExpansion="true">
                     @foreach(var resource in Resources)
                     {
-                        <MudExpansionPanel Text="@resource.DisplayName">
+                        <MudExpansionPanel Text="@resource.DisplayName" Expanded="@UserAppSettings.AreCollapsePanelsExpanded">
                             @if (Targets.Where(target => target.ResourceId == resource.Id).Any())
                             {
                                 <MudStack>

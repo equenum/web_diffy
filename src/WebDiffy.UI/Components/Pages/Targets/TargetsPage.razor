@@ -14,44 +14,44 @@
             @if(Resources.Any())
             {
                 <MudExpansionPanels MultiExpansion="true">
-                @foreach(var resource in Resources)
-                {
-                    <MudExpansionPanel Text="@resource.DisplayName">
-                        <MudStack>
-                            <div @onmouseover="@(() => HandlePanelMouseOver(resource.Id))">
-                                <MudDataGrid T="TargetDto" Items="@Targets.Where(target => target.ResourceId == resource.Id)" SortMode="SortMode.Multiple">
-                                    <Columns>
-                                        @if(UserAppSettings.AreItemIdColumnsEnabled)
-                                        {
-                                            <TemplateColumn Title="Id">
-                                                <CellTemplate>@(GuidHelper.ConvertToString(context.Item.Id))</CellTemplate>
+                    @foreach(var resource in Resources)
+                    {
+                        <MudExpansionPanel Text="@resource.DisplayName" Expanded="@UserAppSettings.AreCollapsePanelsExpanded">
+                            <MudStack>
+                                <div @onmouseover="@(() => HandlePanelMouseOver(resource.Id))">
+                                    <MudDataGrid T="TargetDto" Items="@Targets.Where(target => target.ResourceId == resource.Id)" SortMode="SortMode.Multiple">
+                                        <Columns>
+                                            @if(UserAppSettings.AreItemIdColumnsEnabled)
+                                            {
+                                                <TemplateColumn Title="Id">
+                                                    <CellTemplate>@(GuidHelper.ConvertToString(context.Item.Id))</CellTemplate>
+                                                </TemplateColumn>
+                                            }
+                                            <PropertyColumn Property="x => x.DisplayName" Title="Display Name" />
+                                            <PropertyColumn Property="x => x.Description" Title="Description" />
+                                            <TemplateColumn CellClass="d-flex justify-end">
+                                                <CellTemplate>
+                                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => UpdateTargetAsync(context.Item))"/>
+                                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => RemoveTargetAsync(context.Item.Id))"/>
+                                                </CellTemplate>
                                             </TemplateColumn>
-                                        }
-                                        <PropertyColumn Property="x => x.DisplayName" Title="Display Name" />
-                                        <PropertyColumn Property="x => x.Description" Title="Description" />
-                                        <TemplateColumn CellClass="d-flex justify-end">
-                                            <CellTemplate>
-                                                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => UpdateTargetAsync(context.Item))"/>
-                                                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => RemoveTargetAsync(context.Item.Id))"/>
-                                            </CellTemplate>
-                                        </TemplateColumn>
-                                    </Columns>
-                                    <PagerContent>
-                                        <MudDataGridPager T="TargetDto" PageSizeOptions="UserAppSettings.GridPageSizeOptions" />
-                                    </PagerContent>
-                                    <NoRecordsContent>
-                                        <MudText>No records available.</MudText>
-                                    </NoRecordsContent>
-                                </MudDataGrid>
-                            </div>
-                            <div class="d-flex flex-row-reverse">
-                                <MudButton OnClick="AddTargetAsync" Variant="Variant.Filled" Color="Color.Primary">
-                                    <MudText>Add</MudText>
-                                </MudButton>
-                            </div>
-                        </MudStack>
-                    </MudExpansionPanel>
-                }
+                                        </Columns>
+                                        <PagerContent>
+                                            <MudDataGridPager T="TargetDto" PageSizeOptions="UserAppSettings.GridPageSizeOptions" />
+                                        </PagerContent>
+                                        <NoRecordsContent>
+                                            <MudText>No records available.</MudText>
+                                        </NoRecordsContent>
+                                    </MudDataGrid>
+                                </div>
+                                <div class="d-flex flex-row-reverse">
+                                    <MudButton OnClick="AddTargetAsync" Variant="Variant.Filled" Color="Color.Primary">
+                                        <MudText>Add</MudText>
+                                    </MudButton>
+                                </div>
+                            </MudStack>
+                        </MudExpansionPanel>
+                    }
                 </MudExpansionPanels>
             }
             else
