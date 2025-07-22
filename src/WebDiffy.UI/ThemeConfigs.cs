@@ -4,39 +4,34 @@ namespace WebDiffy.UI;
 
 public static class ThemeConfigs
 {
-    public const bool DrawerOpen = true;
     public const bool IsDarkMode = true;
 
-    public static readonly MudTheme Theme = new()
+    public static MudTheme Theme
     {
-        PaletteDark = new()
+        get
         {
-            Primary = "#7e6fff",
-            Surface = "#1e1e2d",
-            Background = "#1a1a27",
-            BackgroundGray = "#151521",
-            AppbarText = "#92929f",
-            AppbarBackground = "rgba(26,26,39,0.8)",
-            DrawerBackground = "#1a1a27",
-            ActionDefault = "#74718e",
-            ActionDisabled = "#9999994d",
-            ActionDisabledBackground = "#605f6d4d",
-            TextPrimary = "#b2b0bf",
-            TextSecondary = "#92929f",
-            TextDisabled = "#ffffff33",
-            DrawerIcon = "#92929f",
-            DrawerText = "#92929f",
-            GrayLight = "#2a2833",
-            GrayLighter = "#1e1e2d",
-            Info = "#4a86ff",
-            Success = "#3dcb6c",
-            Warning = "#ffb545",
-            Error = "#ff3f5f",
-            LinesDefault = "#33323e",
-            TableLines = "#33323e",
-            Divider = "#292838",
-            OverlayLight = "#1e1e2d80",
-        },
-        LayoutProperties = new LayoutProperties()
-    };
+            var theme = new MudTheme();
+            string[] customfontFamily = ["Ubuntu", "Helvetica", "Arial", "sans-serif"];
+
+            theme.Typography.H1.FontFamily = customfontFamily;
+            theme.Typography.H2.FontFamily = customfontFamily;
+            theme.Typography.H3.FontFamily = customfontFamily;
+            theme.Typography.H4.FontFamily = customfontFamily;
+            theme.Typography.H5.FontFamily = customfontFamily;
+            theme.Typography.H6.FontFamily = customfontFamily;
+
+            theme.Typography.Subtitle1.FontFamily = customfontFamily;
+            theme.Typography.Subtitle2.FontFamily = customfontFamily;
+
+            theme.Typography.Body1.FontFamily = customfontFamily;
+            theme.Typography.Body2.FontFamily = customfontFamily;
+
+            theme.Typography.Button.FontFamily = customfontFamily;
+            theme.Typography.Caption.FontFamily = customfontFamily;
+            theme.Typography.Overline.FontFamily = customfontFamily;
+            theme.Typography.Default.FontFamily = customfontFamily;
+
+            return theme;
+        }
+    }
 }
