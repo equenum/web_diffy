@@ -12,8 +12,15 @@
 @code {
     private int currentCount = 0;
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        currentCount = DbMock.Counter;
+    }
+
     private void IncrementCount()
     {
         currentCount++;
+        DbMock.Counter = currentCount;
     }
 }
