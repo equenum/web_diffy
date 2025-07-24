@@ -11,6 +11,8 @@ public class TargetSnapshotEntityConfiguration : IEntityTypeConfiguration<Target
         builder.HasKey(m => m.Id);
         builder.ToTable("target_snapshots");
 
+        builder.Property(m => m.Outcome).HasConversion<string>();
+
         builder.HasOne(m => m.Target);
     }
 }
