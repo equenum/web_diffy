@@ -15,3 +15,4 @@
 - Persist UI user settings in the database?
 - Update tests for the snapshot services and change detector to account for Outcome and Message.
 - Implement notifications.
+- Fix all API contracts after adding sorting.

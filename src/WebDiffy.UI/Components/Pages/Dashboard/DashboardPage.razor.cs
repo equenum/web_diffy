@@ -12,7 +12,7 @@ public partial class DashboardPage
     private IEnumerable<TargetDto> Targets = [];
     private IEnumerable<TargetSnapshotDto> Snapshots = [];
 
-    // load in data on panel opening
+    // load in data on panel opening? Probably a bit of an overkill
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
