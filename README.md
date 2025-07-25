@@ -1,4 +1,4 @@
-# webpage_change_monitor
+# web_diffy
 
 - What if the target page or node no longer exists?
 - Add a job schedule jitter?
