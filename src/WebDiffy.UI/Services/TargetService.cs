@@ -5,6 +5,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using WebDiffy.UI.Infrastructure.Options;
+using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Dtos;
 using WebPageChangeMonitor.Models.Responses;
 
@@ -13,9 +14,11 @@ namespace WebDiffy.UI.Services;
 public interface ITargetService
 {
     Task<TargetDto> CreateAsync(TargetDto target);
-    Task<TargetPaginatedResponse> GetAsync(int? page = null, int? count = null);
+    Task<TargetPaginatedResponse> GetAsync(
+        int? page = null, int? count = null, SortDirection? sortDirection = null, string sortBy = null);
     Task<TargetDto> GetAsync(Guid id);
-    Task<TargetPaginatedResponse> GetByResourceAsync(Guid resourceId, int? page = null, int? count = null);
+    Task<TargetPaginatedResponse> GetByResourceAsync(
+        Guid resourceId, int? page = null, int? count = null, SortDirection? sortDirection = null, string sortBy = null);
     Task<TargetDto> UpdateAsync(TargetDto target);
     Task RemoveAsync(Guid id);
     Task RemoveByResourceAsync(Guid resourceId);
@@ -44,7 +47,8 @@ public class TargetService : BaseService, ITargetService
         return await response.Content.ReadFromJsonAsync<TargetDto>();
     }
 
-    public async Task<TargetPaginatedResponse> GetAsync(int? page = null, int? count = null)
+    public async Task<TargetPaginatedResponse> GetAsync(int? page = null, int? count = null,
+        SortDirection? sortDirection = null, string sortBy = null)
     {
         var queryParams = new Dictionary<string, string>();
 
@@ -56,6 +60,12 @@ public class TargetService : BaseService, ITargetService
         if (count.HasValue)
         {
             queryParams.Add("count", count.ToString());
+        }
+
+        if (sortDirection.HasValue && !string.IsNullOrWhiteSpace(sortBy))
+        {
+            queryParams.Add("sortDirection", sortDirection.ToString());
+            queryParams.Add("sortBy", sortBy);
         }
 
         var message = BuildGetRequestMessage(_targetsBaseUrl, queryParams);
@@ -78,7 +88,8 @@ public class TargetService : BaseService, ITargetService
         return await response.Content.ReadFromJsonAsync<TargetDto>();
     }
 
-    public async Task<TargetPaginatedResponse> GetByResourceAsync(Guid resourceId, int? page = null, int? count = null)
+    public async Task<TargetPaginatedResponse> GetByResourceAsync(Guid resourceId, int? page = null,
+        int? count = null, SortDirection? sortDirection = null, string sortBy = null)
     {
         var queryParams = new Dictionary<string, string>();
 
@@ -90,6 +101,12 @@ public class TargetService : BaseService, ITargetService
         if (count.HasValue)
         {
             queryParams.Add("count", count.ToString());
+        }
+
+        if (sortDirection.HasValue && !string.IsNullOrWhiteSpace(sortBy))
+        {
+            queryParams.Add("sortDirection", sortDirection.ToString());
+            queryParams.Add("sortBy", sortBy);
         }
 
         var message = BuildGetRequestMessage($"{_targetsBaseUrl}/resource/{resourceId}", queryParams);

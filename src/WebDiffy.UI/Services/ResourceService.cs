@@ -5,6 +5,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using WebDiffy.UI.Infrastructure.Options;
+using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Dtos;
 using WebPageChangeMonitor.Models.Responses;
 
@@ -13,7 +14,8 @@ namespace WebDiffy.UI.Services;
 public interface IResourceService
 {
     Task<ResourceDto> CreateAsync(ResourceDto resource);
-    Task<ResourcePaginatedResponse> GetAsync(int? page = null, int? count = null);
+    Task<ResourcePaginatedResponse> GetAsync(
+        int? page = null, int? count = null, SortDirection? sortDirection = null, string sortBy = null);
     Task<ResourceDto> GetAsync(Guid id);
     Task<ResourceDto> UpdateAsync(ResourceDto resource);
     Task RemoveAsync(Guid id);
@@ -42,7 +44,8 @@ public class ResourceService : BaseService, IResourceService
         return await response.Content.ReadFromJsonAsync<ResourceDto>();
     }
 
-    public async Task<ResourcePaginatedResponse> GetAsync(int? page = null, int? count = null)
+    public async Task<ResourcePaginatedResponse> GetAsync(int? page = null, int? count = null,
+        SortDirection? sortDirection = null, string sortBy = null)
     {
         var queryParams = new Dictionary<string, string>();
 
@@ -54,6 +57,12 @@ public class ResourceService : BaseService, IResourceService
         if (count.HasValue)
         {
             queryParams.Add("count", count.ToString());
+        }
+
+        if (sortDirection.HasValue && !string.IsNullOrWhiteSpace(sortBy))
+        {
+            queryParams.Add("sortDirection", sortDirection.ToString());
+            queryParams.Add("sortBy", sortBy);
         }
 
         var message = BuildGetRequestMessage(_resourcesBaseUrl, queryParams);

@@ -6,6 +6,7 @@ using MudBlazor;
 using WebDiffy.UI.Infrastructure;
 using WebDiffy.UI.Services;
 using WebPageChangeMonitor.Models.Dtos;
+using SortDirection = WebPageChangeMonitor.Models.Consts.SortDirection;
 
 namespace WebDiffy.UI.Components.Pages.Targets;
 
@@ -130,13 +131,17 @@ public partial class TargetsPage
 
     private async Task<IEnumerable<ResourceDto>> FetchResources()
     {
-        var resourceResponse = await ResourceService.GetAsync(count: int.MaxValue);
+        var resourceResponse = await ResourceService.GetAsync(
+            count: int.MaxValue, sortDirection: SortDirection.Asc, sortBy: "DisplayName");
+
         return resourceResponse.Resources;
     }
 
     private async Task<IEnumerable<TargetDto>> FetchTargets()
     {
-        var targetResponse = await TargetService.GetAsync(count: int.MaxValue);
+        var targetResponse = await TargetService.GetAsync(
+            count: int.MaxValue, sortDirection: SortDirection.Asc, sortBy: "DisplayName");
+
         return targetResponse.Targets;
     }
 
