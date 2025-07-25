@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -61,27 +62,30 @@ public class ChangeDetector : IChangeDetector
                 context.Id,
                 context.Url);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            errorMessage = $"Failed to process {context.ChangeType} change detection";
+            errorMessage = $"Failed to process {context.ChangeType} change detection: {ex.Message}";
 
             _logger.LogError("Err-{ErrorCode}: Failed to process change detection for context id '{ContextId}', url '{Url}'.",
                 LogErrorCodes.ChangeDetectionFailed,
                 context.Id,
                 context.Url);
-
-            throw;
         }
 
         if (!isSuccess)
         {
             using (var dbContext = _contextFactory.CreateDbContext())
             {
+                var latestPreviousSnapshot = await dbContext.TargetSnapshots
+                    .Where(snapshot => snapshot.TargetId == context.Id)
+                    .OrderByDescending(snapshot => snapshot.CreatedAt)
+                    .FirstOrDefaultAsync();
+                
                 var failureSnapshot = new TargetSnapshotEntity()
                 {
                     Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                     TargetId = context.Id,
-                    Value = string.Empty,
+                    Value = latestPreviousSnapshot is not null ? latestPreviousSnapshot.Value : string.Empty,
                     IsChangeDetected = false,
                     Outcome = Outcome.Failure,
                     Message = errorMessage,
