@@ -45,15 +45,15 @@
                     @foreach(var resource in Resources)
                     {
                         <MudExpansionPanel Text="@resource.DisplayName" Expanded="@UserAppSettings.AreCollapsePanelsExpanded">
-                            @if (Targets.Where(target => target.ResourceId == resource.Id).Any())
+                            @if (TargetsByResourceId.TryGetValue(resource.Id, out var targets) && targets.Any())
                             {
                                 <MudStack>
-                                    @foreach(var target in Targets.Where(target => target.ResourceId == resource.Id))
+                                    @foreach(var target in targets)
                                     {
                                         <MudStack Row="true" Class="d-flex align-items-center">
                                             <MudText Class="pt-2 pb-1" style="width: 170px;">@target.DisplayName</MudText>
                                             <MudStack Row="true" style="width: 650px;" Class="pt-2 pb-1">
-                                                @foreach(var snapshot in Snapshots)
+                                                @foreach(var snapshot in SnapshotsByTargetId[target.Id])
                                                 {
                                                     <MudTooltip Text="@GetSnapshotTooltipText(snapshot)" Placement="Placement.Top" Arrow="true">
                                                         <MudPaper Height="20px" Width="20px" Outlined="true" Class="@GetSnapshotStyle(snapshot)"></MudPaper>

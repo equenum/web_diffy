@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using WebDiffy.UI.Services;
 using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Dtos;
 
@@ -8,98 +11,68 @@ namespace WebDiffy.UI.Components.Pages.Dashboard;
 
 public partial class DashboardPage
 {
-    private IEnumerable<ResourceDto> Resources = [];
-    private IEnumerable<TargetDto> Targets = [];
-    private IEnumerable<TargetSnapshotDto> Snapshots = [];
+    [Inject]
+    private IResourceService ResourceService { get; set; }
 
-    // load in data on panel opening? Probably a bit of an overkill
+    [Inject]
+    private ITargetService TargetService { get; set; }
+
+    [Inject]
+    private ITargetSnapshotService TargetSnapshotService { get; set; }
+
+    private const int TargetSnapshotMaxCount = 20;
+
+    private IEnumerable<ResourceDto> Resources = [];
+    private Dictionary<Guid, List<TargetDto>> TargetsByResourceId = [];
+    private Dictionary<Guid, IEnumerable<TargetSnapshotDto>> SnapshotsByTargetId = [];
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        var resourceId = Guid.NewGuid();
-        var targetId = Guid.NewGuid();
+        Resources = await FetchResources();
+        var targets = await FetchTargets();
 
-        Resources =
-        [
-            new ResourceDto()
-            {
-                Id = resourceId,
-                DisplayName = "Test Resource 1"
-            },
-            new ResourceDto()
-            {
-                Id = Guid.NewGuid(),
-                DisplayName = "Test Resource 2"
-            }
-        ];
+        TargetsByResourceId = targets
+            .GroupBy(target => target.ResourceId)
+            .ToDictionary(group => group.Key, group => group.ToList());
 
-        Targets =
-        [
-            new TargetDto()
-            {
-                Id = Guid.NewGuid(),
-                ResourceId = resourceId,
-                DisplayName = "Test Target 11111111"
-            },
-            new TargetDto()
-            {
-                Id = Guid.NewGuid(),
-                ResourceId = resourceId,
-                DisplayName = "Test Target 22222222"
-            }
-        ];
-
-        Snapshots = new List<TargetSnapshotDto>()
+        foreach (var target in targets)
         {
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            new TargetSnapshotDto()
+            var snapshots = await FetchTargetSnapshots(target.Id);
+
+            var emptySnapshotCount = TargetSnapshotMaxCount - snapshots.Count;
+            for (int i = 0; i < emptySnapshotCount; i++)
             {
-                Id = Guid.NewGuid(),
-                TargetId = targetId,
-                Outcome = Outcome.Success,
-                IsChangeDetected = false,
-                CreatedAt = DateTime.Now
-            },
-            new TargetSnapshotDto()
-            {
-                Id = Guid.NewGuid(),
-                TargetId = targetId,
-                Outcome = Outcome.Success,
-                IsChangeDetected = true,
-                CreatedAt = DateTime.Now
-            },
-            new TargetSnapshotDto()
-            {
-                Id = Guid.NewGuid(),
-                TargetId = targetId,
-                Outcome = Outcome.Success,
-                IsChangeDetected = false,
-                CreatedAt = DateTime.Now
-            },
-            new TargetSnapshotDto()
-            {
-                Id = Guid.NewGuid(),
-                TargetId = targetId,
-                Outcome = Outcome.Failure,
-                IsChangeDetected = false,
-                CreatedAt = DateTime.Now
+                snapshots.Add(null);
             }
-        };
+
+            snapshots.Reverse();
+            SnapshotsByTargetId.TryAdd(target.Id, snapshots);
+        }
+    }
+
+    private async Task<IEnumerable<ResourceDto>> FetchResources()
+    {
+        var resourceResponse = await ResourceService.GetAsync(
+            count: int.MaxValue, sortDirection: SortDirection.Asc, sortBy: "DisplayName");
+
+        return resourceResponse.Resources;
+    }
+
+    private async Task<IEnumerable<TargetDto>> FetchTargets()
+    {
+        var targetResponse = await TargetService.GetAsync(
+            count: int.MaxValue, sortDirection: SortDirection.Asc, sortBy: "DisplayName");
+
+        return targetResponse.Targets;
+    }
+
+    private async Task<List<TargetSnapshotDto>> FetchTargetSnapshots(Guid targetId)
+    {
+        var targetResponse = await TargetSnapshotService.GetByTargetAsync(
+            targetId, count: TargetSnapshotMaxCount, sortDirection: SortDirection.Desc, sortBy: "CreatedAt");
+
+        return [.. targetResponse.Snapshots];
     }
 }

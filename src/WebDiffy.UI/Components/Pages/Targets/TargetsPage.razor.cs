@@ -140,7 +140,7 @@ public partial class TargetsPage
     private async Task<IEnumerable<TargetDto>> FetchTargets()
     {
         var targetResponse = await TargetService.GetAsync(
-            count: int.MaxValue, sortDirection: SortDirection.Asc, sortBy: "DisplayName");
+            count: int.MaxValue, sortDirection: SortDirection.Desc, sortBy: "DisplayName");
 
         return targetResponse.Targets;
     }
