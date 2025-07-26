@@ -140,9 +140,9 @@ public class ResourceService : IResourceService
             throw new ResourceNotFoundException(id.ToString());
         }
 
-        await _jobService.UnscheduleByResourceAsync(id);
-
         _context.Resources.Remove(targetResource);
         await _context.SaveChangesAsync();
+        
+        await _jobService.UnscheduleByResourceAsync(id);
     }
 }

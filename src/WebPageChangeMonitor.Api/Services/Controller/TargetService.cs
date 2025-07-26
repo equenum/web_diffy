@@ -193,10 +193,10 @@ public class TargetService : ITargetService
             CreatedAt = DateTime.UtcNow
         };
 
-        await _jobService.ScheduleAsync(targetEntity.ToTarget());
-
         _context.Targets.Add(targetEntity);
         await _context.SaveChangesAsync();
+
+        await _jobService.ScheduleAsync(targetEntity.ToTarget());
 
         return targetEntity.ToTargetDto();
     }
@@ -215,11 +215,11 @@ public class TargetService : ITargetService
             throw new TargetNotFoundException(updatedTarget.Id.ToString());
         }
 
-        await _jobService.UnscheduleByTargetAsync(updatedTarget.Id, updatedTarget.ResourceId);
-        await _jobService.ScheduleAsync(updatedTarget);
-
         _context.Entry(targetTarget).CurrentValues.SetValues(updatedTarget.ToTargetEntity());
         await _context.SaveChangesAsync();
+
+        await _jobService.UnscheduleByTargetAsync(updatedTarget.Id, updatedTarget.ResourceId);
+        await _jobService.ScheduleAsync(updatedTarget);
 
         return targetTarget.ToTargetDto();
     }
@@ -232,10 +232,10 @@ public class TargetService : ITargetService
             throw new TargetNotFoundException(targetTarget.Id.ToString());
         }
 
-        await _jobService.UnscheduleByTargetAsync(targetTarget.Id, targetTarget.ResourceId);
-
         _context.Targets.Remove(targetTarget);
         await _context.SaveChangesAsync();
+        
+        await _jobService.UnscheduleByTargetAsync(targetTarget.Id, targetTarget.ResourceId);
     }
 
     public async Task RemoveByResourceIdAsync(Guid id)
@@ -244,14 +244,12 @@ public class TargetService : ITargetService
             .Where(target => target.ResourceId == id)
             .CountAsync();
 
-        if (availableCount == 0) 
+        if (availableCount == 0)
         {
             throw new InvalidOperationException("No targets found for the given resource id: {id}.");
         }
 
+        await _context.Targets.Where(target => target.ResourceId == id).ExecuteDeleteAsync();
         await _jobService.UnscheduleByResourceAsync(id);
-
-        await _context.Targets.Where(target => target.ResourceId == id)
-            .ExecuteDeleteAsync();
     }
 }
