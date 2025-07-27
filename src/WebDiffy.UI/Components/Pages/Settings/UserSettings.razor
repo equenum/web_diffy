@@ -21,6 +21,11 @@
                 Value="ConvertArrayBasedValue(UserAppSettings.GridPageSizeOptions)"
                 ValueChanged="@((string value) => UpdateGridPageSizeOptions(value))"
                 Label="GridPageSizeOptions" />
+            <MudTextField 
+                T="string"
+                Value="ConvertArrayBasedValue(UserAppSettings.LargeGridPageSizeOptions)"
+                ValueChanged="@((string value) => UpdateLargeGridPageSizeOptions(value))"
+                Label="LargeGridPageSizeOptions" />
             <MudButton OnClick="Reset">Reset</MudButton>
         </MudPaper>
     </MudItem>

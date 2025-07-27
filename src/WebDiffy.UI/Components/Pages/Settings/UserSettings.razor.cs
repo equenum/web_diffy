@@ -17,6 +17,11 @@ public partial class UserSettings
         UserAppSettings.GridPageSizeOptions = [.. value.Split(ArrayDelimeter).Select(int.Parse)];
     }
 
+    private static void UpdateLargeGridPageSizeOptions(string value)
+    {
+        UserAppSettings.LargeGridPageSizeOptions = [.. value.Split(ArrayDelimeter).Select(int.Parse)];
+    }
+
     private static void Reset()
     {
         UserAppSettings.Reset();

@@ -8,6 +8,7 @@ public static class UserAppSettings
     public static bool AreCollapsePanelsExpanded { get; set; } = false;
     public static int ItemIdSubSectionLength { get; set; } = 12;
     public static int[] GridPageSizeOptions { get; set; } = [10, 25, 50, 100];
+    public static int[] LargeGridPageSizeOptions { get; set; } = [50, 100, 200];
 
     public static void Reset()
     {
@@ -17,5 +18,6 @@ public static class UserAppSettings
         AreCollapsePanelsExpanded = false;
         ItemIdSubSectionLength = 12;
         GridPageSizeOptions = [10, 25, 50, 100];
+        LargeGridPageSizeOptions = [50, 100, 200];
     }
 }
