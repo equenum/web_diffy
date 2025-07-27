@@ -1,0 +1,128 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">@($"Diff: {Target.DisplayName}")</MudText>
+        <MudText Typo="Typo.subtitle1">@Snapshot.CreatedAt</MudText>
+        <MudText Typo="Typo.subtitle1">@StatusMessage</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Row="true" Class="pb-8">
+            <MudSwitch 
+                T="bool"
+                Value="@IgnoreCase" 
+                ValueChanged="@UpdateIgnoreCase"
+                ThumbIcon="@(IgnoreCase is true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                ThumbIconColor="@(IgnoreCase is true ? Color.Success : Color.Error)"
+                >Ignore case
+            </MudSwitch>
+            <MudSwitch 
+                T="bool"
+                Value="@IgnoreWhiteSpace" 
+                ValueChanged="@UpdateIgnoreWhiteSpace"
+                ThumbIcon="@(IgnoreWhiteSpace is true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                ThumbIconColor="@(IgnoreWhiteSpace is true ? Color.Success : Color.Error)"
+                >Ignore whitespace
+            </MudSwitch>
+        </MudStack>
+        @if (Snapshot is not null)
+        {
+            <MudStack Row="true" Spacing="5">
+                @if(DiffModel is not null)
+                {
+                    <MudCard Outlined="true" style="width: 50%;">
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">Original</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            @foreach (var line in DiffModel.OldText.Lines)
+                            {
+                                <div class="line @GetLineClass(line.Type)">
+                                    <span class="line-number">@(line.Position?.ToString() ?? "")</span>
+                                    <span class="line-content">@line.Text</span>
+                                </div>
+                            }
+                        </MudCardContent>
+                    </MudCard>
+                    <MudCard Outlined="true" style="width: 50%;">
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">Modified</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            @foreach (var line in DiffModel.NewText.Lines)
+                            {
+                                <div class="line @GetLineClass(line.Type)">
+                                    <span class="line-number">@(line.Position?.ToString() ?? "")</span>
+                                    <span class="line-content">@line.Text</span>
+                                </div>
+                            }
+                        </MudCardContent>
+                    </MudCard>
+                }
+            </MudStack>
+        }
+        else
+        {
+            <MudText>Invalid snapshot.</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close">Close</MudButton>
+        <MudButton OnClick="CloseAll">Back to Dashboard</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<style>
+    .line {
+        display: flex;
+        min-height: 20px;
+        line-height: 20px;
+        white-space: nowrap;
+    }
+
+    .line-number {
+        width: 50px;
+        padding: 0 8px;
+        text-align: right;
+        border-right: 1px solid var(--mud-palette-text-primary);
+        user-select: none;
+        flex-shrink: 0;
+    }
+
+    .line-content {
+        padding: 0 8px;
+        white-space: pre;
+        overflow-x: auto;
+        flex: 1;
+    }
+
+    .line.inserted {
+        color: #00E676;
+    }
+
+    .line.inserted .line-number {
+        color: #00C853;
+    }
+
+    .line.deleted {
+        color: #FF8A80;
+    }
+
+    .line.deleted .line-number {
+        color: #FF5252;
+    }
+
+    .line.modified {
+        color: #FFEA00;
+    }
+
+    .line.modified .line-number {
+        color: #FFD600;
+    }
+
+    .line.unchanged {
+        color: var(--mud-palette-text-primary);
+    }
+</style>
