@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using WebDiffy.UI.Services;
-using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Dtos;
+using SortDirection = WebPageChangeMonitor.Models.Consts.SortDirection;
 
 namespace WebDiffy.UI.Components.Pages.Dashboard;
 
@@ -20,11 +21,14 @@ public partial class DashboardPage
     [Inject]
     private ITargetSnapshotService TargetSnapshotService { get; set; }
 
+    [Inject]
+    private IDialogService DialogService { get; set; }
+
     private const int TargetSnapshotMaxCount = 20;
 
     private IEnumerable<ResourceDto> Resources = [];
     private Dictionary<Guid, List<TargetDto>> TargetsByResourceId = [];
-    private Dictionary<Guid, IEnumerable<TargetSnapshotDto>> SnapshotsByTargetId = [];
+    private Dictionary<Guid, List<TargetSnapshotDto>> SnapshotsByTargetId = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -68,11 +72,29 @@ public partial class DashboardPage
         return targetResponse.Targets;
     }
 
-    private async Task<List<TargetSnapshotDto>> FetchTargetSnapshots(Guid targetId)
+    private async Task<List<TargetSnapshotDto>> FetchTargetSnapshots(Guid targetId, int maxCount = TargetSnapshotMaxCount)
     {
         var targetResponse = await TargetSnapshotService.GetByTargetAsync(
-            targetId, count: TargetSnapshotMaxCount, sortDirection: SortDirection.Desc, sortBy: "CreatedAt");
+            targetId, count: maxCount, sortDirection: SortDirection.Desc, sortBy: "CreatedAt");
 
         return [.. targetResponse.Snapshots];
+    }
+
+    private async Task OpenSnapshotHistoryAsync(TargetDto target)
+    {
+        var snapshots = await FetchTargetSnapshots(target.Id, int.MaxValue);
+        var parameters = new DialogParameters<SnapshotHistoryDialog>
+        {
+            { x => x.Target, target },
+            { x => x.TargetSnapshots, snapshots }
+        };
+
+        var options = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Large,
+            FullWidth = true
+        };
+
+        var dialog = await DialogService.ShowAsync<SnapshotHistoryDialog>(title: string.Empty, parameters, options);
     }
 }

@@ -60,7 +60,11 @@
                                                     </MudTooltip>
                                                 }
                                             </MudStack>
-                                            <MudIconButton Style="height: 20px; width: 20px; margin-top: 5px;" Icon="@Icons.Material.Filled.List"/>
+                                            <MudIconButton 
+                                                Disabled="SnapshotsByTargetId[target.Id].All(snapshot => snapshot is null)" 
+                                                Style="height: 20px; width: 20px; margin-top: 5px;"
+                                                Icon="@Icons.Material.Filled.List"
+                                                OnClick="@(() => OpenSnapshotHistoryAsync(target))"/>
                                         </MudStack>
                                         <MudDivider/>
                                     }
@@ -100,6 +104,11 @@
             return "border-solid";
         }
 
+        if (snapshot.Outcome is Outcome.Success && snapshot.IsExpectedValue)
+        {
+            return "border-solid mud-theme-success";
+        }
+
         return "border-solid mud-theme-primary";
     }
     
@@ -118,6 +127,11 @@
         if (snapshot.Outcome is Outcome.Success && !snapshot.IsChangeDetected)
         {
             return $"No changes - {snapshot.CreatedAt}";
+        }
+
+        if (snapshot.Outcome is Outcome.Success && snapshot.IsExpectedValue)
+        {
+            return $"Expected value detected - {snapshot.CreatedAt}";
         }
 
         return $"Changes detected - {snapshot.CreatedAt}";
