@@ -60,6 +60,7 @@ public class ValueChangeDetectionStrategy : IChangeDetectionStrategy
                     Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                     TargetId = context.Id,
                     Value = newValue,
+                    NewValue = newValue,
                     IsExpectedValue = isExpectedValue,
                     IsChangeDetected = false,
                     Outcome = Outcome.Success,
@@ -82,13 +83,14 @@ public class ValueChangeDetectionStrategy : IChangeDetectionStrategy
                 return;
             }
 
-            var isChangeDetected = latestPreviousSnapshot.Value != newValue;
+            var isChangeDetected = latestPreviousSnapshot.NewValue != newValue;
 
             var snapshot = new TargetSnapshotEntity()
             {
                 Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                 TargetId = context.Id,
-                Value = isChangeDetected ? newValue : latestPreviousSnapshot.Value,
+                Value = latestPreviousSnapshot.NewValue,
+                NewValue = newValue,
                 IsExpectedValue = isExpectedValue,
                 IsChangeDetected = isChangeDetected,
                 Outcome = Outcome.Success,

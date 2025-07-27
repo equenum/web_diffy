@@ -86,6 +86,7 @@ public class ChangeDetector : IChangeDetector
                     Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                     TargetId = context.Id,
                     Value = latestPreviousSnapshot is not null ? latestPreviousSnapshot.Value : string.Empty,
+                    NewValue = latestPreviousSnapshot is not null ? latestPreviousSnapshot.NewValue : string.Empty,
                     IsChangeDetected = false,
                     Outcome = Outcome.Failure,
                     Message = errorMessage,

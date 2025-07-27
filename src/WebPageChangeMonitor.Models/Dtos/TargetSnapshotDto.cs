@@ -8,6 +8,7 @@ public class TargetSnapshotDto
     public Guid Id { get; set; }
     public Guid TargetId { get; set; }
     public string Value { get; set; }
+    public string NewValue { get; set; }
     public bool IsExpectedValue { get; set; }
     public bool IsChangeDetected { get; set; }
     public Outcome Outcome { get; set; }
