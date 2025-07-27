@@ -229,7 +229,7 @@ public class TargetService : ITargetService
         var targetTarget = await _context.Targets.FindAsync(id);
         if (targetTarget is null)
         {
-            throw new TargetNotFoundException(targetTarget.Id.ToString());
+            throw new TargetNotFoundException(id.ToString());
         }
 
         _context.Targets.Remove(targetTarget);
