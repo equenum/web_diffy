@@ -30,7 +30,6 @@ public static class ResourceEndpoints
         group.MapGet(string.Empty, GetAll);
         group.MapGet("{id}", GetById).WithName(GetByIdEndpointName);
 
-        // remove the filters after enabling attribute based validation when dotnet 10 comes out
         group.MapPost(string.Empty, Create).AddEndpointFilter<CreateResourceValidationFilter>();
         group.MapPut(string.Empty, Update).AddEndpointFilter<UpdateResourceValidationFilter>();;
         group.MapDelete("{id}", Remove);

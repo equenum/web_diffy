@@ -11,7 +11,6 @@ namespace WebPageChangeMonitor.Api.Infrastructure.Filters;
 
 public class CreateTargetValidationFilter : IEndpointFilter
 {
-    // remove this class after enabling attribute based validation when dotnet 10 comes out
     public async ValueTask<object> InvokeAsync(EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {

@@ -31,7 +31,6 @@ public static class TargetEndpoints
         group.MapGet("{id}", GetById).WithName(GetByIdEndpointName);
         group.MapGet("resource/{id}", GetByResourceIdAsync);
 
-        // remove the filters after enabling attribute based validation when dotnet 10 comes out
         group.MapPost(string.Empty, Create).AddEndpointFilter<CreateTargetValidationFilter>();
         group.MapPut(string.Empty, Update).AddEndpointFilter<UpdateTargetValidationFilter>();
 

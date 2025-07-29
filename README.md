@@ -10,7 +10,6 @@
 
 - Add error codes to all error logs like in ChangeDetector.cs.
 - Add input validation on UI (take the code from the existing endpoint filters).
-- Enable attribute based endpoint validation when dotnet 10 comes out.
 - Persist UI user settings in the database?
 - Update tests for the snapshot services and change detector to account for Outcome and Message.
 - Implement notifications.

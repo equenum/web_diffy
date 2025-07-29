@@ -3,7 +3,6 @@ using System.Linq;
 
 namespace WebPageChangeMonitor.Models.Validation;
 
-// remove this class after enabling attribute based validation when dotnet 10 comes out
 public class ValidationContext
 {
     private List<ValidationError> _errors = [];
