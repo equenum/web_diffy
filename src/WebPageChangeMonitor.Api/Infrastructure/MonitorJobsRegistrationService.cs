@@ -9,6 +9,7 @@ using Quartz.Spi;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
 using WebPageChangeMonitor.Api.Services;
 using WebPageChangeMonitor.Data;
+using WebPageChangeMonitor.Models.Consts;
 
 namespace WebPageChangeMonitor.Api.Infrastructure;
 
@@ -39,11 +40,11 @@ public class MonitorJobsRegistrationService : IHostedService
 
         using (var context = _contextFactory.CreateDbContext())
         {
-            var targetEntities = await context.Targets.ToListAsync(cancellationToken);
+            var targetEntities = await context.Targets.Where(target => target.State == State.Active).ToListAsync(cancellationToken);
 
             if (targetEntities.Count > 0) 
             {
-                _logger.LogInformation("Existing targets found, count: {TargetCount}. Registering jobs...",
+                _logger.LogInformation("Existing active targets found, count: {TargetCount}. Registering jobs...",
                     targetEntities.Count);
                 
                 await _jobService.ScheduleAsync(targetEntities.Select(entity => entity.ToTarget()),
