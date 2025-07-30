@@ -34,6 +34,7 @@ public partial class CreateTargetDialog
         try
         {
             Target.ResourceId = ResourceId;
+            Target.State = State.Paused;
             
             var createdTarget = await TargetService.CreateAsync(Target);
             createdTargetId = createdTarget.Id;

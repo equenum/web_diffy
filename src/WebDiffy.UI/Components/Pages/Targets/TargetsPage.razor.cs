@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using WebDiffy.UI.Infrastructure;
 using WebDiffy.UI.Services;
+using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Dtos;
 using SortDirection = WebPageChangeMonitor.Models.Consts.SortDirection;
 
@@ -86,6 +87,27 @@ public partial class TargetsPage
         }
 
         await RemoveTargetSilentAsync(id);
+    }
+
+    private async Task ToggleTargetStateAsync(TargetDto target)
+    {
+        target.State = target.State is State.Active ? State.Paused : State.Active;
+
+        var toastMessage = target.State is State.Active
+            ? $"Started target: {target.DisplayName}" 
+            : $"Paused target: {target.DisplayName}";
+
+        try
+        {
+            await TargetService.UpdateAsync(target);
+            Targets = await FetchTargets(); 
+
+            Snackbar.Add(toastMessage, Severity.Success);
+        }
+        catch
+        {
+            Snackbar.Add($"Failed to change state for target: {target.DisplayName}", Severity.Error);
+        }
     }
 
     private async Task RemoveTargetInteractiveAsync(Guid id)
