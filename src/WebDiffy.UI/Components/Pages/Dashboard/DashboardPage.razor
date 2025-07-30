@@ -14,25 +14,25 @@
             <MudPaper Height="100px" Width="210px">
                 <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
                     <MudText Typo="Typo.button">Total</MudText>
-                    <MudText Typo="Typo.button">10</MudText>
+                    <MudText Typo="Typo.button">@WidgetData.Total</MudText>
                 </MudStack>
             </MudPaper>
             <MudPaper Height="100px" Width="210px">
                 <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
                     <MudText Typo="Typo.button">Paused</MudText>
-                    <MudText Typo="Typo.button">1</MudText>
+                    <MudText Typo="Typo.button">@WidgetData.Paused</MudText>
                 </MudStack>
             </MudPaper>
             <MudPaper Height="100px" Width="210px">
                 <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
                     <MudText Typo="Typo.button">Active</MudText>
-                    <MudText Typo="Typo.button">9</MudText>
+                    <MudText Typo="Typo.button">@WidgetData.Active</MudText>
                 </MudStack>
             </MudPaper>
             <MudPaper Height="100px" Width="210px">
                 <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
-                    <MudText Typo="Typo.button">Change Detected</MudText>
-                    <MudText Typo="Typo.button">2</MudText>
+                    <MudText Typo="Typo.button">Recent Changes</MudText>
+                    <MudText Typo="Typo.button">@WidgetData.ChangeDetected</MudText>
                 </MudStack>
             </MudPaper>
         </MudStack>
@@ -51,7 +51,7 @@
                                     @foreach(var target in targets)
                                     {
                                         <MudStack Row="true" Class="d-flex align-items-center">
-                                            <MudText Class="pt-2 pb-1" style="width: 170px;">@target.DisplayName</MudText>
+                                            <MudText Class="pt-2 pb-1" style="width: 180px;">@target.DisplayName</MudText>
                                             <MudStack Row="true" style="width: 650px;" Class="pt-2 pb-1">
                                                 @foreach(var snapshot in SnapshotsByTargetId[target.Id])
                                                 {
