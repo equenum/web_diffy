@@ -20,6 +20,9 @@
 - Wire up dashboard widgets.
 - Make all datagrids outlined (also take a look if makes sense to outline other elements).
 - Test diffs (especially added and removed lines).
+- Add user setting to create targets as active by default. 
+- Highlight active, paused and change detected targets on the dashboard somehow.
+- Persist collapse panel state within a session.
 
 # Attribution
 - https://github.com/mmanela/diffplex/tree/master
