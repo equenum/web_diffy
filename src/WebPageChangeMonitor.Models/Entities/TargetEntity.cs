@@ -8,6 +8,7 @@ public class TargetEntity
 {
     public Guid Id { get; set; }
 
+    public State State { get; set; }
     public string DisplayName { get; set; }
     public string Description { get; set; }
     public string Url { get; set; }

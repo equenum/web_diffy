@@ -11,6 +11,7 @@ public class TargetEntityConfiguration : IEntityTypeConfiguration<TargetEntity>
         builder.HasKey(m => m.Id);
         builder.ToTable("targets");
 
+        builder.Property(m => m.State).HasConversion<string>();
         builder.Property(m => m.ChangeType).HasConversion<string>();
         builder.Property(m => m.SelectorType).HasConversion<string>();
 

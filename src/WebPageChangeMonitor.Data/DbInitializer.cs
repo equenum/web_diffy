@@ -88,6 +88,7 @@ public static class DbInitializer
                         create table if not exists monitor.targets (
                             id uuid primary key,
                             resource_id uuid references monitor.target_resources(id) on delete cascade,
+                            state text not null,
                             display_name text not null,
                             description text,
                             url text not null,

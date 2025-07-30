@@ -13,6 +13,10 @@ public class Target
     [Required]
     public Guid ResourceId { get; set; }
 
+    [Required]
+    [EnumDataType(typeof(State))]
+    public State State { get; set; }
+
     [Required(AllowEmptyStrings = false)]
     [StringLength(20)]
     public string DisplayName { get; set; }
