@@ -181,6 +181,7 @@ public class TargetService : ITargetService
         {
             Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
             ResourceId = request.ResourceId,
+            State = request.State,
             DisplayName = request.DisplayName,
             Description = request.Description,
             Url = request.Url,
@@ -196,7 +197,10 @@ public class TargetService : ITargetService
         _context.Targets.Add(targetEntity);
         await _context.SaveChangesAsync();
 
-        await _jobService.ScheduleAsync(targetEntity.ToTarget());
+        if (request.State is State.Active)
+        {
+            await _jobService.ScheduleAsync(targetEntity.ToTarget()); 
+        }
 
         return targetEntity.ToTargetDto();
     }
@@ -218,8 +222,16 @@ public class TargetService : ITargetService
         _context.Entry(targetTarget).CurrentValues.SetValues(updatedTarget.ToTargetEntity());
         await _context.SaveChangesAsync();
 
-        await _jobService.UnscheduleByTargetAsync(updatedTarget.Id, updatedTarget.ResourceId);
-        await _jobService.ScheduleAsync(updatedTarget);
+        if (updatedTarget.State is State.Active)
+        {
+            await _jobService.UnscheduleByTargetAsync(updatedTarget.Id, updatedTarget.ResourceId);
+            await _jobService.ScheduleAsync(updatedTarget);
+        }
+
+        if (updatedTarget.State is State.Paused)
+        {
+            await _jobService.UnscheduleByTargetAsync(updatedTarget.Id, updatedTarget.ResourceId);
+        }
 
         return targetTarget.ToTargetDto();
     }

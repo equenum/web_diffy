@@ -43,9 +43,11 @@ public class MonitorJobService : IMonitorJobService
         }
 
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
+
         foreach (var details in targets.Select(BuildJobDetails))
         {
             await scheduler.ScheduleJob(details.Details, details.Trigger, cancellationToken);
+
             _logger.LogInformation("Scheduled job {JobKey} for target {TargetName}.",
                 details.Details.Key,
                 details.JobTargetName);
@@ -83,7 +85,7 @@ public class MonitorJobService : IMonitorJobService
                 targetId.ToString(),
                 resourceId.ToString());
 
-            throw new InvalidOperationException($"Job trigger not found, key: {targetId}.{resourceId}.");
+            return;
         }
 
         await scheduler.UnscheduleJob(targetTriggerKey, cancellationToken);
