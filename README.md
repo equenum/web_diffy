@@ -13,12 +13,8 @@
 - Persist UI user settings in the database?
 - Update tests for the snapshot services and change detector to account for Outcome and Message.
 - Implement notifications.
-- Add new target property - status (active / paused) and new endpoints to resume and pause jobs.
-- Grey out stopped jobs on the dashboard.
-- Add attribution section to readme includeing all libraries and licenses.
-- Outline dashboard targets what have changes detected.
-- Wire up dashboard widgets.
-- Make all datagrids outlined (also take a look if makes sense to outline other elements).
+- Add attribution section to readme including all libraries and licenses.
+- Make all data grids outlined (also take a look if makes sense to outline other elements).
 - Test diffs (especially added and removed lines).
 - Add user setting to create targets as active by default. 
 - Highlight active, paused and change detected targets on the dashboard somehow.
