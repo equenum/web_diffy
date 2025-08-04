@@ -14,7 +14,7 @@
         <MudPaper Class="py-2 px-2">
             <MudStack>
                 <div>
-                    <MudDataGrid T="ResourceDto" Items="@Resources" SortMode="SortMode.Multiple">
+                    <MudDataGrid T="ResourceDto" Items="@Resources" SortMode="SortMode.Multiple" Outlined="true">
                         <Columns>
                             @if(UserAppSettings.AreItemIdColumnsEnabled)
                             {

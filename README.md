@@ -19,6 +19,8 @@
 - Add user setting to create targets as active by default. 
 - Highlight active, paused and change detected targets on the dashboard somehow.
 - Persist collapse panel state within a session.
+- Set elevation for all UI elements to 2.
+- Custom headers for all expansion panels https://mudblazor.com/components/expansionpanels#customizing-the-header-and-icon
 
 # Attribution
 - https://github.com/mmanela/diffplex/tree/master
