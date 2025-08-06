@@ -58,7 +58,7 @@ public class ChangeDetector : IChangeDetector
             errorMessage = "Failed to fetch html page contents";
 
             _logger.LogError("Err-{ErrorCode}: Failed to fetch html page contents for context id '{ContextId}', url '{Url}'.",
-                LogErrorCodes.HtmlContentFetchFailed,
+                LogErrorCodes.Detection.FetchFailed,
                 context.Id,
                 context.Url);
         }
@@ -67,7 +67,7 @@ public class ChangeDetector : IChangeDetector
             errorMessage = $"Failed to process {context.ChangeType} change detection: {ex.Message}";
 
             _logger.LogError("Err-{ErrorCode}: Failed to process change detection for context id '{ContextId}', url '{Url}'.",
-                LogErrorCodes.ChangeDetectionFailed,
+                LogErrorCodes.Detection.Failed,
                 context.Id,
                 context.Url);
         }
