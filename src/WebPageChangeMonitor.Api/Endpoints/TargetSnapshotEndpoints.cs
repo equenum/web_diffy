@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebPageChangeMonitor.Api.Exceptions;
+using WebPageChangeMonitor.Api.Infrastructure.Logging;
 using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Dtos;
@@ -44,7 +45,7 @@ public static class TargetSnapshotEndpoints
         catch (TargetSnapshotNotFoundException)
         {
             var logger = loggerFactory.CreateLogger(TargetSnapshotEndpointsType);
-            logger.LogError("Target snapshot not found: {Id}", id);
+            logger.LogError("Err-{ErrorCode}: Target snapshot not found: {Id}", LogErrorCodes.Snapshot.NotFound, id);
 
             return TypedResults.NotFound($"Target snapshot not found: {id}");
         }
@@ -68,7 +69,9 @@ public static class TargetSnapshotEndpoints
         catch (Exception ex) when (ex is ArgumentException || ex is ArgumentOutOfRangeException)
         {
             var logger = loggerFactory.CreateLogger(TargetSnapshotEndpointsType);
-            logger.LogError("Invalid query parameter value: {ErrorMessage}.", ex.Message);
+            logger.LogError("Err-{ErrorCode}: Invalid query parameter value: {ErrorMessage}.",
+                LogErrorCodes.Snapshot.InvalidQuery,
+                ex.Message);
 
             return TypedResults.BadRequest($"Invalid query parameter value: {ex.Message}.");
         }
@@ -87,7 +90,7 @@ public static class TargetSnapshotEndpoints
         catch (TargetSnapshotNotFoundException)
         {
             var logger = loggerFactory.CreateLogger(TargetSnapshotEndpointsType);
-            logger.LogError("Target snapshot not found: {Id}", id);
+            logger.LogError("Err-{ErrorCode}: Target snapshot not found: {Id}", LogErrorCodes.Snapshot.NotFound, id);
 
             return TypedResults.NotFound($"Target snapshot not found: {id}");
         }
@@ -106,7 +109,9 @@ public static class TargetSnapshotEndpoints
         catch (InvalidOperationException ex)
         {
             var logger = loggerFactory.CreateLogger(TargetSnapshotEndpointsType);
-            logger.LogError("Failed to remove target snapshots: {Message}.", ex.Message);
+            logger.LogError("Err-{ErrorCode}: Failed to remove target snapshots: {Message}.",
+                LogErrorCodes.Snapshot.DeleteFailed,
+                ex.Message);
 
             return TypedResults.NotFound(ex.Message);
         }

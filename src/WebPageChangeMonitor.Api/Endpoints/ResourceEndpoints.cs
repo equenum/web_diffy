@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Infrastructure.Filters;
+using WebPageChangeMonitor.Api.Infrastructure.Logging;
 using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
@@ -52,7 +53,9 @@ public static class ResourceEndpoints
         catch (Exception ex) when (ex is ArgumentException || ex is ArgumentOutOfRangeException)
         {
             var logger = loggerFactory.CreateLogger(ResourceEndpointsType);
-            logger.LogError("Invalid query parameter value: {ErrorMessage}.", ex.Message);
+            logger.LogError("Err-{ErrorCode}: Invalid query parameter value: {ErrorMessage}.",
+                LogErrorCodes.Resource.InvalidQuery,
+                ex.Message);
 
             return TypedResults.BadRequest($"Invalid query parameter value: {ex.Message}.");
         }
@@ -71,7 +74,7 @@ public static class ResourceEndpoints
         catch (ResourceNotFoundException)
         {
             var logger = loggerFactory.CreateLogger(ResourceEndpointsType);
-            logger.LogError("Resource not found: {Id}", id);
+            logger.LogError("Err-{ErrorCode}: Resource not found: {Id}", LogErrorCodes.Resource.NotFound, id);
 
             return TypedResults.NotFound($"Resource not found: {id}");
         }
@@ -104,7 +107,9 @@ public static class ResourceEndpoints
         catch (ResourceNotFoundException)
         {
             var logger = loggerFactory.CreateLogger(ResourceEndpointsType);
-            logger.LogError("Resource not found: {Id}", resource.Id);
+            logger.LogError("Err-{ErrorCode}: Resource not found: {Id}",
+                LogErrorCodes.Resource.NotFound,
+                resource.Id);
 
             return TypedResults.NotFound($"Resource not found: {resource.Id}");
         }
@@ -123,7 +128,7 @@ public static class ResourceEndpoints
         catch (ResourceNotFoundException)
         {
             var logger = loggerFactory.CreateLogger(ResourceEndpointsType);
-            logger.LogError("Resource not found: {Id}", id);
+            logger.LogError("Err-{ErrorCode}: Resource not found: {Id}", LogErrorCodes.Resource.NotFound, id);
 
             return TypedResults.NotFound($"Resource not found: {id}");
         }

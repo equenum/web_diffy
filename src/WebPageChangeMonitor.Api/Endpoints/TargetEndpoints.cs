@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Infrastructure.Filters;
+using WebPageChangeMonitor.Api.Infrastructure.Logging;
 using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
@@ -55,7 +56,9 @@ public static class TargetEndpoints
         catch (Exception ex) when (ex is ArgumentException || ex is ArgumentOutOfRangeException)
         {
             var logger = loggerFactory.CreateLogger(TargetEndpointsType);
-            logger.LogError("Invalid query parameter value: {ErrorMessage}.", ex.Message);
+            logger.LogError("Err-{ErrorCode}: Invalid query parameter value: {ErrorMessage}.",
+                LogErrorCodes.Target.InvalidQuery,
+                ex.Message);
 
             return TypedResults.BadRequest($"Invalid query parameter value: {ex.Message}.");
         }
@@ -74,7 +77,7 @@ public static class TargetEndpoints
         catch (TargetNotFoundException)
         {
             var logger = loggerFactory.CreateLogger(TargetEndpointsType);
-            logger.LogError("Target not found: {Id}", id);
+            logger.LogError("Err-{ErrorCode}: Target not found: {Id}", LogErrorCodes.Target.NotFound, id);
 
             return TypedResults.NotFound($"Target not found: {id}");
         }
@@ -98,7 +101,9 @@ public static class TargetEndpoints
         catch (Exception ex) when (ex is ArgumentException || ex is ArgumentOutOfRangeException)
         {
             var logger = loggerFactory.CreateLogger(TargetEndpointsType);
-            logger.LogError("Invalid query parameter value: {ErrorMessage}.", ex.Message);
+            logger.LogError("Err-{ErrorCode}: Invalid query parameter value: {ErrorMessage}.",
+                LogErrorCodes.Target.InvalidQuery,
+                ex.Message);
 
             return TypedResults.BadRequest($"Invalid query parameter value: {ex.Message}.");
         }
@@ -131,14 +136,18 @@ public static class TargetEndpoints
         catch (ResourceNotFoundException)
         {
             var logger = loggerFactory.CreateLogger(TargetEndpointsType);
-            logger.LogError("Resource doesn't exist: {ResourceId}", target.ResourceId);
+            logger.LogError("Err-{ErrorCode}: Resource doesn't exist: {ResourceId}",
+                LogErrorCodes.Resource.NotFound,
+                target.ResourceId);
 
             return TypedResults.BadRequest($"Resource doesn't exist: {target.ResourceId}");
         }
         catch (TargetNotFoundException)
         {
             var logger = loggerFactory.CreateLogger(TargetEndpointsType);
-            logger.LogError("Target not found: {TargetId}", target.Id);
+            logger.LogError("Err-{ErrorCode}: Target not found: {TargetId}",
+                LogErrorCodes.Target.NotFound,
+                target.Id);
 
             return TypedResults.NotFound($"Target not found: {target.Id}");
         }
@@ -157,7 +166,7 @@ public static class TargetEndpoints
         catch (TargetNotFoundException)
         {
             var logger = loggerFactory.CreateLogger(TargetEndpointsType);
-            logger.LogError("Target not found: {Id}", id);
+            logger.LogError("Err-{ErrorCode}: Target not found: {Id}", LogErrorCodes.Target.NotFound, id);
 
             return TypedResults.NotFound($"Target not found: {id}");
         }
@@ -176,7 +185,9 @@ public static class TargetEndpoints
         catch (InvalidOperationException ex)
         {
             var logger = loggerFactory.CreateLogger(TargetEndpointsType);
-            logger.LogError("Failed to remove targets: {Message}.", ex.Message);
+            logger.LogError("Err-{ErrorCode}: Failed to remove targets: {Message}.",
+                LogErrorCodes.Target.DeleteFailed,
+                ex.Message);
 
             return TypedResults.NotFound(ex.Message);
         }

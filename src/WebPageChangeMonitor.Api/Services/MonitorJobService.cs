@@ -9,6 +9,7 @@ using Quartz;
 using Quartz.Impl;
 using Quartz.Impl.Matchers;
 using WebPageChangeMonitor.Api.Infrastructure;
+using WebPageChangeMonitor.Api.Infrastructure.Logging;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
 using WebPageChangeMonitor.Models.Domain;
 
@@ -81,7 +82,8 @@ public class MonitorJobService : IMonitorJobService
         var targetTriggerKey = triggerKeys.FirstOrDefault(key => key.Name == targetId.ToString());
         if (targetTriggerKey is null)
         {
-            _logger.LogError("Job trigger not found, key: {TriggerName}.{TriggerGroup}.",
+            _logger.LogError("Err-{ErrorCode}: Job trigger not found, key: {TriggerName}.{TriggerGroup}.",
+                LogErrorCodes.Job.TriggerNotFound,
                 targetId.ToString(),
                 resourceId.ToString());
 
