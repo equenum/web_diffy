@@ -6,7 +6,7 @@
     <DialogContent >
         @if (TargetSnapshots.Any())
         {
-            <MudDataGrid T="TargetSnapshotDto" Items="@TargetSnapshots" SortMode="SortMode.Multiple" Outlined="true">
+            <MudDataGrid T="TargetSnapshotDto" Items="@TargetSnapshots" SortMode="SortMode.Multiple">
                 <Columns>
                     <TemplateColumn Title="#" Sortable="false">
                         <CellTemplate>@(TargetSnapshots.IndexOf(context.Item) + 1)</CellTemplate>

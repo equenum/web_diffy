@@ -19,7 +19,7 @@
                         <MudExpansionPanel Text="@resource.DisplayName" Expanded="@UserAppSettings.AreCollapsePanelsExpanded">
                             <MudStack>
                                 <div @onmouseover="@(() => HandlePanelMouseOver(resource.Id))">
-                                    <MudDataGrid T="TargetDto" Items="@Targets.Where(target => target.ResourceId == resource.Id)" SortMode="SortMode.Multiple" Outlined="true">
+                                    <MudDataGrid T="TargetDto" Items="@Targets.Where(target => target.ResourceId == resource.Id)" SortMode="SortMode.Multiple">
                                         <Columns>
                                             @if(UserAppSettings.AreItemIdColumnsEnabled)
                                             {
