@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using WebDiffy.UI.Infrastructure;
+using WebDiffy.UI.Infrastructure.UserSettings;
 using WebDiffy.UI.Services;
 using WebPageChangeMonitor.Models.Dtos;
 using SortDirection = WebPageChangeMonitor.Models.Consts.SortDirection;

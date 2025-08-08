@@ -1,5 +1,5 @@
 using System.Linq;
-using WebDiffy.UI.Infrastructure;
+using WebDiffy.UI.Infrastructure.UserSettings;
 
 namespace WebDiffy.UI.Components.Pages.Settings;
 
