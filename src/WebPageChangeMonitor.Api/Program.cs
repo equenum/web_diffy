@@ -36,6 +36,7 @@ app.UseHttpsRedirection();
 app.MapResourceEndpoints();
 app.MapTargetEndpoints();
 app.MapTargetSnapshotEndpoints();
+app.MapUserSettingsEndpoints();
 
 await DbInitializer.ExecuteAsync(connectionString);
 

@@ -28,8 +28,13 @@ public static class LogErrorCodes
         public const int DeleteFailed = 43;
     }
 
+    public static class UserSettings
+    {
+        public const int NotFound = 51;
+    }
+
     public static class Job
     {
-        public const int TriggerNotFound = 51;
+        public const int TriggerNotFound = 61;
     }
 }

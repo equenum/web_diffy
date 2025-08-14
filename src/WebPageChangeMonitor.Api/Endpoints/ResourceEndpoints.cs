@@ -32,7 +32,7 @@ public static class ResourceEndpoints
         group.MapGet("{id}", GetById).WithName(GetByIdEndpointName);
 
         group.MapPost(string.Empty, Create).AddEndpointFilter<CreateResourceValidationFilter>();
-        group.MapPut(string.Empty, Update).AddEndpointFilter<UpdateResourceValidationFilter>();;
+        group.MapPut(string.Empty, Update).AddEndpointFilter<UpdateResourceValidationFilter>();
         group.MapDelete("{id}", Remove);
     }
 
