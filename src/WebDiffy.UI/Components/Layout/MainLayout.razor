@@ -36,3 +36,28 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code
+{
+    [Inject]
+    private IUserSettingsService UserSettingsService { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        try
+        {
+            var storedSettings = await UserSettingsService.GetAsync();
+            if (storedSettings is not null)
+            {
+                UserAppSettings.Populate(storedSettings);
+            }
+        }
+        catch
+        {
+            var currentSettings = ObjectCopyHelper.DeepCopy(UserAppSettings.ToData());
+            await UserSettingsService.CreateAsync(currentSettings);
+        }
+    }
+}
