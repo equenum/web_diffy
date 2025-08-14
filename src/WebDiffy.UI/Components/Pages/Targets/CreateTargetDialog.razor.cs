@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using WebDiffy.UI.Infrastructure.Helpers;
+using WebDiffy.UI.Infrastructure.UserSettings;
 using WebDiffy.UI.Services;
 using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Dtos;
@@ -34,7 +35,7 @@ public partial class CreateTargetDialog
         try
         {
             Target.ResourceId = ResourceId;
-            Target.State = State.Paused;
+            Target.State = UserAppSettings.AreTargetsCreatedAsActive ? State.Active : State.Paused;
             
             var createdTarget = await TargetService.CreateAsync(Target);
             createdTargetId = createdTarget.Id;
