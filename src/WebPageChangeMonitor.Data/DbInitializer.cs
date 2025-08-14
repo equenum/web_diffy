@@ -116,8 +116,8 @@ public static class DbInitializer
                     }
 
                     await transaction.CommitAsync();
-                } 
-                
+                }
+
                 // target snapshots
                 using (var transaction = await connection.BeginTransactionAsync())
                 {
@@ -149,7 +149,34 @@ public static class DbInitializer
                     }
 
                     await transaction.CommitAsync();
-                } 
+                }
+                
+                // user settings
+                using (var transaction = await connection.BeginTransactionAsync())
+                {
+                    using (var command = new NpgsqlCommand(@"
+                        create table if not exists monitor.user_settings (
+                            id uuid primary key,
+                            value text not null,
+                            created_at timestamp default statement_timestamp() not null,
+                            updated_at timestamp
+                        );",
+                        connection, transaction))
+                    {
+                        await command.ExecuteNonQueryAsync();
+                    }
+
+                    using (var command = new NpgsqlCommand(@"
+                        create or replace trigger set_updated_at_stamp before insert or update 
+                        on monitor.user_settings
+                        for each row execute function monitor.set_updated_at_stamp();",
+                        connection, transaction))
+                    {
+                        await command.ExecuteNonQueryAsync();
+                    }
+
+                    await transaction.CommitAsync();
+                }
             }
         }
     }

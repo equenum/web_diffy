@@ -9,9 +9,10 @@ public class MonitorDbContext : DbContext
     public DbSet<ResourceEntity> Resources { get; set; }
     public DbSet<TargetEntity> Targets { get; set; }
     public DbSet<TargetSnapshotEntity> TargetSnapshots { get; set; }
+    public DbSet<UserSettingsEntity> UserSettings { get; set; }
 
     public MonitorDbContext(DbContextOptions<MonitorDbContext> options)
-        : base(options) 
+        : base(options)
     { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -22,5 +23,6 @@ public class MonitorDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ResourceEntityConfiguration());
         modelBuilder.ApplyConfiguration(new TargetEntityConfiguration());
         modelBuilder.ApplyConfiguration(new TargetSnapshotEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new UserSettingsEntityConfiguration());
     }
 }
