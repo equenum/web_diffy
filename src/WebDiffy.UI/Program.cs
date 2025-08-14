@@ -17,6 +17,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddTransient<IResourceService, ResourceService>();
 builder.Services.AddTransient<ITargetService, TargetService>();
 builder.Services.AddTransient<ITargetSnapshotService, TargetSnapshotService>();
+builder.Services.AddTransient<IUserSettingsService, UserSettingsService>();
 
 builder.Services.Configure<ApiOptions>(
     builder.Configuration.GetSection(ApiOptions.Name));

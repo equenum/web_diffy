@@ -90,6 +90,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IResourceService, ResourceService>();
         services.AddTransient<ITargetService, TargetService>();
         services.AddTransient<ITargetSnapshotService, TargetSnapshotService>();
+        services.AddTransient<IUserSettingsService, UserSettingsService>();
 
         return services;
     }
