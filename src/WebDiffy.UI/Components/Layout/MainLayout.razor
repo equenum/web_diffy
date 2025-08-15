@@ -9,16 +9,26 @@
         <MudGrid Justify="Justify.Center" Spacing="5">
             <MudItem xs="12">
                 <MudPaper>
-                    <MudText id="page-header" Typo="Typo.h5" Align="Align.Center" Class="align-center justify-center mud-width-full py-2">web_diffy</MudText>
+                    <div class="py-4">
+                        <MudText id="page-header" Typo="Typo.h5" Align="Align.Center" Class="align-center justify-center mud-width-full">web_diffy</MudText>
+                    </div>
                 </MudPaper>
             </MudItem>
             <MudItem xs="3">
                 <MudPaper>
                     <MudNavMenu id="nav-menu" Bordered="true" Class="py-4">
-                        <MudNavLink Href="@Urls.Dashboard" Match="NavLinkMatch.Prefix">Dashboard</MudNavLink>
-                        <MudNavLink Href="@Urls.Resources" Match="NavLinkMatch.Prefix">Resources</MudNavLink>
-                        <MudNavLink Href="@Urls.Targets" Match="NavLinkMatch.Prefix">Targets</MudNavLink>
-                        <MudNavLink Href="@Urls.Settings" Match="NavLinkMatch.Prefix">Settings</MudNavLink>
+                        <MudNavLink Href="@Urls.Dashboard" Match="NavLinkMatch.Prefix">
+                            <MudText Typo="Typo.subtitle1" Align="Align.Left">Dashboard</MudText>
+                        </MudNavLink>
+                        <MudNavLink Href="@Urls.Resources" Match="NavLinkMatch.Prefix">
+                            <MudText Typo="Typo.subtitle1" Align="Align.Left">Resources</MudText>
+                        </MudNavLink>
+                        <MudNavLink Href="@Urls.Targets" Match="NavLinkMatch.Prefix">
+                            <MudText Typo="Typo.subtitle1" Align="Align.Left">Targets</MudText>
+                        </MudNavLink>
+                        <MudNavLink Href="@Urls.Settings" Match="NavLinkMatch.Prefix">
+                            <MudText Typo="Typo.subtitle1" Align="Align.Left">Settings</MudText>
+                        </MudNavLink>
                     </MudNavMenu>
                 </MudPaper>
             </MudItem>
