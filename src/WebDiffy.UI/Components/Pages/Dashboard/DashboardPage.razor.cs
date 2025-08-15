@@ -32,6 +32,8 @@ public partial class DashboardPage
     private Dictionary<Guid, List<TargetDto>> TargetsByResourceId = [];
     private Dictionary<Guid, List<TargetSnapshotDto>> SnapshotsByTargetId = [];
     private WidgetData WidgetData = new();
+    private bool IsDataLoaded = false;
+    private bool IsWidgetDataReady = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,7 +60,10 @@ public partial class DashboardPage
             SnapshotsByTargetId.TryAdd(target.Id, snapshots);
         }
 
+        IsDataLoaded = true;
+
         WidgetData = BuildWidgetData();
+        IsWidgetDataReady = true;
     }
 
     private async Task<IEnumerable<ResourceDto>> FetchResources()

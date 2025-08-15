@@ -28,6 +28,7 @@ public partial class TargetsPage
     private IEnumerable<ResourceDto> Resources = [];
     private IEnumerable<TargetDto> Targets = [];
     private Guid? ActiveResourceId = default;
+    private bool IsDataLoaded = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -35,6 +36,8 @@ public partial class TargetsPage
 
         Resources = await FetchResources();
         Targets = await FetchTargets();
+
+        IsDataLoaded = true;
     }
 
     private async Task AddTargetAsync()
