@@ -7,7 +7,6 @@ public static class UserAppSettings
     public static bool AreDeletePopUpsEnabled { get; set; } = true;
     public static bool AreItemIdColumnsEnabled { get; set; } = true;
     public static bool AreItemIdsShortened { get; set; } = true;
-    public static bool AreCollapsePanelsExpanded { get; set; } = true;
     public static bool AreTargetsCreatedAsActive { get; set; } = false;
     public static int ItemIdSubSectionLength { get; set; } = 12;
     public static int[] GridPageSizeOptions { get; set; } = [10, 25, 50, 100];
@@ -18,7 +17,6 @@ public static class UserAppSettings
         AreDeletePopUpsEnabled = true;
         AreItemIdColumnsEnabled = true;
         AreItemIdsShortened = true;
-        AreCollapsePanelsExpanded = true;
         AreTargetsCreatedAsActive = false;
         ItemIdSubSectionLength = 12;
         GridPageSizeOptions = [10, 25, 50, 100];
@@ -30,7 +28,6 @@ public static class UserAppSettings
         AreDeletePopUpsEnabled = dto.AreDeletePopUpsEnabled;
         AreItemIdColumnsEnabled = dto.AreItemIdColumnsEnabled;
         AreItemIdsShortened = dto.AreItemIdsShortened;
-        AreCollapsePanelsExpanded = dto.AreCollapsePanelsExpanded;
         AreTargetsCreatedAsActive = dto.AreTargetsCreatedAsActive;
         ItemIdSubSectionLength = dto.ItemIdSubSectionLength;
         GridPageSizeOptions = dto.GridPageSizeOptions;
@@ -44,7 +41,6 @@ public static class UserAppSettings
             AreDeletePopUpsEnabled = AreDeletePopUpsEnabled,
             AreItemIdColumnsEnabled = AreItemIdColumnsEnabled,
             AreItemIdsShortened = AreItemIdsShortened,
-            AreCollapsePanelsExpanded = AreCollapsePanelsExpanded,
             AreTargetsCreatedAsActive = AreTargetsCreatedAsActive,
             ItemIdSubSectionLength = ItemIdSubSectionLength,
             GridPageSizeOptions = GridPageSizeOptions,
