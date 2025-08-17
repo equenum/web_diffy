@@ -1,6 +1,6 @@
 using MudBlazor;
 
-namespace WebDiffy.UI;
+namespace WebDiffy.UI.Infrastructure;
 
 public static class ThemeConfigs
 {
