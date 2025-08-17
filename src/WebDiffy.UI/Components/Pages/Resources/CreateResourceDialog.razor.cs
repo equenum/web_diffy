@@ -24,10 +24,18 @@ public partial class CreateResourceDialog
 
     private async Task AddResourceAsync()
     {
+        await Form.Validate();
+        if (!IsFormValid)
+        {
+            return;
+        }
+        
         Guid? createdResourceId = null;
 
         try
         {
+            TrimInputs();
+
             var createdResource = await ResourceService.CreateAsync(Resource);
             createdResourceId = createdResource.Id;
 
@@ -39,5 +47,13 @@ public partial class CreateResourceDialog
         }
 
         MudDialog.Close(DialogResult.Ok(createdResourceId));
+    }
+
+    private void TrimInputs()
+    {
+        Resource.DisplayName = Resource.DisplayName.Trim();
+        Resource.Description = !string.IsNullOrWhiteSpace(Resource.Description)
+            ? Resource.Description 
+            : null;
     }
 }

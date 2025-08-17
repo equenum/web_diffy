@@ -1,16 +1,57 @@
 ﻿<MudDialog>
     <TitleContent>
-        <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.Add"/>
-            Add Resource
-        </MudText>
+        <div class="d-flex align-center">
+            <MudIcon Icon="@Icons.Material.Filled.AddBox"/>
+            <MudText Typo="Typo.h6" Class="px-2">Add Resource</MudText>
+        </div>
     </TitleContent>
     <DialogContent>
-        <MudTextField @bind-Value="Resource.DisplayName" Label="Display Name" />
-        <MudTextField @bind-Value="Resource.Description" Label="Description" />
+        <MudForm @ref="Form" @bind-IsValid="@IsFormValid">
+            <MudGrid>
+                <MudItem xs="6" Class="py-0">
+                    <MudTextField @bind-Value="Resource.DisplayName" Label="Display Name" Counter="20" MaxLength="20" Immediate="true"
+                        Validation="ValidateDisplayName" Class="py-2"
+                    />
+                </MudItem>
+                <MudItem xs="6" Class="py-0">
+                    <MudTextField @bind-Value="Resource.Description" Label="Description" Counter="50" MaxLength="50" Immediate="true" 
+                        Validation="ValidateDescription" Class="py-2"
+                    />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="AddResourceAsync">Add</MudButton>
+        <MudButton OnClick="Cancel" Variant="Variant.Filled">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddResourceAsync" Disabled="@(!IsFormValid)">Add</MudButton>
     </DialogActions>
 </MudDialog>
+
+@code {
+    private MudForm Form;
+    private bool IsFormValid;
+
+    private string ValidateDisplayName(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "Required";
+        }
+        
+        return null;
+    }
+
+    private string ValidateDescription(string value)
+    {
+        if (!string.IsNullOrEmpty(value))
+        {
+            var trimmedValue = value.Replace(" ", string.Empty);
+            if (trimmedValue.Length == 0)
+            {
+                return "Cannot be empty";
+            }
+        }
+
+        return null;
+    }
+}
