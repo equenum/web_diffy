@@ -1,17 +1,58 @@
 ﻿<MudDialog>
     <TitleContent>
-        <MudText Typo="Typo.h6">
+        <div class="d-flex align-center">
             <MudIcon Icon="@Icons.Material.Filled.Edit"/>
-            Edit Resource
-        </MudText>
+            <MudText Typo="Typo.h6" Class="px-2">Edit Resource</MudText>
+        </div>
+        <MudText Typo="Typo.subtitle1">Id: @CopiedResource.Id</MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField Value="@CopiedResource.Id" Label="Id" ReadOnly="true" />
-        <MudTextField @bind-Value="CopiedResource.DisplayName" Label="Display Name" />
-        <MudTextField @bind-Value="CopiedResource.Description" Label="Description" />
+        <MudForm @ref="Form" @bind-IsValid="@IsFormValid">
+            <MudGrid>
+                <MudItem xs="6" Class="py-0">
+                    <MudTextField @bind-Value="CopiedResource.DisplayName" Label="Display Name" Counter="20" MaxLength="20" Immediate="true"
+                        Validation="@(new Func<string, string>(ValidateDisplayName))" Class="py-2"
+                    />
+                </MudItem>
+                <MudItem xs="6" Class="py-0">
+                    <MudTextField @bind-Value="CopiedResource.Description" Label="Description" Counter="50" MaxLength="50" Immediate="true" 
+                        Validation="@(new Func<string, string>(ValidateDescription))" Class="py-2"
+                    />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="UpdateResourceAsync">Edit</MudButton>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateResourceAsync" Disabled="@(!IsFormValid)">Edit</MudButton>
     </DialogActions>
 </MudDialog>
+
+@code {
+    private MudForm Form;
+    private bool IsFormValid;
+
+    private string ValidateDisplayName(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return ValidationMessages.Required;
+        }
+        
+        return null;
+    }
+
+    private string ValidateDescription(string value)
+    {
+        if (!string.IsNullOrEmpty(value))
+        {
+            var trimmedValue = value.Replace(" ", string.Empty);
+            if (trimmedValue.Length == 0)
+            {
+                return ValidationMessages.Empty;
+            }
+        }
+
+        return null;
+    }
+}

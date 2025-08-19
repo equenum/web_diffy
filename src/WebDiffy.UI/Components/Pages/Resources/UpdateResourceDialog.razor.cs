@@ -35,6 +35,12 @@ public partial class UpdateResourceDialog
 
     private async Task UpdateResourceAsync()
     {
+        await Form.Validate();
+        if (!IsFormValid)
+        {
+            return;
+        }
+        
         Guid? updatedResourceId = null;
 
         try
