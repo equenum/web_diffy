@@ -7,14 +7,12 @@
 
 # Todo:
 
-- Add input validation on UI (take the code from the existing endpoint filters).
+- Style user settings.
 - Update tests for the snapshot services and change detector to account for Outcome and Message.
 - Implement notifications.
 - Add attribution section to readme including all libraries and licenses.
 - Test diffs (especially added and removed lines).
 - Highlight active, paused and change detected targets on the dashboard somehow.
-- Set elevation for all UI elements to 2.
-- Custom headers for all expansion panels https://mudblazor.com/components/expansionpanels#customizing-the-header-and-icon
 - Index db columns.
 
 # Attribution
