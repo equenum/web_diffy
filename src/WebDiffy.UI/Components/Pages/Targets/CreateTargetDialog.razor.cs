@@ -30,6 +30,12 @@ public partial class CreateTargetDialog
 
     private async Task AddTargetAsync()
     {
+        await Form.Validate();
+        if (!IsFormValid)
+        {
+            return;
+        }
+        
         Guid? createdTargetId = null;
 
         try
