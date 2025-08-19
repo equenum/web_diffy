@@ -36,6 +36,12 @@ public partial class UpdateTargetDialog
 
     private async Task UpdateTargetAsync()
     {
+        await Form.Validate();
+        if (!IsFormValid)
+        {
+            return;
+        }
+        
         Guid? updatedTargetId = null;
 
         try
@@ -53,12 +59,12 @@ public partial class UpdateTargetDialog
         MudDialog.Close(DialogResult.Ok(updatedTargetId));
     }
 
-    private void UpdateChangeType(string value)
+    private void SetChangeType(string value)
     {
         CopiedTarget.ChangeType = EnumHelper.GetEnumValue<ChangeType>(value);
     } 
 
-    private void UpdateSelectorType(string value)
+    private void SetSelectorType(string value)
     {
         CopiedTarget.SelectorType = EnumHelper.GetEnumValue<SelectorType>(value);
     }

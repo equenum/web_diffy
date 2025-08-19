@@ -1,42 +1,173 @@
 ﻿<MudDialog>
     <TitleContent>
-        <MudText Typo="Typo.h6">
+        <div class="d-flex align-center">
             <MudIcon Icon="@Icons.Material.Filled.Edit"/>
-            Edit Target
-        </MudText>
+            <MudText Typo="Typo.h6" Class="px-2">Edit Target</MudText>
+        </div>
+        <MudText Typo="Typo.subtitle1">Id: @CopiedTarget.Id</MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField Value="@CopiedTarget.Id" Label="Id" ReadOnly="true" />
-        <MudTextField @bind-Value="CopiedTarget.DisplayName" Label="Display Name" />
-        <MudTextField @bind-Value="CopiedTarget.Description" Label="Description" />
-        <MudTextField @bind-Value="CopiedTarget.Url" Label="Url" />
-        <MudTextField @bind-Value="CopiedTarget.CronSchedule" Label="Cron Schedule" />
-        <MudSelect 
-            T="string" 
-            Label="Change Type" 
-            Value="CopiedTarget.ChangeType.ToString()" 
-            ValueChanged="@((string value) => UpdateChangeType(value))">
-            @foreach (var type in Enum.GetValues(typeof(ChangeType)))
-            {
-                <MudSelectItem Value="@type.ToString()" />
-            }
-        </MudSelect>
-        <MudTextField @bind-Value="CopiedTarget.HtmlTag" Label="Html Tag" />
-        <MudSelect 
-            T="string" 
-            Label="Selector Type" 
-            Value="CopiedTarget.SelectorType.ToString()" 
-            ValueChanged="@((string value) => UpdateSelectorType(value))">
-            @foreach (var type in Enum.GetValues(typeof(SelectorType)))
-            {
-                <MudSelectItem Value="@type.ToString()" />
-            }
-        </MudSelect>
-        <MudTextField @bind-Value="CopiedTarget.SelectorValue" Label="Selector Value" />
-        <MudTextField @bind-Value="CopiedTarget.ExpectedValue" Label="Expected Value" />
+        <MudForm @ref="Form" @bind-IsValid="@IsFormValid">
+            <MudGrid>
+                <MudItem xs="6" Class="py-0">
+                    <MudTextField @bind-Value="CopiedTarget.DisplayName" Label="Display Name" Counter="20" MaxLength="20" Immediate="true"
+                        Validation="@(new Func<string, string>(ValidateDisplayName))" Class="py-2"
+                    />
+                </MudItem>
+                <MudItem xs="6" Class="py-0">
+                    <MudTextField @bind-Value="CopiedTarget.Description" Label="Description" Counter="50" MaxLength="50" Immediate="true" 
+                        Validation="@(new Func<string, string>(ValidateDescription))" Class="py-2"
+                    />
+                </MudItem>
+                <MudItem xs="6" Class="py-0">
+                    <MudTextField @bind-Value="CopiedTarget.Url" Label="Url" Immediate="true" 
+                        Validation="@(new Func<string, string>(ValidateUrl))" Class="pt-2 pb-7"
+                    />
+                </MudItem>
+                <MudItem xs="6" Class="py-0">
+                    <MudTextField @bind-Value="CopiedTarget.CronSchedule" Label="Cron Schedule" Immediate="true" 
+                        Validation="@(new Func<string, string>(ValidateCronSchedule))" Class="pt-2 pb-7"
+                    />
+                </MudItem>
+                <MudItem xs="6" Class="py-0">
+                    <MudSelect T="string" Class="py-2" Label="Change Type" Value="CopiedTarget.ChangeType.ToString()" 
+                        ValueChanged="@((string value) => SetChangeType(value))">
+                        @foreach (var type in Enum.GetValues(typeof(ChangeType)))
+                        {
+                            <MudSelectItem Value="@type.ToString()" />
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="6" Class="py-0">
+                    <MudTextField @bind-Value="CopiedTarget.HtmlTag" Label="Html Tag" Counter="20" MaxLength="20" Immediate="true" 
+                        Validation="@(new Func<string, string>(ValidateHtmlTag))" Class="py-2"
+                    />
+                </MudItem>
+                <MudItem xs="6" Class="py-0">
+                    <MudSelect
+                        T="string" Class="py-2" Label="Selector Type" Value="CopiedTarget.SelectorType.ToString()" 
+                        ValueChanged="@((string value) => SetSelectorType(value))">
+                        @foreach (var type in Enum.GetValues(typeof(SelectorType)))
+                        {
+                            <MudSelectItem Value="@type.ToString()" />
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="6" Class="py-0">
+                    <MudTextField @bind-Value="CopiedTarget.SelectorValue" Label="Selector Value" Counter="50" MaxLength="50" Immediate="true" 
+                        Validation="@(new Func<string, string>(ValidateSelectorValue))" Class="py-2"
+                    />
+                </MudItem>
+                <MudItem xs="6" Class="py-0">
+                    <MudTextField @bind-Value="CopiedTarget.ExpectedValue" Label="Expected Value" Counter="100" MaxLength="100" Immediate="true" 
+                        Validation="@(new Func<string, string>(ValidateExpectedValue))" Class="py-2"
+                    />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="UpdateTargetAsync">Edit</MudButton>
+        <MudButton Variant="Variant.Filled" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="UpdateTargetAsync" Disabled="@(!IsFormValid)">Edit</MudButton>
     </DialogActions>
 </MudDialog>
+
+@code {
+    private MudForm Form;
+    private bool IsFormValid;
+
+    private string ValidateDisplayName(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return ValidationMessages.Required;
+        }
+        
+        return null;
+    }
+
+    private string ValidateDescription(string value)
+    {
+        if (!string.IsNullOrEmpty(value))
+        {
+            var trimmedValue = value.Replace(" ", string.Empty);
+            if (trimmedValue.Length == 0)
+            {
+                return ValidationMessages.Empty;
+            }
+        }
+
+        return null;
+    }
+
+    private string ValidateUrl(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return ValidationMessages.Required;
+        }
+
+        var isValidUrl = Uri.TryCreate(value, UriKind.Absolute, out var uriResult);
+
+        if (!isValidUrl)
+        {
+            return ValidationMessages.Url;
+        }
+
+        if (isValidUrl && uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps)
+        { 
+            return ValidationMessages.UrlSchema;
+        }
+
+        return null;
+    }
+
+    private string ValidateCronSchedule(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return ValidationMessages.Required;
+        }
+
+        if (!CronExpression.IsValidExpression(value))
+        {
+            return ValidationMessages.CronExpression;
+        }
+        
+        return null;
+    }
+
+    private string ValidateHtmlTag(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return ValidationMessages.Required;
+        }
+
+        return null;
+    }
+
+    private string ValidateSelectorValue(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return ValidationMessages.Required;
+        }
+
+        return null;
+    }
+
+    private string ValidateExpectedValue(string value)
+    {
+        if (!string.IsNullOrEmpty(value))
+        {
+            var trimmedValue = value.Replace(" ", string.Empty);
+            if (trimmedValue.Length == 0)
+            {
+                return ValidationMessages.Empty;
+            }
+        }
+
+        return null;
+    }
+}
