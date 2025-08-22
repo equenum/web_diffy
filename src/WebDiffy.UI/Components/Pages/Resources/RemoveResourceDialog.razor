@@ -9,7 +9,9 @@
         <MudText>Are you sure you want to delete this resource? Doing so will also remove related targets and snapshots.</MudText>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="RemoveResourceAsync">Delete</MudButton>
+        <div class="pb-1">
+            <MudButton Variant="Variant.Filled" OnClick="Cancel" Class="mx-2">Cancel</MudButton>
+            <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="RemoveResourceAsync">Delete</MudButton>
+        </div>
     </DialogActions>
 </MudDialog>

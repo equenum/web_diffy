@@ -23,8 +23,10 @@
         </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton Variant="Variant.Filled" OnClick="Cancel">Cancel</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateResourceAsync" Disabled="@(!IsFormValid)">Edit</MudButton>
+        <div class="pb-1">
+            <MudButton Variant="Variant.Filled" OnClick="Cancel" Class="mx-2">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateResourceAsync" Disabled="@(!IsFormValid)">Edit</MudButton>
+        </div>
     </DialogActions>
 </MudDialog>
 

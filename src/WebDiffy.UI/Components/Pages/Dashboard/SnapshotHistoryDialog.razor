@@ -6,34 +6,36 @@
     <DialogContent >
         @if (TargetSnapshots.Any())
         {
-            <MudDataGrid T="TargetSnapshotDto" Items="@TargetSnapshots" SortMode="SortMode.Multiple">
-                <Columns>
-                    <TemplateColumn Title="#" Sortable="false">
-                        <CellTemplate>@(TargetSnapshots.IndexOf(context.Item) + 1)</CellTemplate>
-                    </TemplateColumn>
-                    <PropertyColumn Property="x => x.Outcome" Title="Outcome" Sortable="false"/>
-                    <TemplateColumn Title="Status" Sortable="false">
-                        <CellTemplate>@GetStatusMessage(context.Item)</CellTemplate>
-                    </TemplateColumn>
-                    <PropertyColumn Property="x => x.Message" Title="Message" Sortable="false"/>
-                    <PropertyColumn Property="x => x.CreatedAt" Title="Created At"/>
-                    <TemplateColumn>
-                        <CellTemplate>
-                            <MudIconButton 
-                                Disabled="!context.Item.IsChangeDetected" 
-                                Size="@Size.Small" 
-                                Icon="@Icons.Material.Filled.List" 
-                                OnClick="@(() => OpenSnapshotDiffAsync(context.Item))"/>
-                        </CellTemplate>
-                    </TemplateColumn>
-                </Columns>
-                <PagerContent>
-                    <MudDataGridPager T="TargetSnapshotDto" PageSizeOptions="UserAppSettings.LargeGridPageSizeOptions" />
-                </PagerContent>
-                <NoRecordsContent>
-                    <MudText>No records available.</MudText>
-                </NoRecordsContent>
-            </MudDataGrid>
+            <div class="py-1">
+                <MudDataGrid T="TargetSnapshotDto" Items="@TargetSnapshots" SortMode="SortMode.Multiple">
+                    <Columns>
+                        <TemplateColumn Title="#" Sortable="false">
+                            <CellTemplate>@(TargetSnapshots.IndexOf(context.Item) + 1)</CellTemplate>
+                        </TemplateColumn>
+                        <PropertyColumn Property="x => x.Outcome" Title="Outcome" Sortable="false"/>
+                        <TemplateColumn Title="Status" Sortable="false">
+                            <CellTemplate>@GetStatusMessage(context.Item)</CellTemplate>
+                        </TemplateColumn>
+                        <PropertyColumn Property="x => x.Message" Title="Message" Sortable="false"/>
+                        <PropertyColumn Property="x => x.CreatedAt" Title="Created At"/>
+                        <TemplateColumn>
+                            <CellTemplate>
+                                <MudIconButton 
+                                    Disabled="!context.Item.IsChangeDetected" 
+                                    Size="@Size.Small" 
+                                    Icon="@Icons.Material.Filled.List" 
+                                    OnClick="@(() => OpenSnapshotDiffAsync(context.Item))"/>
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </Columns>
+                    <PagerContent>
+                        <MudDataGridPager T="TargetSnapshotDto" PageSizeOptions="UserAppSettings.LargeGridPageSizeOptions" />
+                    </PagerContent>
+                    <NoRecordsContent>
+                        <MudText>No records available.</MudText>
+                    </NoRecordsContent>
+                </MudDataGrid>
+            </div>
         }
         else
         {
@@ -41,6 +43,8 @@
         }
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Close">Close</MudButton>
+        <div class="pb-1">
+            <MudButton Variant="Variant.Filled" OnClick="Close">Close</MudButton>
+        </div>
     </DialogActions>
 </MudDialog>

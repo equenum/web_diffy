@@ -69,8 +69,10 @@
         }
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Close">Close</MudButton>
-        <MudButton OnClick="CloseAll">Back to Dashboard</MudButton>
+        <div class="pb-1">
+            <MudButton Variant="Variant.Filled" OnClick="Close" Class="mx-2">Close</MudButton>
+            <MudButton Variant="Variant.Filled" OnClick="CloseAll">Back to Dashboard</MudButton>
+        </div>
     </DialogActions>
 </MudDialog>
 
