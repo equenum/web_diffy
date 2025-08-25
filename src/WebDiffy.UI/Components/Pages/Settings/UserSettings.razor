@@ -15,24 +15,131 @@
         <MudPaper Class="py-2 px-2">
             @if(CopiedUserSettings is not null)
             {
-                <MudCheckBox @bind-Value="CopiedUserSettings.AreDeletePopUpsEnabled" Label="AreDeletePopUpsEnabled"></MudCheckBox>
-                <MudCheckBox @bind-Value="CopiedUserSettings.AreItemIdColumnsEnabled" Label="AreItemIdColumnsEnabled"></MudCheckBox>
-                <MudCheckBox @bind-Value="CopiedUserSettings.AreItemIdsShortened" Label="AreItemIdsShortened"></MudCheckBox>
-                <MudCheckBox @bind-Value="CopiedUserSettings.AreTargetsCreatedAsActive" Label="AreTargetsCreatedAsActive"></MudCheckBox>
-                <MudNumericField @bind-Value="CopiedUserSettings.ItemIdSubSectionLength" Label="ItemIdSubSectionLength" Min="1" Max="12" />
-                <MudTextField 
-                    T="string"
-                    Value="ConvertArrayBasedValue(CopiedUserSettings.GridPageSizeOptions)"
-                    ValueChanged="@((string value) => UpdateGridPageSizeOptions(value))"
-                    Label="GridPageSizeOptions" />
-                <MudTextField 
-                    T="string"
-                    Value="ConvertArrayBasedValue(CopiedUserSettings.LargeGridPageSizeOptions)"
-                    ValueChanged="@((string value) => UpdateLargeGridPageSizeOptions(value))"
-                    Label="LargeGridPageSizeOptions" />
+                <MudForm @ref="Form" @bind-IsValid="@IsFormValid">
+                    <MudGrid>
+                        <MudItem xs="3" Class="d-flex align-center justify-start mud-width-full">
+                            <MudSwitch T="bool" @bind-Value="CopiedUserSettings.AreDeletePopUpsEnabled"
+                                ThumbIcon="@(CopiedUserSettings.AreDeletePopUpsEnabled is true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                                ThumbIconColor="@(CopiedUserSettings.AreDeletePopUpsEnabled is true ? Color.Success : Color.Error)"
+                                >Deletion Dialogs
+                            </MudSwitch>
+                        </MudItem>
+                        <MudItem xs="3" Class="d-flex align-center justify-start mud-width-full">
+                            <MudSwitch T="bool" @bind-Value="CopiedUserSettings.AreItemIdColumnsEnabled"
+                                ThumbIcon="@(CopiedUserSettings.AreItemIdColumnsEnabled is true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                                ThumbIconColor="@(CopiedUserSettings.AreItemIdColumnsEnabled is true ? Color.Success : Color.Error)"
+                                >Item Id Columns
+                            </MudSwitch>
+                        </MudItem>
+                        <MudItem xs="6" Class="d-flex align-center justify-start mud-width-full pr-4">
+                            <MudSlider @bind-Value="CopiedUserSettings.ItemIdSubSectionLength" Min="4" Max="12" TickMarks="true" Step="1" Color="Color.Primary">
+                                <MudText>Item Id Section Length: @CopiedUserSettings.ItemIdSubSectionLength.ToString()</MudText>
+                            </MudSlider>
+                        </MudItem>
+                        <MudItem xs="3" Class="d-flex align-center justify-start mud-width-full">
+                            <MudSwitch T="bool" @bind-Value="CopiedUserSettings.AreItemIdsShortened"
+                                ThumbIcon="@(CopiedUserSettings.AreItemIdsShortened is true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                                ThumbIconColor="@(CopiedUserSettings.AreItemIdsShortened is true ? Color.Success : Color.Error)"
+                                >Shorten Item Ids
+                            </MudSwitch>
+                        </MudItem>
+                        <MudItem xs="3" Class="d-flex align-center justify-start mud-width-full">
+                            <MudSwitch T="bool" @bind-Value="CopiedUserSettings.AreTargetsCreatedAsActive"
+                                ThumbIcon="@(CopiedUserSettings.AreTargetsCreatedAsActive is true ? Icons.Material.Filled.Done : Icons.Material.Filled.Close)" 
+                                ThumbIconColor="@(CopiedUserSettings.AreTargetsCreatedAsActive is true ? Color.Success : Color.Error)"
+                                >Create Targets As Active
+                            </MudSwitch>
+                        </MudItem>
+                        <MudItem xs="6" Class="d-flex align-center justify-start mud-width-full pr-4">
+                            <MudTextField T="string" @bind-Value="GridPageSizeOptionsText" Label="Grid Page Size Options" 
+                                Placeholder="10, 25, 50, 100" Immediate="true" Validation="@(new Func<string, string>(ValidateGridPageSizeOptions))"/>
+                        </MudItem>
+                        <MudItem xs="6" Class="d-flex align-center justify-start mud-width-full" />
+                        <MudItem xs="6" Class="d-flex align-center justify-start mud-width-full pr-4">
+                            <MudTextField T="string" @bind-Value="LargeGridPageSizeOptionsText" Label="Large Grid Page Size Options" 
+                                Placeholder="50, 100, 200" Immediate="true" Validation="@(new Func<string, string>(ValidateLargeGridPageSizeOptions))"/>
+                        </MudItem>
+                        <MudItem xs="12" Class="d-flex align-center justify-end mud-width-full pr-1 pb-1">
+                            <MudButton Variant="Variant.Filled" OnClick="Reset" Class="mx-2">Reset</MudButton>
+                            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Save" Disabled="@(!IsFormValid)">Save</MudButton>
+                        </MudItem>
+                    </MudGrid>
+                </MudForm>
             }
-            <MudButton OnClick="Reset">Reset</MudButton>
-            <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
         </MudPaper>
     </MudItem>
 </MudGrid>
+
+@code {
+    private MudForm Form;
+    private bool IsFormValid;
+
+    private string ValidateGridPageSizeOptions(string value)
+    {
+        return ValidateGridPageSize(value, MaxGridPageSizeValue);
+    }
+
+    private string ValidateLargeGridPageSizeOptions(string value)
+    {
+        return ValidateGridPageSize(value, MaxLargeGridPageSizeValue);
+    }
+
+    private string ValidateGridPageSize(string value, int maxValue)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return ValidationMessages.Empty;
+        }
+
+        var trimmedValue = value.Trim();
+        var sanitizedValue = trimmedValue.Replace(ArrayDelimeter, string.Empty);
+
+        if (!sanitizedValue.All(char.IsDigit))
+        {
+            return ValidationMessages.ArrayFormat;
+        }
+
+        var commaCount = 0;
+        foreach (var trimmedChar in trimmedValue)
+        {
+            if (trimmedChar == ',')
+            {
+                commaCount++;
+            }
+        }
+
+        var valueSections = trimmedValue.Split(ArrayDelimeter);
+        var validSizeOptions = new List<int>();
+
+        foreach (var section in valueSections)
+        {
+            if (int.TryParse(section, out var validSection))
+            {
+                validSizeOptions.Add(validSection);
+            }
+        }
+
+        if (valueSections.Count() != validSizeOptions.Count
+            || commaCount != validSizeOptions.Count - 1)
+        {
+            return ValidationMessages.ArrayFormat;
+        }
+
+        if (validSizeOptions.Count != validSizeOptions.Distinct().Count())
+        {
+            return ValidationMessages.Unique;
+        }
+
+        if (validSizeOptions.Any(option => option > maxValue))
+        {
+            return ValidationMessages.MaxValue(maxValue);
+        }
+
+        if (validSizeOptions.Count > MaxGridPageSize)
+        {
+            return ValidationMessages.MaxArrayLength(MaxGridPageSize);
+        }
+
+        return null;
+    }
+}

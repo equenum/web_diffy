@@ -12,6 +12,9 @@ namespace WebDiffy.UI.Components.Pages.Settings;
 public partial class UserSettings
 {
     private const string ArrayDelimeter = ", ";
+    private const int MaxGridPageSize = 5;
+    private const int MaxGridPageSizeValue = 100;
+    private const int MaxLargeGridPageSizeValue = 1000;
 
     [Inject]
     private ISnackbar Snackbar { get; set; }
@@ -19,12 +22,18 @@ public partial class UserSettings
     [Inject]
     private IUserSettingsService UserSettingsService { get; set; }
 
+    private string GridPageSizeOptionsText = string.Empty;
+    private string LargeGridPageSizeOptionsText = string.Empty;
+
     private UserSettingsDto CopiedUserSettings;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         CopiedUserSettings = ObjectCopyHelper.DeepCopy(UserAppSettings.ToData());
+
+        GridPageSizeOptionsText = ConvertArrayBasedValue(CopiedUserSettings.GridPageSizeOptions);
+        LargeGridPageSizeOptionsText = ConvertArrayBasedValue(CopiedUserSettings.LargeGridPageSizeOptions);
     }
 
     private static string ConvertArrayBasedValue<T>(T[] items) where T : struct
@@ -34,24 +43,37 @@ public partial class UserSettings
 
     private void UpdateGridPageSizeOptions(string value)
     {
-        CopiedUserSettings.GridPageSizeOptions = [.. value.Split(ArrayDelimeter).Select(int.Parse)];
+        CopiedUserSettings.GridPageSizeOptions = [.. value.Trim().Split(ArrayDelimeter).Select(int.Parse)];
     }
 
     private void UpdateLargeGridPageSizeOptions(string value)
     {
-        CopiedUserSettings.LargeGridPageSizeOptions = [.. value.Split(ArrayDelimeter).Select(int.Parse)];
+        CopiedUserSettings.LargeGridPageSizeOptions = [.. value.Trim().Split(ArrayDelimeter).Select(int.Parse)];
     }
 
     private void Reset()
     {
         UserAppSettings.Reset();
         CopiedUserSettings = ObjectCopyHelper.DeepCopy(UserAppSettings.ToData());
+
+        GridPageSizeOptionsText = ConvertArrayBasedValue(CopiedUserSettings.GridPageSizeOptions);
+        LargeGridPageSizeOptionsText = ConvertArrayBasedValue(CopiedUserSettings.LargeGridPageSizeOptions);
+
+        Form.ResetValidation();
     }
 
     private async void Save()
     {
+        if (!Form.IsValid)
+        {
+            return;
+        }
+
         try
         {
+            UpdateGridPageSizeOptions(GridPageSizeOptionsText);
+            UpdateLargeGridPageSizeOptions(LargeGridPageSizeOptionsText);
+
             CopiedUserSettings = await UserSettingsService.UpdateAsync(CopiedUserSettings);
 
             UserAppSettings.Populate(CopiedUserSettings);
