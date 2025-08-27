@@ -8,6 +8,7 @@ public static class ValidationMessages
 
     public const string Required = "Required";
     public const string Empty = "Cannot be empty";
+    public const string JsonFormat = "Invalid JSON format";
     public const string ArrayFormat = "Invalid array format";
     public const string Unique = "Unique values expected";
     public const string CronExpression = "Invalid cron expression";
