@@ -6,5 +6,6 @@ namespace WebPageChangeMonitor.Models.Consts;
 public enum DataOperationType
 {
     Import,
-    Export
+    Export,
+    Delete
 }
