@@ -5,6 +5,7 @@ using MudBlazor;
 using WebDiffy.UI.Infrastructure.Helpers;
 using WebDiffy.UI.Infrastructure.UserSettings;
 using WebDiffy.UI.Services;
+using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Dtos;
 
 namespace WebDiffy.UI.Components.Pages.Settings;
@@ -22,9 +23,11 @@ public partial class UserSettings
     [Inject]
     private IUserSettingsService UserSettingsService { get; set; }
 
+    [Inject]
+    private IDialogService DialogService { get; set; }
+
     private string GridPageSizeOptionsText = string.Empty;
     private string LargeGridPageSizeOptionsText = string.Empty;
-
     private UserSettingsDto CopiedUserSettings;
 
     protected override async Task OnInitializedAsync()
@@ -64,6 +67,7 @@ public partial class UserSettings
 
     private async void Save()
     {
+        await Form.Validate();
         if (!Form.IsValid)
         {
             return;
@@ -83,5 +87,41 @@ public partial class UserSettings
         {
             Snackbar.Add("Operation 'Save Settings' failed", Severity.Error);
         }
+    }
+
+    private async void DeleteAll()
+    {
+        var parameters = new DialogParameters<DeleteDataImportExportDialog>
+        {
+            { x => x.OperationType, DataOperationType.Delete }
+        };
+
+        await DialogService.ShowAsync<DeleteDataImportExportDialog>(title: string.Empty, parameters);
+    }
+
+    private async void Import()
+    {
+        await OpenImportExportDialog(DataOperationType.Import);
+    }
+
+    private async void Export()
+    {
+        await OpenImportExportDialog(DataOperationType.Export);
+    }
+
+    private async Task OpenImportExportDialog(DataOperationType operationType)
+    {
+        var parameters = new DialogParameters<DataImportExportDialog>
+        {
+            { x => x.OperationType, operationType }
+        };
+
+        var options = new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
+        };
+
+        var dialog = await DialogService.ShowAsync<DataImportExportDialog>(title: string.Empty, parameters, options); 
     }
 }

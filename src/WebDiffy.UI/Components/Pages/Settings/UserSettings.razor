@@ -68,6 +68,23 @@
             }
         </MudPaper>
     </MudItem>
+    <MudItem xs="12">
+        <MudPaper>
+            <div class="py-4 px-4">
+                <MudText Typo="Typo.h5" Align="Align.Left">Data Management</MudText>
+                <MudText Typo="Typo.subtitle1" Align="Align.Left">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur</MudText>
+            </div>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12">
+        <MudPaper>
+            <div class="d-flex align-center justify-center py-4 px-4">
+                <MudButton Variant="Variant.Filled" OnClick="Import">Import</MudButton>
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Export" Class="mx-2">Export</MudButton>
+                <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAll">Delete All</MudButton>
+            </div>
+        </MudPaper>
+    </MudItem>
 </MudGrid>
 
 @code {

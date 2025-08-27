@@ -1,0 +1,66 @@
+﻿<MudDialog>
+    <TitleContent>
+        <div class="d-flex align-center full-width">
+            <MudIcon Icon="@Icons.Material.Filled.CopyAll"/>
+            <MudText Typo="Typo.h6" Class="px-2">@(OperationType.ToString())</MudText>
+        </div>
+        @if(OperationType is DataOperationType.Import)
+        {
+            <MudText Color="Color.Error" Typo="Typo.subtitle1" Align="Align.Left">Warning: Data Import deletes all existing resources, targets and snapshots!</MudText>
+        }
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="Form" @bind-IsValid="@IsFormValid">
+            @if(OperationType is DataOperationType.Import)
+            {
+                <MudTextField @bind-Value="JsonData" Typo="Typo.body2" Variant="Variant.Outlined" Immediate="true"
+                    Validation="@(new Func<string, string>(ValidateJsonData))" Class="py-2" InputMode="InputMode.none" AutoGrow
+                />
+            }
+            else
+            {
+                <MudText Typo="Typo.body2">
+                    <pre>
+                        <code>@JsonData</code>
+                    </pre>
+                </MudText>
+            }
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <div class="pb-1">
+            <MudButton 
+                Variant="Variant.Filled" 
+                OnClick="Cancel" 
+                Class="@(OperationType is DataOperationType.Import ? "mx-2" : "")">@(OperationType is DataOperationType.Import ? "Cancel" : "Close")</MudButton>
+            @if(OperationType is DataOperationType.Import)
+            {
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="Import" Disabled="@(!IsFormValid)">Import</MudButton>
+            }
+        </div>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private MudForm Form;
+    private bool IsFormValid;
+
+    private string ValidateJsonData(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return ValidationMessages.Required;
+        }
+
+        try
+        {
+            _ = JsonSerializer.Deserialize<DataImportExportDto>(value);
+        }
+        catch
+        {
+            return ValidationMessages.JsonFormat;
+        }
+
+        return null;
+    }
+}
