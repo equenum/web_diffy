@@ -80,7 +80,7 @@ public class ChangeDetector : IChangeDetector
                     .Where(snapshot => snapshot.TargetId == context.Id)
                     .OrderByDescending(snapshot => snapshot.CreatedAt)
                     .FirstOrDefaultAsync();
-                
+
                 var failureSnapshot = new TargetSnapshotEntity()
                 {
                     Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),

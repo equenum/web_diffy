@@ -94,8 +94,11 @@ public class ValueChangeDetectionStrategyTests : IDisposable
         // Assert
         dbTargetSnapshots.Should().ContainSingle();
         dbTargetSnapshots[0].Value.Should().Be(newValue);
+        dbTargetSnapshots[0].NewValue.Should().Be(newValue);
         dbTargetSnapshots[0].IsChangeDetected.Should().BeFalse();
         dbTargetSnapshots[0].IsExpectedValue.Should().Be(expectedIsExpectedValue);
+        dbTargetSnapshots[0].Outcome.Should().Be(Outcome.Success);
+        dbTargetSnapshots[0].Message.Should().Be("Initial value snapshot created");
     }
 
     [Theory]
@@ -125,6 +128,7 @@ public class ValueChangeDetectionStrategyTests : IDisposable
                 Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                 TargetId = targetContext.Id,
                 Value = previousValue,
+                NewValue = previousValue,
                 CreatedAt = DateTime.UtcNow
             });
 
@@ -142,9 +146,12 @@ public class ValueChangeDetectionStrategyTests : IDisposable
         dbTargetSnapshots.Should().HaveCount(2);
         dbTargetSnapshots[1].TargetId.Should().Be(dbTargetSnapshots[0].TargetId);
         dbTargetSnapshots[1].Value.Should().Be(previousValue);
+        dbTargetSnapshots[1].NewValue.Should().Be(newValue);
         dbTargetSnapshots[1].IsChangeDetected.Should().BeFalse();
         dbTargetSnapshots[1].CreatedAt.Should().BeAfter(dbTargetSnapshots[0].CreatedAt);
         dbTargetSnapshots[1].IsExpectedValue.Should().Be(expectedIsExpectedValue);
+        dbTargetSnapshots[1].Outcome.Should().Be(Outcome.Success);
+        dbTargetSnapshots[1].Message.Should().Be("Consecutive value snapshot created");
     }
 
     [Theory]
@@ -173,6 +180,7 @@ public class ValueChangeDetectionStrategyTests : IDisposable
                 Id = Uuid.NewDatabaseFriendly(Database.PostgreSql),
                 TargetId = targetContext.Id,
                 Value = previousValue,
+                NewValue = previousValue,
                 CreatedAt = DateTime.UtcNow
             });
 
@@ -189,10 +197,13 @@ public class ValueChangeDetectionStrategyTests : IDisposable
         // Assert
         dbTargetSnapshots.Should().HaveCount(2);
         dbTargetSnapshots[1].TargetId.Should().Be(dbTargetSnapshots[0].TargetId);
-        dbTargetSnapshots[1].Value.Should().Be(newValue);
+        dbTargetSnapshots[1].Value.Should().Be(previousValue);
+        dbTargetSnapshots[1].NewValue.Should().Be(newValue);
         dbTargetSnapshots[1].IsChangeDetected.Should().BeTrue();
         dbTargetSnapshots[1].CreatedAt.Should().BeAfter(dbTargetSnapshots[0].CreatedAt);
         dbTargetSnapshots[1].IsExpectedValue.Should().Be(expectedIsExpectedValue);
+        dbTargetSnapshots[1].Outcome.Should().Be(Outcome.Success);
+        dbTargetSnapshots[1].Message.Should().Be("Consecutive value snapshot created");
     }
 
     public void Dispose()
