@@ -11,4 +11,5 @@ public class ChangeMonitorOptions
     public bool AreNotificationsEnabled { get; init; }
     public bool UseJitter { get; init; }
     public JobRetryOptions JobRetry { get; init; }
+    public NotificationOptions Notifications { get; init; }
 }
