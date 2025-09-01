@@ -9,9 +9,9 @@ using Quartz;
 using Quartz.Impl;
 using Quartz.Impl.Matchers;
 using WebPageChangeMonitor.Api.Infrastructure;
-using WebPageChangeMonitor.Api.Infrastructure.Logging;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
 using WebPageChangeMonitor.Models.Domain;
+using WebPageChangeMonitor.Models.Logging;
 
 namespace WebPageChangeMonitor.Api.Services;
 

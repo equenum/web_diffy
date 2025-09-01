@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using WebPageChangeMonitor.Api.Exceptions;
-using WebPageChangeMonitor.Api.Infrastructure.Logging;
 using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Models.Dtos;
+using WebPageChangeMonitor.Models.Logging;
 
 namespace WebPageChangeMonitor.Api.Endpoints;
 

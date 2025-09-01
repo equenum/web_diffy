@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebPageChangeMonitor.Api.Exceptions;
-using WebPageChangeMonitor.Api.Infrastructure.Logging;
 using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Dtos;
+using WebPageChangeMonitor.Models.Logging;
 using WebPageChangeMonitor.Models.Options;
 using WebPageChangeMonitor.Models.Responses;
 

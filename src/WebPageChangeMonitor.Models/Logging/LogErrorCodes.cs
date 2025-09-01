@@ -1,4 +1,4 @@
-namespace WebPageChangeMonitor.Api.Infrastructure.Logging;
+namespace WebPageChangeMonitor.Models.Logging;
 
 public static class LogErrorCodes
 {

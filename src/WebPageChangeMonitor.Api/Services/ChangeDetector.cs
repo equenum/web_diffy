@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UUIDNext;
-using WebPageChangeMonitor.Api.Infrastructure.Logging;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Entities;
+using WebPageChangeMonitor.Models.Logging;
 using WebPageChangeMonitor.Services.Detection.Strategies;
 
 namespace WebPageChangeMonitor.Api.Services;
