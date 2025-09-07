@@ -6,4 +6,5 @@ public class NotificationChannel
     public bool IsEnabled { get; init; }
     public string Url { get; init; }
     public string Token { get; init; }
+    public string AuthHeader { get; init; }
 }
