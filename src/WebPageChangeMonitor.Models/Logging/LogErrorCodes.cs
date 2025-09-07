@@ -37,4 +37,10 @@ public static class LogErrorCodes
     {
         public const int TriggerNotFound = 61;
     }
+
+    public static class Notifications
+    {
+        public const int SnapshotFailed = 71;
+        public const int ValueFailed = 72;
+    }
 }

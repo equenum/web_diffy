@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -9,7 +11,10 @@ using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Entities;
+using WebPageChangeMonitor.Models.Logging;
+using WebPageChangeMonitor.Models.Notifications;
 using WebPageChangeMonitor.Models.Options;
+using WebPageChangeMonitor.Services.Notifications;
 using WebPageChangeMonitor.Services.Parsers;
 
 namespace WebPageChangeMonitor.Services.Detection.Strategies;
@@ -20,17 +25,20 @@ public class SnapshotChangeDetectionStrategy : IChangeDetectionStrategy
     private readonly ChangeMonitorOptions _options;
     private readonly IDbContextFactory<MonitorDbContext> _contextFactory;
     private readonly IHtmlParser _htmlParser;
+    private readonly INotificationService _notificationService;
 
     public SnapshotChangeDetectionStrategy(
         ILogger<SnapshotChangeDetectionStrategy> logger,
         IOptions<ChangeMonitorOptions> options,
         IDbContextFactory<MonitorDbContext> contextFactory,
-        IHtmlParser htmlParser)
+        IHtmlParser htmlParser,
+        INotificationService notificationService)
     {
         _logger = logger;
         _options = options.Value;
         _contextFactory = contextFactory;
         _htmlParser = htmlParser;
+        _notificationService = notificationService;
     }
 
     public bool CanHandle(ChangeType type) => type == ChangeType.Snapshot;
@@ -83,13 +91,48 @@ public class SnapshotChangeDetectionStrategy : IChangeDetectionStrategy
             dbContext.TargetSnapshots.Add(snapshot);
             await dbContext.SaveChangesAsync();
 
-            if (isChangeDetected && _options.AreNotificationsEnabled)
+            if (isChangeDetected && _options.Notifications.AreEnabled)
             {
-                // todo implement notification mechanism here
+                var resource = await dbContext.Resources.FirstOrDefaultAsync(resource => resource.Id == context.ResourceId);
+                var enabledChannels = _options.Notifications.Channels.Where(channel => channel.IsEnabled is true);
                 
-                _logger.LogInformation(
-                    "Expected value detected for url {Url}. Sending notifications out...",
-                    context.Url);
+                if (resource is not null && enabledChannels.Any())
+                {
+                    foreach (var channel in enabledChannels)
+                    {
+                        try
+                        {
+                            var body = new Dictionary<string, string>()
+                            {
+                                { "resource", resource.DisplayName },
+                                { "target", context.DisplayName },
+                                { "message", "Consecutive snapshot created" }
+                            };
+
+                            await _notificationService.SendAsync(_options.Notifications.TenantId, channel, new NotificationMessage()
+                            {
+                                Title = "Changes detected",
+                                Body = JsonSerializer.Serialize(body),
+                                BodyType = NotificationBodyType.KeyValue,
+                                Origin = _options.Notifications.TenantId,
+                                Timestamp = snapshot.CreatedAt
+                            });
+
+                            _logger.LogInformation("Change detected for target '{TargetName}' ({TargetId}). Sending notification to {Channel}",
+                                context.DisplayName,
+                                context.Id,
+                                channel.Name);
+                        }
+                        catch
+                        {
+                            _logger.LogError("Err-{ErrorCode}: Failed to send notification to '{Channel}', target id '{TargetId}', target name {TargetName}.",
+                                LogErrorCodes.Notifications.SnapshotFailed,
+                                channel.Name,
+                                context.Id,
+                                context.DisplayName);
+                        }
+                    }
+                }
             }
         }
     }

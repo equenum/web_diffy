@@ -12,6 +12,7 @@ using WebPageChangeMonitor.Api.Services.Controller;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Options;
 using WebPageChangeMonitor.Services.Detection.Strategies;
+using WebPageChangeMonitor.Services.Notifications;
 using WebPageChangeMonitor.Services.Parsers;
 
 namespace WebPageChangeMonitor.Api.Infrastructure;
@@ -68,6 +69,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IChangeDetectionStrategyFactory, ChangeDetectionStrategyFactory>();
         services.AddTransient<IChangeDetectionStrategy, ValueChangeDetectionStrategy>();
         services.AddTransient<IChangeDetectionStrategy, SnapshotChangeDetectionStrategy>();
+        services.AddTransient<INotificationService, NotificationService>();
 
         return services;
     }
