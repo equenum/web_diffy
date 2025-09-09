@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using WebPageChangeMonitor.Api.Infrastructure;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Api.Endpoints;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.AddEndpointServices();
 builder.Services.AddOtherServices();
 
 builder.Services.AddHttpClient();
+builder.Services.UseHttpClientMetrics();
 
 var app = builder.Build();
 
@@ -32,11 +34,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseHttpMetrics();
 
 app.MapResourceEndpoints();
 app.MapTargetEndpoints();
 app.MapTargetSnapshotEndpoints();
 app.MapUserSettingsEndpoints();
+app.MapMetrics();
 
 await DbInitializer.ExecuteAsync(connectionString);
 
