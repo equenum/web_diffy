@@ -4,14 +4,65 @@ namespace WebPageChangeMonitor.Common.Stats;
 
 public static class MonitorMetrics
 {
-    public static readonly Gauge TargetsGauge =
+    public static readonly Gauge ActiveTargets =
         Metrics.CreateGauge(
-            "web_diffy_targets_gauge",
-            "Number of existing targets.",
-            labelNames:
-            [
-                "status",
-                "change-type"
-            ]
+            "web_diffy_active_targets_gauge",
+            "Number of active target jobs."
+        );
+
+    public static readonly Counter ChangeDetectionCount =
+        Metrics.CreateCounter(
+            "web_diffy_change_detection_count",
+            "Number of change detections.",
+            new CounterConfiguration
+            {
+                LabelNames =
+                [
+                    "success",
+                    "change-type"
+                ] 
+            }
+        );
+
+    public static readonly Histogram ChangeDetectionDuration =
+        Metrics.CreateHistogram(
+            "web_diffy_change_detection_duration",
+            "Histogram of change detection durations in seconds.",
+            new HistogramConfiguration
+            {
+                LabelNames =
+                [
+                    "success",
+                    "change-type"
+                ]
+            }
+        );
+
+    public static readonly Counter NotificationSendCount =
+        Metrics.CreateCounter(
+            "web_diffy_notification_send_count",
+            "Number of notification send requests.",
+            new CounterConfiguration
+            {
+                LabelNames =
+                [
+                    "success",
+                    "channel"
+                ] 
+            }
+        );
+
+    public static readonly Histogram NotificationSendDuration =
+        Metrics.CreateHistogram(
+            "web_diffy_notification_send_duration",
+            "Histogram of notification send request durations in seconds.",
+            new HistogramConfiguration
+            {
+                LabelNames =
+                [
+                    "success",
+                    "channel"
+                ]
+            }
         );
 }

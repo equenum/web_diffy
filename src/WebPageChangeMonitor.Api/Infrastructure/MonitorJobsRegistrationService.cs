@@ -8,6 +8,7 @@ using Quartz.Impl;
 using Quartz.Spi;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
 using WebPageChangeMonitor.Api.Services;
+using WebPageChangeMonitor.Common.Stats;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Consts;
 
@@ -42,13 +43,15 @@ public class MonitorJobsRegistrationService : IHostedService
         {
             var targetEntities = await context.Targets.Where(target => target.State == State.Active).ToListAsync(cancellationToken);
 
-            if (targetEntities.Count > 0) 
+            if (targetEntities.Count > 0)
             {
                 _logger.LogInformation("Existing active targets found, count: {TargetCount}. Registering jobs...",
                     targetEntities.Count);
-                
+
                 await _jobService.ScheduleAsync(targetEntities.Select(entity => entity.ToTarget()),
                     cancellationToken);
+                    
+                MonitorMetrics.ActiveTargets.Inc();
             }
         }
     }
@@ -57,6 +60,8 @@ public class MonitorJobsRegistrationService : IHostedService
     {
         var scheduler = await _schedulerFactory.GetScheduler(cancellationToken);
         await scheduler.Shutdown(cancellationToken);
+
+        MonitorMetrics.ActiveTargets.DecTo(0);
     }
 
     private async Task InitiateScheduler(CancellationToken cancellationToken)
@@ -65,5 +70,6 @@ public class MonitorJobsRegistrationService : IHostedService
         scheduler.JobFactory = _jobFactory;
 
         await scheduler.Start(cancellationToken);
+        MonitorMetrics.ActiveTargets.DecTo(0);
     }
 }

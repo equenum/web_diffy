@@ -6,6 +6,7 @@ using UUIDNext;
 using WebPageChangeMonitor.Api.Exceptions;
 using WebPageChangeMonitor.Api.Infrastructure.Mappers;
 using WebPageChangeMonitor.Common.Helpers;
+using WebPageChangeMonitor.Common.Stats;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
@@ -199,7 +200,8 @@ public class TargetService : ITargetService
 
         if (request.State is State.Active)
         {
-            await _jobService.ScheduleAsync(targetEntity.ToTarget()); 
+            await _jobService.ScheduleAsync(targetEntity.ToTarget());
+            MonitorMetrics.ActiveTargets.Inc();
         }
 
         return targetEntity.ToTargetDto();
@@ -219,6 +221,8 @@ public class TargetService : ITargetService
             throw new TargetNotFoundException(updatedTarget.Id.ToString());
         }
 
+        var previousTargetState = targetTarget.State;
+
         _context.Entry(targetTarget).CurrentValues.SetValues(updatedTarget.ToTargetEntity());
         await _context.SaveChangesAsync();
 
@@ -231,6 +235,16 @@ public class TargetService : ITargetService
         if (updatedTarget.State is State.Paused)
         {
             await _jobService.UnscheduleByTargetAsync(updatedTarget.Id, updatedTarget.ResourceId);
+        }
+
+        if (previousTargetState is State.Paused && updatedTarget.State is State.Active)
+        {
+            MonitorMetrics.ActiveTargets.Inc(); 
+        }
+
+        if (previousTargetState is State.Active && updatedTarget.State is State.Paused)
+        {
+            MonitorMetrics.ActiveTargets.Dec(); 
         }
 
         return targetTarget.ToTargetDto();
@@ -246,22 +260,35 @@ public class TargetService : ITargetService
 
         _context.Targets.Remove(targetTarget);
         await _context.SaveChangesAsync();
-        
+
         await _jobService.UnscheduleByTargetAsync(targetTarget.Id, targetTarget.ResourceId);
+
+        if (targetTarget.State is State.Active)
+        { 
+            MonitorMetrics.ActiveTargets.Dec(); 
+        }
     }
 
     public async Task RemoveByResourceIdAsync(Guid id)
     {
-        var availableCount = await _context.Targets
+        var availableTargets = await _context.Targets
             .Where(target => target.ResourceId == id)
-            .CountAsync();
+            .ToListAsync();
 
-        if (availableCount == 0)
+        if (availableTargets.Count == 0)
         {
             throw new InvalidOperationException("No targets found for the given resource id: {id}.");
         }
 
         await _context.Targets.Where(target => target.ResourceId == id).ExecuteDeleteAsync();
         await _jobService.UnscheduleByResourceAsync(id);
+
+        foreach (var target in availableTargets)
+        {
+            if (target.State is State.Active)
+            { 
+                MonitorMetrics.ActiveTargets.Dec(); 
+            }
+        }
     }
 }

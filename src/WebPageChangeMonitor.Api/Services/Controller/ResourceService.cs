@@ -20,13 +20,16 @@ public class ResourceService : IResourceService
 {
     private readonly MonitorDbContext _context;
     private readonly IMonitorJobService _jobService;
+    private readonly ITargetService _targetService;
 
     public ResourceService(
         MonitorDbContext context,
-        IMonitorJobService jobService)
+        IMonitorJobService jobService,
+        ITargetService targetService)
     {
         _context = context;
         _jobService = jobService;
+        _targetService = targetService;
     }
 
     public async Task<ResourcePaginatedResponse> GetAsync(SortDirection? sortDirection, string sortBy, int? page, int count)
@@ -140,9 +143,17 @@ public class ResourceService : IResourceService
             throw new ResourceNotFoundException(id.ToString());
         }
 
+        var availableTargets = await _context.Targets
+            .Where(target => target.ResourceId == id)
+            .ToListAsync();
+
+        foreach (var target in availableTargets)
+        {
+            await _targetService.RemoveAsync(target.Id);
+        }
+
         _context.Resources.Remove(targetResource);
         await _context.SaveChangesAsync();
-        
         await _jobService.UnscheduleByResourceAsync(id);
     }
 }
