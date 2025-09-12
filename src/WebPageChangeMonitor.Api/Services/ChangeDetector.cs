@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UUIDNext;
+using WebPageChangeMonitor.Common.Stats;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
@@ -40,7 +42,9 @@ public class ChangeDetector : IChangeDetector
 
         var isSuccess = false;
         string errorMessage;
-        
+
+        var sw = Stopwatch.StartNew();
+
         try
         {
             var message = new HttpRequestMessage(HttpMethod.Get, context.Url);
@@ -52,6 +56,11 @@ public class ChangeDetector : IChangeDetector
                 await strategy.ExecuteAsync(html, context);
 
                 isSuccess = true;
+
+                sw.Stop();
+                MonitorMetrics.ChangeDetectionCount.WithLabels(MetricLabels.Success.True, context.ChangeType.ToString()).Inc();
+                MonitorMetrics.ChangeDetectionDuration.WithLabels(MetricLabels.Success.True, context.ChangeType.ToString()).Observe(sw.ElapsedMilliseconds);
+
                 return;
             }
 
@@ -64,12 +73,16 @@ public class ChangeDetector : IChangeDetector
         }
         catch (Exception ex)
         {
+            sw.Stop();
             errorMessage = $"Failed to process {context.ChangeType} change detection: {ex.Message}";
 
             _logger.LogError("Err-{ErrorCode}: Failed to process change detection for context id '{ContextId}', url '{Url}'.",
                 LogErrorCodes.Detection.Failed,
                 context.Id,
                 context.Url);
+
+            MonitorMetrics.ChangeDetectionCount.WithLabels(MetricLabels.Success.False, context.ChangeType.ToString()).Inc();
+            MonitorMetrics.ChangeDetectionDuration.WithLabels(MetricLabels.Success.False, context.ChangeType.ToString()).Observe(sw.ElapsedMilliseconds);
         }
 
         if (!isSuccess)
