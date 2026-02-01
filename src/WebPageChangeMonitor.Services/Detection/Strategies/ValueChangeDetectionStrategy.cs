@@ -145,12 +145,12 @@ public class ValueChangeDetectionStrategy : IChangeDetectionStrategy
                         { "is-change-detected", messageContext.IsChangeDetected.ToString() }
                     };
 
-                    await _notificationService.SendAsync(_options.Notifications.TenantId, channel, new NotificationMessage()
+                    await _notificationService.SendAsync(_options.Notifications.OriginName, channel, new NotificationMessage()
                     {
                         Title = "Expected value detected",
                         Body = JsonSerializer.Serialize(body),
                         BodyType = NotificationBodyType.KeyValue,
-                        Origin = _options.Notifications.TenantId,
+                        Origin = _options.Notifications.OriginName,
                         Timestamp = messageContext.Snapshot.CreatedAt
                     });
 

@@ -109,12 +109,12 @@ public class SnapshotChangeDetectionStrategy : IChangeDetectionStrategy
                                 { "message", "Consecutive snapshot created" }
                             };
 
-                            await _notificationService.SendAsync(_options.Notifications.TenantId, channel, new NotificationMessage()
+                            await _notificationService.SendAsync(_options.Notifications.OriginName, channel, new NotificationMessage()
                             {
                                 Title = "Changes detected",
                                 Body = JsonSerializer.Serialize(body),
                                 BodyType = NotificationBodyType.KeyValue,
-                                Origin = _options.Notifications.TenantId,
+                                Origin = _options.Notifications.OriginName,
                                 Timestamp = snapshot.CreatedAt
                             });
 
