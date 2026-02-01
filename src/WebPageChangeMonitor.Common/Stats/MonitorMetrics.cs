@@ -19,7 +19,7 @@ public static class MonitorMetrics
                 LabelNames =
                 [
                     "success",
-                    "change-type"
+                    "change_type"
                 ] 
             }
         );
@@ -33,7 +33,7 @@ public static class MonitorMetrics
                 LabelNames =
                 [
                     "success",
-                    "change-type"
+                    "change_type"
                 ]
             }
         );
@@ -41,7 +41,7 @@ public static class MonitorMetrics
     public static readonly Counter NotificationSendCount =
         Metrics.CreateCounter(
             "web_diffy_notification_send_count",
-            "Number of notification send requests.",
+            "Number of notification requests sent.",
             new CounterConfiguration
             {
                 LabelNames =
@@ -55,7 +55,7 @@ public static class MonitorMetrics
     public static readonly Histogram NotificationSendDuration =
         Metrics.CreateHistogram(
             "web_diffy_notification_send_duration",
-            "Histogram of notification send request durations in seconds.",
+            "Histogram of notification request durations in seconds.",
             new HistogramConfiguration
             {
                 LabelNames =
