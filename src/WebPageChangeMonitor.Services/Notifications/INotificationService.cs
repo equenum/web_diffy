@@ -6,5 +6,5 @@ namespace WebPageChangeMonitor.Services.Notifications;
 
 public interface INotificationService
 {
-    Task SendAsync(string tenantId, NotificationChannel channel, NotificationMessage message);
+    Task SendAsync(NotificationChannel channel, NotificationMessage message);
 }
