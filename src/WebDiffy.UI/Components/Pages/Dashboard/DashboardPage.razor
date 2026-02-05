@@ -3,101 +3,93 @@
 <PageTitle>Dashboard</PageTitle>
 
 <MudGrid id="dashboard-header" Justify="Justify.Center">
-    <MudItem xs="12">
-        <MudPaper>
-            <div class="py-4 px-4">
-                <MudText Typo="Typo.h5" Align="Align.Left">Dashboard</MudText>
-                <MudText Typo="Typo.subtitle1" Align="Align.Left">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur</MudText>
-            </div>
-        </MudPaper>
-    </MudItem>
-        @if(IsWidgetDataReady)
-        {
-            <MudItem xs="12">
-                <MudStack Row="true" Spacing="6" Justify="Justify.SpaceBetween">
-                    <MudPaper Height="100px" Width="210px">
-                        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
-                            <MudText Typo="Typo.button">Total</MudText>
-                            <MudText Typo="Typo.button">@WidgetData.Total</MudText>
-                        </MudStack>
-                    </MudPaper>
-                    <MudPaper Height="100px" Width="210px">
-                        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
-                            <MudText Typo="Typo.button">Paused</MudText>
-                            <MudText Typo="Typo.button">@WidgetData.Paused</MudText>
-                        </MudStack>
-                    </MudPaper>
-                    <MudPaper Height="100px" Width="210px">
-                        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
-                            <MudText Typo="Typo.button">Active</MudText>
-                            <MudText Typo="Typo.button">@WidgetData.Active</MudText>
-                        </MudStack>
-                    </MudPaper>
-                    <MudPaper Height="100px" Width="210px">
-                        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
-                            <MudText Typo="Typo.button">Recent Changes</MudText>
-                            <MudText Typo="Typo.button">@WidgetData.ChangeDetected</MudText>
-                        </MudStack>
-                    </MudPaper>
-                </MudStack>
-            </MudItem>
-        }
+    @if(IsWidgetDataReady)
+    {
+        <MudItem xs="12">
+            <MudStack Row="true" Spacing="6" Justify="Justify.SpaceBetween">
+                <MudPaper Height="120px" Width="210px">
+                    <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
+                        <MudText Typo="Typo.h6">Total</MudText>
+                        <MudText Typo="Typo.h5"><b>@WidgetData.Total</b></MudText>
+                    </MudStack>
+                </MudPaper>
+                <MudPaper Height="120px" Width="210px">
+                    <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
+                        <MudText Typo="Typo.h6">Paused</MudText>
+                        <MudText Typo="Typo.h5"><b>@WidgetData.Paused</b></MudText>
+                    </MudStack>
+                </MudPaper>
+                <MudPaper Height="120px" Width="210px">
+                    <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
+                        <MudText Typo="Typo.h6">Active</MudText>
+                        <MudText Typo="Typo.h5"><b>@WidgetData.Active</b></MudText>
+                    </MudStack>
+                </MudPaper>
+                <MudPaper Height="120px" Width="210px">
+                    <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="py-5 px-5">
+                        <MudText Typo="Typo.h6">Recent Changes</MudText>
+                        <MudText Typo="Typo.h5"><b>@WidgetData.ChangeDetected</b></MudText>
+                    </MudStack>
+                </MudPaper>
+            </MudStack>
+        </MudItem>
+    }
 
-        @if(IsDataLoaded)
+    @if(IsDataLoaded)
+    {
+        @if(Resources.Any())
         {
-            @if(Resources.Any())
-            {
-                @foreach(var resource in Resources)
-                {
-                    <MudItem xs="12">
-                        <MudPaper Class="py-2 px-2">
-                            <div class="py-4 px-2">
-                                <MudStack Row="true" Spacing="1" class="pb-3">
-                                    <MudText Typo="Typo.h6">@resource.DisplayName</MudText>
-                                </MudStack>
-                                @if (TargetsByResourceId.TryGetValue(resource.Id, out var targets) && targets.Any())
-                                {
-                                    <MudStack>
-                                        @foreach(var target in targets)
-                                        {
-                                            <MudStack Row="true" Class="d-flex align-items-center">
-                                                <MudText Class="pt-2 pb-1" style="width: 180px;">@target.DisplayName</MudText>
-                                                <MudStack Row="true" style="width: 650px;" Class="pt-2 pb-1">
-                                                    @foreach(var snapshot in SnapshotsByTargetId[target.Id])
-                                                    {
-                                                        <MudTooltip Text="@GetSnapshotTooltipText(snapshot)" Placement="Placement.Top" Arrow="true">
-                                                            <MudPaper Height="20px" Width="20px" Outlined="true" Class="@GetSnapshotStyle(snapshot)"></MudPaper>
-                                                        </MudTooltip>
-                                                    }
-                                                </MudStack>
-                                                <MudIconButton 
-                                                    Disabled="SnapshotsByTargetId[target.Id].All(snapshot => snapshot is null)" 
-                                                    Style="height: 20px; width: 20px; margin-top: 5px;"
-                                                    Icon="@Icons.Material.Filled.List"
-                                                    OnClick="@(() => OpenSnapshotHistoryAsync(target))"/>
-                                            </MudStack>
-                                            <MudDivider/>
-                                        }
-                                    </MudStack>
-                                }
-                                else
-                                {
-                                    <MudText>No Targets available</MudText>
-                                }
-                            </div>
-                        </MudPaper>
-                    </MudItem>
-                }
-            }
-            else
+            @foreach(var resource in Resources)
             {
                 <MudItem xs="12">
-                    <MudPaper Class="py-4 px-4">
-                        <MudText Typo="Typo.body1" Align="Align.Center">No Resources available</MudText>
+                    <MudPaper Class="py-2 px-2">
+                        <div class="py-4 px-2">
+                            <MudStack Row="true" Spacing="1" class="pb-3">
+                                <MudText Typo="Typo.h6">@resource.DisplayName</MudText>
+                            </MudStack>
+                            @if (TargetsByResourceId.TryGetValue(resource.Id, out var targets) && targets.Any())
+                            {
+                                <MudStack>
+                                    @foreach(var target in targets)
+                                    {
+                                        <MudStack Row="true" Class="d-flex align-items-center">
+                                            <MudText Class="pt-2 pb-1" style="width: 180px;">@target.DisplayName</MudText>
+                                            <MudStack Row="true" style="width: 650px;" Class="pt-2 pb-1">
+                                                @foreach(var snapshot in SnapshotsByTargetId[target.Id])
+                                                {
+                                                    <MudTooltip Text="@GetSnapshotTooltipText(snapshot)" Placement="Placement.Top" Arrow="true">
+                                                        <MudPaper Height="20px" Width="20px" Outlined="true" Class="@GetSnapshotStyle(snapshot)"></MudPaper>
+                                                    </MudTooltip>
+                                                }
+                                            </MudStack>
+                                            <MudIconButton 
+                                                Disabled="SnapshotsByTargetId[target.Id].All(snapshot => snapshot is null)" 
+                                                Style="height: 20px; width: 20px; margin-top: 5px;"
+                                                Icon="@Icons.Material.Filled.List"
+                                                OnClick="@(() => OpenSnapshotHistoryAsync(target))"/>
+                                        </MudStack>
+                                        <MudDivider/>
+                                    }
+                                </MudStack>
+                            }
+                            else
+                            {
+                                <MudText>No Targets available</MudText>
+                            }
+                        </div>
                     </MudPaper>
                 </MudItem>
             }
         }
+        else
+        {
+            <MudItem xs="12">
+                <MudPaper Class="py-4 px-4">
+                    <MudText Typo="Typo.body1" Align="Align.Center">No Resources available</MudText>
+                </MudPaper>
+            </MudItem>
+        }
+    }
 </MudGrid>
 
 @code {

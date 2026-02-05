@@ -3,75 +3,67 @@
 <PageTitle>Targets</PageTitle>
 
 <MudGrid id="targets-header" Justify="Justify.Center">
-    <MudItem xs="12">
-        <MudPaper>
-            <div class="py-4 px-4">
-                <MudText Typo="Typo.h5" Align="Align.Left">Targets</MudText>
-                <MudText Typo="Typo.subtitle1" Align="Align.Left">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur</MudText>
-            </div>
-        </MudPaper>
-    </MudItem>
-        @if(IsDataLoaded)
+    @if(IsDataLoaded)
+    {
+        @if(Resources.Any())
         {
-            @if(Resources.Any())
-            {
-                @foreach(var resource in Resources)
-                {
-                    <MudItem xs="12">
-                        <MudPaper Class="py-2 px-2">
-                            <MudStack>
-                                <div @onmouseover="@(() => HandlePanelMouseOver(resource.Id))">
-                                    <MudDataGrid T="TargetDto" Items="@Targets.Where(target => target.ResourceId == resource.Id)" SortMode="SortMode.Multiple" Elevation="0">
-                                        <ToolBarContent>
-                                            <MudStack Row="false" Spacing="1">
-                                                <MudText Typo="Typo.h6">@resource.DisplayName</MudText>
-                                                <MudText Typo="Typo.subtitle1" Align="Align.Left">@resource.Description</MudText>
-                                            </MudStack>
-                                            <MudSpacer />
-                                            <MudButton OnClick="AddTargetAsync" Variant="Variant.Filled" Color="Color.Primary">
-                                                <MudText>Add</MudText>
-                                            </MudButton>
-                                        </ToolBarContent>
-                                        <Columns>
-                                            @if(UserAppSettings.AreItemIdColumnsEnabled)
-                                            {
-                                                <TemplateColumn Title="Id">
-                                                    <CellTemplate>@(GuidHelper.ConvertToString(context.Item.Id))</CellTemplate>
-                                                </TemplateColumn>
-                                            }
-                                            <PropertyColumn Property="x => x.DisplayName" Title="Display Name" />
-                                            <PropertyColumn Property="x => x.Description" Title="Description" />
-                                            <TemplateColumn CellClass="d-flex justify-end">
-                                                <CellTemplate>
-                                                    <MudIconButton 
-                                                        Size="@Size.Small" 
-                                                        Icon="@(context.Item.State is State.Active ? Icons.Material.Filled.Pause : Icons.Material.Filled.PlayArrow)"
-                                                        OnClick="@(() => ToggleTargetStateAsync(context.Item))"/>
-                                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => UpdateTargetAsync(context.Item))"/>
-                                                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => RemoveTargetAsync(context.Item.Id))"/>
-                                                </CellTemplate>
-                                            </TemplateColumn>
-                                        </Columns>
-                                        <PagerContent>
-                                            <MudDataGridPager T="TargetDto" PageSizeOptions="UserAppSettings.GridPageSizeOptions" />
-                                        </PagerContent>
-                                        <NoRecordsContent>
-                                            <MudText>No records available</MudText>
-                                        </NoRecordsContent>
-                                    </MudDataGrid>
-                                </div>
-                            </MudStack>
-                        </MudPaper>
-                    </MudItem>
-                }
-            }
-            else
+            @foreach(var resource in Resources)
             {
                 <MudItem xs="12">
-                    <MudPaper Class="py-4 px-4">
-                        <MudText Typo="Typo.body1" Align="Align.Center">No Targets available | Create Resources first</MudText>
+                    <MudPaper Class="py-2 px-2">
+                        <MudStack>
+                            <div @onmouseover="@(() => HandlePanelMouseOver(resource.Id))">
+                                <MudDataGrid T="TargetDto" Items="@Targets.Where(target => target.ResourceId == resource.Id)" SortMode="SortMode.Multiple" Elevation="0">
+                                    <ToolBarContent>
+                                        <MudStack Row="false" Spacing="1">
+                                            <MudText Typo="Typo.h6">@resource.DisplayName</MudText>
+                                            <MudText Typo="Typo.subtitle1" Align="Align.Left">@resource.Description</MudText>
+                                        </MudStack>
+                                        <MudSpacer />
+                                        <MudButton OnClick="AddTargetAsync" Variant="Variant.Filled" Color="Color.Primary">
+                                            <MudText>Add</MudText>
+                                        </MudButton>
+                                    </ToolBarContent>
+                                    <Columns>
+                                        @if(UserAppSettings.AreItemIdColumnsEnabled)
+                                        {
+                                            <TemplateColumn Title="Id">
+                                                <CellTemplate>@(GuidHelper.ConvertToString(context.Item.Id))</CellTemplate>
+                                            </TemplateColumn>
+                                        }
+                                        <PropertyColumn Property="x => x.DisplayName" Title="Display Name" />
+                                        <PropertyColumn Property="x => x.Description" Title="Description" />
+                                        <TemplateColumn CellClass="d-flex justify-end">
+                                            <CellTemplate>
+                                                <MudIconButton 
+                                                    Size="@Size.Small" 
+                                                    Icon="@(context.Item.State is State.Active ? Icons.Material.Filled.Pause : Icons.Material.Filled.PlayArrow)"
+                                                    OnClick="@(() => ToggleTargetStateAsync(context.Item))"/>
+                                                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => UpdateTargetAsync(context.Item))"/>
+                                                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => RemoveTargetAsync(context.Item.Id))"/>
+                                            </CellTemplate>
+                                        </TemplateColumn>
+                                    </Columns>
+                                    <PagerContent>
+                                        <MudDataGridPager T="TargetDto" PageSizeOptions="UserAppSettings.GridPageSizeOptions" />
+                                    </PagerContent>
+                                    <NoRecordsContent>
+                                        <MudText>No records available</MudText>
+                                    </NoRecordsContent>
+                                </MudDataGrid>
+                            </div>
+                        </MudStack>
                     </MudPaper>
                 </MudItem>
             }
         }
+        else
+        {
+            <MudItem xs="12">
+                <MudPaper Class="py-4 px-4">
+                    <MudText Typo="Typo.body1" Align="Align.Center">No Targets available | Create Resources first</MudText>
+                </MudPaper>
+            </MudItem>
+        }
+    }
 </MudGrid>
