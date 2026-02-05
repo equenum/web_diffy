@@ -47,6 +47,7 @@ public static class MonitorMetrics
                 LabelNames =
                 [
                     "success",
+                    "change_type",
                     "channel"
                 ] 
             }
@@ -61,6 +62,7 @@ public static class MonitorMetrics
                 LabelNames =
                 [
                     "success",
+                    "change_type",
                     "channel"
                 ]
             }
