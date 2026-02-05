@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using UUIDNext;
+using WebPageChangeMonitor.Common.Stats;
 using WebPageChangeMonitor.Data;
 using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
@@ -135,6 +137,13 @@ public class ValueChangeDetectionStrategy : IChangeDetectionStrategy
         {
             foreach (var channel in enabledChannels)
             {
+                _logger.LogInformation("Expected value detected for target '{TargetName}' ({TargetId}). Sending notification to {Channel}",
+                    targetContext.DisplayName,
+                    targetContext.Id,
+                    channel.Name);
+
+                var sw = Stopwatch.StartNew();
+                
                 try
                 {
                     var body = new Dictionary<string, string>()
@@ -145,7 +154,7 @@ public class ValueChangeDetectionStrategy : IChangeDetectionStrategy
                         { "is-change-detected", messageContext.IsChangeDetected.ToString() }
                     };
 
-                    await _notificationService.SendAsync(_options.Notifications.OriginName, channel, new NotificationMessage()
+                    await _notificationService.SendAsync(channel, new NotificationMessage()
                     {
                         Title = "Expected value detected",
                         Body = JsonSerializer.Serialize(body),
@@ -154,18 +163,22 @@ public class ValueChangeDetectionStrategy : IChangeDetectionStrategy
                         Timestamp = messageContext.Snapshot.CreatedAt
                     });
 
-                    _logger.LogInformation("Expected value detected for target '{TargetName}' ({TargetId}). Sending notification to {Channel}",
-                        targetContext.DisplayName,
-                        targetContext.Id,
-                        channel.Name);
+                    sw.Stop();
+                    MonitorMetrics.NotificationSendCount.WithLabels(MetricLabels.Success.True, targetContext.ChangeType.ToString(), channel.Name).Inc();
+                    MonitorMetrics.NotificationSendDuration.WithLabels(MetricLabels.Success.True, targetContext.ChangeType.ToString(), channel.Name).Observe(sw.ElapsedMilliseconds);
                 }
                 catch
                 {
+                    sw.Stop();
+
                     _logger.LogError("Err-{ErrorCode}: Failed to send notification to '{Channel}', target id '{TargetId}', target name {TargetName}.",
                         LogErrorCodes.Notifications.ValueFailed,
                         channel.Name,
                         targetContext.Id,
                         targetContext.DisplayName);
+
+                    MonitorMetrics.NotificationSendCount.WithLabels(MetricLabels.Success.False, targetContext.ChangeType.ToString(), channel.Name).Inc();
+                    MonitorMetrics.NotificationSendDuration.WithLabels(MetricLabels.Success.False, targetContext.ChangeType.ToString(), channel.Name).Observe(sw.ElapsedMilliseconds);
                 }
             }
         }
