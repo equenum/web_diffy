@@ -58,7 +58,7 @@ public class HtmlParserTests
 
         // Assert
         action.Should().Throw<InvalidOperationException>()
-            .WithMessage("Target context selector value not specified.");
+            .WithMessage("Target selector value not specified, type: Id.");
     }
 
     [Theory]
@@ -146,5 +146,25 @@ public class HtmlParserTests
         // Assert
         innerText.Should().NotBeNull();
         innerText.Should().Be(TestHtml.InnerTexsts.Test);
+    }
+
+    [Theory]
+    [InlineData(TestHtml.SelectorValues.XPathRelative)]
+    [InlineData(TestHtml.SelectorValues.XPathFull)]
+    public void GetNodeInnerText_RelativeXPath_ReturnsExpectedValue(string selectorValue)
+    {
+        // Arrange 
+        var context = new TargetContext()
+        {
+            SelectorType = SelectorType.XPath,
+            SelectorValue = selectorValue
+        };
+
+        // Act
+        var innerText = new HtmlParser().GetNodeInnerText(TestHtml.ValidXPath, context);
+
+        // Assert
+        innerText.Should().NotBeNull();
+        innerText.Should().Be(TestHtml.InnerTexsts.Counter);
     }
 }
