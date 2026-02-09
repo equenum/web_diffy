@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using HtmlAgilityPack;
+using WebPageChangeMonitor.Models.Consts;
 using WebPageChangeMonitor.Models.Domain;
 
 namespace WebPageChangeMonitor.Services.Parsers;
@@ -21,10 +22,10 @@ public class HtmlParser : IHtmlParser
 
         if (string.IsNullOrWhiteSpace(context.SelectorValue))
         {
-            throw new InvalidOperationException("Target context selector value not specified.");    
+            throw new InvalidOperationException($"Target selector value not specified, type: {context.SelectorType}.");    
         }
 
-        if (string.IsNullOrWhiteSpace(context.HtmlTag))
+        if (context.SelectorType is not SelectorType.XPath && string.IsNullOrWhiteSpace(context.HtmlTag))
         {
             throw new InvalidOperationException("Target html tag not specified.");    
         }
@@ -32,14 +33,22 @@ public class HtmlParser : IHtmlParser
         var document = new HtmlDocument();
         document.LoadHtml(html);
 
-        var xPath = $"//{context.HtmlTag}[contains(@{context.SelectorType}, '{context.SelectorValue}')]".ToLowerInvariant();
-        var targetNodes = document.DocumentNode.SelectNodes(xPath);
-
+        var targetNodes = document.DocumentNode.SelectNodes(GetXPath(context));
         if (targetNodes is null || targetNodes.Count == 0)
         {
             throw new InvalidOperationException("Target HTML node not found.");
         }
 
         return targetNodes.First().InnerText;
+    }
+
+    private static string GetXPath(TargetContext context)
+    {
+        if (context.SelectorType is SelectorType.XPath)
+        {
+            return context.SelectorValue;
+        }
+        
+        return $"//{context.HtmlTag}[contains(@{context.SelectorType}, '{context.SelectorValue}')]".ToLowerInvariant();
     }
 }
