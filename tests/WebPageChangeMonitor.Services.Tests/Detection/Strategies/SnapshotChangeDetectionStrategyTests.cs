@@ -13,6 +13,7 @@ using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Entities;
 using WebPageChangeMonitor.Models.Options;
 using WebPageChangeMonitor.Services.Detection.Strategies;
+using WebPageChangeMonitor.Services.Notifications;
 using WebPageChangeMonitor.Services.Parsers;
 
 namespace WebPageChangeMonitor.Services.Tests.Detection.Strategies;
@@ -23,6 +24,7 @@ public class SnapshotChangeDetectionStrategyTests : IDisposable
 
     private readonly IDbContextFactory<MonitorDbContext> _dbContextFactoryMock;
     private readonly IHtmlParser _parserMock;
+    private readonly INotificationService _notificationServiceMock;
 
     private readonly SnapshotChangeDetectionStrategy _strategy;
 
@@ -30,12 +32,14 @@ public class SnapshotChangeDetectionStrategyTests : IDisposable
     {
         _dbContextFactoryMock = Substitute.For<IDbContextFactory<MonitorDbContext>>();
         _parserMock = Substitute.For<IHtmlParser>();
+        _notificationServiceMock = Substitute.For<INotificationService>();
 
         _strategy = new SnapshotChangeDetectionStrategy(
             Substitute.For<ILogger<SnapshotChangeDetectionStrategy>>(),
             Options.Create(GetDefaultOptions()),
             _dbContextFactoryMock,
-            _parserMock);
+            _parserMock,
+            _notificationServiceMock);
     }
 
     [Theory]
@@ -177,6 +181,9 @@ public class SnapshotChangeDetectionStrategyTests : IDisposable
 
     private static ChangeMonitorOptions GetDefaultOptions() => new()
     {
-        AreNotificationsEnabled = false
+        Notifications = new NotificationOptions
+        {
+            AreEnabled = false
+        }
     };
 }

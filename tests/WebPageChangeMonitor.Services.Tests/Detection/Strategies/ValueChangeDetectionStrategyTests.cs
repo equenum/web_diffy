@@ -13,6 +13,7 @@ using WebPageChangeMonitor.Models.Domain;
 using WebPageChangeMonitor.Models.Entities;
 using WebPageChangeMonitor.Models.Options;
 using WebPageChangeMonitor.Services.Detection.Strategies;
+using WebPageChangeMonitor.Services.Notifications;
 using WebPageChangeMonitor.Services.Parsers;
 
 namespace WebPageChangeMonitor.Services.Tests.Detection.Strategies;
@@ -23,6 +24,7 @@ public class ValueChangeDetectionStrategyTests : IDisposable
 
     private readonly IDbContextFactory<MonitorDbContext> _dbContextFactoryMock;
     private readonly IHtmlParser _parserMock;
+    private readonly INotificationService _notificationServiceMock;
 
     private readonly ValueChangeDetectionStrategy _strategy;
 
@@ -35,7 +37,8 @@ public class ValueChangeDetectionStrategyTests : IDisposable
             Substitute.For<ILogger<ValueChangeDetectionStrategy>>(),
             _parserMock,
             Options.Create(GetDefaultOptions()),
-            _dbContextFactoryMock);
+            _dbContextFactoryMock,
+            _notificationServiceMock);
     }
 
     [Theory]
@@ -213,6 +216,9 @@ public class ValueChangeDetectionStrategyTests : IDisposable
 
     private static ChangeMonitorOptions GetDefaultOptions() => new()
     {
-        AreNotificationsEnabled = false
+        Notifications = new NotificationOptions
+        {
+            AreEnabled = false
+        }
     };
 }
