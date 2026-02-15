@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace WebPageChangeMonitor.Api.Infrastructure.Schemas;
 
 public class EnumSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         if (context.Type.IsEnum)
         {
