@@ -5,7 +5,7 @@ namespace WebDiffy.UI.Infrastructure.UserSettings;
 public static class UserAppSettings
 {
     public static bool AreDeletePopUpsEnabled { get; set; } = true;
-    public static bool AreItemIdColumnsEnabled { get; set; } = true;
+    public static bool AreItemIdColumnsEnabled { get; set; } = false;
     public static bool AreItemIdsShortened { get; set; } = true;
     public static bool AreTargetsCreatedAsActive { get; set; } = false;
     public static int ItemIdSubSectionLength { get; set; } = 12;
@@ -15,7 +15,7 @@ public static class UserAppSettings
     public static void Reset()
     {
         AreDeletePopUpsEnabled = true;
-        AreItemIdColumnsEnabled = true;
+        AreItemIdColumnsEnabled = false;
         AreItemIdsShortened = true;
         AreTargetsCreatedAsActive = false;
         ItemIdSubSectionLength = 12;
