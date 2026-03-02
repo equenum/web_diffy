@@ -39,11 +39,6 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="6" Class="py-0">
-                    <MudTextField @bind-Value="CopiedTarget.HtmlTag" Label="Html Tag" Counter="20" MaxLength="20" Immediate="true" 
-                        Validation="@(new Func<string, string>(ValidateHtmlTag))" Class="py-2"
-                    />
-                </MudItem>
-                <MudItem xs="6" Class="py-0">
                     <MudSelect
                         T="string" Class="py-2" Label="Selector Type" Value="CopiedTarget.SelectorType.ToString()" 
                         ValueChanged="@((string value) => SetSelectorType(value))">
@@ -53,16 +48,27 @@
                         }
                     </MudSelect>
                 </MudItem>
+                @if(CopiedTarget.SelectorType != SelectorType.XPath)
+                {
+                    <MudItem xs="6" Class="py-0">
+                        <MudTextField @bind-Value="CopiedTarget.HtmlTag" Label="Html Tag" Counter="20" MaxLength="20" Immediate="true" 
+                            Validation="@(new Func<string, string>(ValidateHtmlTag))" Class="py-2"
+                        />
+                    </MudItem>
+                }
                 <MudItem xs="6" Class="py-0">
-                    <MudTextField @bind-Value="CopiedTarget.SelectorValue" Label="Selector Value" Counter="50" MaxLength="50" Immediate="true" 
+                    <MudTextField @bind-Value="CopiedTarget.SelectorValue" Label="Selector Value" Immediate="true" 
                         Validation="@(new Func<string, string>(ValidateSelectorValue))" Class="py-2"
                     />
                 </MudItem>
-                <MudItem xs="6" Class="py-0">
-                    <MudTextField @bind-Value="CopiedTarget.ExpectedValue" Label="Expected Value" Counter="100" MaxLength="100" Immediate="true" 
-                        Validation="@(new Func<string, string>(ValidateExpectedValue))" Class="py-2"
-                    />
-                </MudItem>
+                @if(CopiedTarget.ChangeType == ChangeType.Value)
+                {
+                    <MudItem xs="6" Class="py-0">
+                        <MudTextField @bind-Value="CopiedTarget.ExpectedValue" Label="Expected Value" Immediate="true" 
+                            Validation="@(new Func<string, string>(ValidateExpectedValue))" Class="py-2"
+                        />
+                    </MudItem>
+                }
             </MudGrid>
         </MudForm>
     </DialogContent>
