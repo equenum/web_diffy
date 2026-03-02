@@ -8,12 +8,12 @@
     <DialogContent>
         <MudForm @ref="Form" @bind-IsValid="@IsFormValid">
             <MudGrid>
-                <MudItem xs="6" Class="py-0">
+                <MudItem xs="6" Class="pb-0 pt-2">
                     <MudTextField @bind-Value="Resource.DisplayName" Label="Display Name" Counter="20" MaxLength="20" Immediate="true"
                         Validation="@(new Func<string, string>(ValidateDisplayName))" Class="py-2"
                     />
                 </MudItem>
-                <MudItem xs="6" Class="py-0">
+                <MudItem xs="6" Class="pb-0 pt-2">
                     <MudTextField @bind-Value="Resource.Description" Label="Description" Counter="50" MaxLength="50" Immediate="true" 
                         Validation="@(new Func<string, string>(ValidateDescription))" Class="py-2"
                     />
