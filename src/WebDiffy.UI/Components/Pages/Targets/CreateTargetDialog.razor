@@ -38,11 +38,6 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="6" Class="py-0">
-                    <MudTextField @bind-Value="Target.HtmlTag" Label="Html Tag" Counter="20" MaxLength="20" Immediate="true" 
-                        Validation="@(new Func<string, string>(ValidateHtmlTag))" Class="py-2"
-                    />
-                </MudItem>
-                <MudItem xs="6" Class="py-0">
                     <MudSelect
                         T="string" Class="py-2" Label="Selector Type" Value="Target.SelectorType.ToString()" 
                         ValueChanged="@((string value) => SetSelectorType(value))">
@@ -52,16 +47,27 @@
                         }
                     </MudSelect>
                 </MudItem>
+                @if(Target.SelectorType != SelectorType.XPath)
+                {
+                    <MudItem xs="6" Class="py-0">
+                        <MudTextField @bind-Value="Target.HtmlTag" Label="Html Tag" Counter="20" MaxLength="20" Immediate="true" 
+                            Validation="@(new Func<string, string>(ValidateHtmlTag))" Class="py-2"
+                        />
+                    </MudItem>
+                }
                 <MudItem xs="6" Class="py-0">
-                    <MudTextField @bind-Value="Target.SelectorValue" Label="Selector Value" Counter="50" MaxLength="50" Immediate="true" 
+                    <MudTextField @bind-Value="Target.SelectorValue" Label="Selector Value" Immediate="true" 
                         Validation="@(new Func<string, string>(ValidateSelectorValue))" Class="py-2"
                     />
                 </MudItem>
-                <MudItem xs="6" Class="py-0">
-                    <MudTextField @bind-Value="Target.ExpectedValue" Label="Expected Value" Counter="100" MaxLength="100" Immediate="true" 
-                        Validation="@(new Func<string, string>(ValidateExpectedValue))" Class="py-2"
-                    />
-                </MudItem>
+                @if(Target.ChangeType == ChangeType.Value)
+                {
+                    <MudItem xs="6" Class="py-0">
+                        <MudTextField @bind-Value="Target.ExpectedValue" Label="Expected Value" Immediate="true" 
+                            Validation="@(new Func<string, string>(ValidateExpectedValue))" Class="py-2"
+                        />
+                    </MudItem>
+                }
             </MudGrid>
         </MudForm>
     </DialogContent>
