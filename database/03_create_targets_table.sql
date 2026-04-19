@@ -10,7 +10,7 @@ create table if not exists monitor.targets (
     url text not null,
     cron_schedule text not null,
     change_type text not null,
-    html_tag text not null,
+    html_tag text null,
     selector_type text not null,
     selector_value text not null,
     expected_value text,

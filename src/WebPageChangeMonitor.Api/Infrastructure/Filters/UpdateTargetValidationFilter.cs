@@ -88,7 +88,7 @@ public class UpdateTargetValidationFilter : IEndpointFilter
             validationContext.AddError(new ValidationError(nameof(request.CronSchedule), ValidationMessages.CronExpression));
         }
 
-        if (request.HtmlTag is null)
+        if (request.SelectorType is not SelectorType.XPath && request.HtmlTag is null)
         {
             validationContext.AddError(new ValidationError(nameof(request.HtmlTag), ValidationMessages.Required));
         }

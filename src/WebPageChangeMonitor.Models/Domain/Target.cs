@@ -36,7 +36,6 @@ public class Target
     [EnumDataType(typeof(ChangeType))]
     public ChangeType ChangeType { get; set; }
 
-    [Required(AllowEmptyStrings = false)]
     [StringLength(20)]
     public string HtmlTag { get; set; }
 
