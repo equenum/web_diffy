@@ -1,0 +1,30 @@
+services:
+  frontend:
+    build:
+      context: ./src/WebDiffy.UI
+    image: web-diffy-ui:latest
+    container_name: web-diffy-ui
+    restart: unless-stopped
+    ports:
+      - "5011:5011"
+    depends_on:
+      - backend
+    environment:
+      - Api__Url=http://localhost:5180
+  backend:
+    build:
+      context: ./src/WebPageChangeMonitor.Api
+    image: web-diffy-api:latest
+    container_name: web-diffy-api
+    restart: unless-stopped
+    ports:
+      - "5180:5180"
+    environment:
+      - ConnectionStrings__ChangeMonitor= # postgresql 
+      - ChangeMonitor__Notifications__AreEnabled=true
+      
+      # pocprinthub
+      - ChangeMonitor__Notifications__Channels__1__IsEnabled=true
+      - ChangeMonitor__Notifications__Channels__1__Url=
+      - ChangeMonitor__Notifications__Channels__1__TenantId=
+      - ChangeMonitor__Notifications__Channels__1__TenantToken=
