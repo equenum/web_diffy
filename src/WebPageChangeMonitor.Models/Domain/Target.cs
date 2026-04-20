@@ -44,9 +44,7 @@ public class Target
     public SelectorType SelectorType { get; set; }
 
     [Required(AllowEmptyStrings = false)]
-    [StringLength(50)]
     public string SelectorValue { get; set; }
 
-    [StringLength(100, MinimumLength = 1)]
     public string ExpectedValue { get; set; } 
 }

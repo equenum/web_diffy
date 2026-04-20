@@ -112,11 +112,6 @@ public class CreateTargetValidationFilter : IEndpointFilter
             {
                 validationContext.AddError(new ValidationError(nameof(request.SelectorValue), ValidationMessages.Empty));
             }
-
-            if (request.SelectorValue.Length > 50)
-            {
-                validationContext.AddError(new ValidationError(nameof(request.SelectorValue), ValidationMessages.MaxLength(50)));
-            }
         }
 
         if (request.ExpectedValue is not null)
@@ -124,11 +119,6 @@ public class CreateTargetValidationFilter : IEndpointFilter
             if (string.IsNullOrWhiteSpace(request.ExpectedValue))
             {
                 validationContext.AddError(new ValidationError(nameof(request.ExpectedValue), ValidationMessages.Empty));
-            }
-
-            if (request.ExpectedValue.Length > 100)
-            {
-                validationContext.AddError(new ValidationError(nameof(request.ExpectedValue), ValidationMessages.MaxLength(100)));
             }
         }
 
