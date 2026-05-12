@@ -4,7 +4,6 @@
 
 - Add attribution section to readme including all libraries and licenses.
 - Test diffs (especially added and removed lines).
-- Dockerize, set mode to release
 - test Metrics
 - Create Grafana dashboards (also include .NET metrics) https://github.com/prometheus-net/grafana-dashboards/tree/master
 - Add a gif to the poc-print-hub to showcase how it works live
