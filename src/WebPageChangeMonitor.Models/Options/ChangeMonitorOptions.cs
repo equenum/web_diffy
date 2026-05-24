@@ -10,5 +10,6 @@ public class ChangeMonitorOptions
     public int BackoffType { get; init; }
     public bool UseJitter { get; init; }
     public JobRetryOptions JobRetry { get; init; }
+    public PlaywrightOptions Playwright { get; init; }
     public NotificationOptions Notifications { get; init; }
 }
