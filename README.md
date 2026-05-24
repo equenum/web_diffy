@@ -10,3 +10,5 @@
 
 ## Attribution
 - https://github.com/mmanela/diffplex/tree/master
+- https://github.com/microsoft/playwright-dotnet
+- https://github.com/MudBlazor/MudBlazor/
