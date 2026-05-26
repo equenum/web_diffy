@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -45,13 +46,24 @@ public class MonitorJobsRegistrationService : IHostedService
 
             if (targetEntities.Count > 0)
             {
-                _logger.LogInformation("Existing active targets found, count: {TargetCount}. Registering jobs...",
+                _logger.LogInformation("Existing active targets found, count: {TargetCount}. Scheduling jobs...",
                     targetEntities.Count);
 
-                await _jobService.ScheduleAsync(targetEntities.Select(entity => entity.ToTarget()),
-                    cancellationToken);
+                var targets = targetEntities.Select(entity => entity.ToTarget());
+
+                foreach (var target in targets)
+                {
+                    await _jobService.ScheduleAsync(target, cancellationToken);
+
+                    _logger.LogInformation("Scheduled a job, target id: {TargetId}, url: {TargetUrl}.",
+                        target.Id,
+                        target.Url);
                     
-                MonitorMetrics.ActiveTargets.Inc();
+                    MonitorMetrics.ActiveTargets.Inc();
+
+                    var jitterDelay = Random.Shared.Next(500, 5000);
+                    await Task.Delay(jitterDelay, cancellationToken);
+                }
             }
         }
     }
